@@ -114,18 +114,16 @@ var ui = {
 	},
 
 	render_body: function() {
-		var out = '<div id="centre_div">\
-               <div id="timer_label">0.00</div>\
-               <div id="scramble_label"></div>\
-               <div id="times_label" class="a"></div>\
-               <div id="stats_label">\
-               times: <span id="s_t">0</span><br />\
-               current average: <span id="c_a_5"></span>, <span id="c_a_12"></span><br />\
-               session average: <span id="s_a"></span>, mean: <span id="s_m"></span>\
-               </div>\
-               <div id="options_label" class="a"><span>options</span>: </div>\
-               <div id="options_panel" style="display: none;"><select id="scramblers"></select></div>\
-               </div>';
+		var out = '<div id="centre_div">'+
+               '<div id="timer_label">0.00</div>'+
+               '<div id="scramble_label"></div>'+
+               '<div id="times_label" class="a"></div>'+
+               '<div id="stats_label">'+
+               'times: <span id="s_t">0</span><br />'+
+               'current average: <span id="c_a_5"></span>, <span id="c_a_12"></span><br />'+
+               'session average: <span id="s_a"></span>, mean: <span id="s_m"></span></div>'+
+               '<div id="options_label" class="a"><span>options</span>: </div>'+
+               '<div id="options_panel" style="display: none;"><select id="scramblers"></select></div</div>';
 		document.body.innerHTML = out;
 	},
 

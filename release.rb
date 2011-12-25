@@ -15,7 +15,7 @@ end
 
 output = File.read "jjtimer.html"
 output.gsub!(/<script type="text\/javascript" src="[^"]+"><\/script>\n/, "")
-output.gsub!(/<\/head>/, merge + "</head>")
+output.gsub!(/<\/head>/, "<script type='text/javascript'>" + merge + "</script></head>")
 
 File.open("index.html", "w") do |out|
 	out.print output
