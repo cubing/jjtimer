@@ -109,7 +109,7 @@ var ui = {
 		var menu = $('scramblers');
 		for(var i = 0; i < scrambler.scramblers.length; i++)
 		{
-			menu.options[i] = new Option(scrambler.scramblers[i][0]);
+			menu.options[i] = new Option(scrambler.get_name(i));
 		}
 	},
 
