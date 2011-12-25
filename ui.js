@@ -1,4 +1,4 @@
-function load(url) {
+function load_external(url) {
 	var file = document.createElement('script');
 	file.type = "text/javascript";
 	file.src = url;
@@ -105,11 +105,11 @@ var ui = {
 	},
 
 	reset: function() {
+		timer.reset();
 		ui.next_scramble();
 		ui.update_stats();
 		t($('timer_label'), "0.00");	
 		t($('times_label'), "&nbsp;");
-		timer.reset();
 	},
 
 	populate_scramblers_menu: function() {
@@ -126,7 +126,7 @@ var ui = {
 
 	load_plugin: function() {
 		var url = $('plugin_url').value;
-		load(url);
+		load_external(url);
 		$('plugin_url').value = "";
 	},
 
@@ -156,17 +156,15 @@ var ui = {
 	init: function() {
 		ui.render_body();
 
-		$('c_a_5').onclick = function() { timer.hilight_current(5); };
-		$('c_a_12').onclick = function() { timer.hilight_current(12); };
+		$('c_a_5').onclick = function() { ui.hilight_current(5); };
+		$('c_a_12').onclick = function() { ui.hilight_current(12); };
 		$('s_a').onclick = function() { ui.hilight_current(session.times.length); };
 		$('s_m').onclick = function() { ui.hilight_current(session.times.length); };
 
 		$('options_label').onclick = function() { toggle($('options_panel')); };
 		$('scramble_menu').onchange = function(s) { scrambler.set($('scramble_menu').selectedIndex); ui.next_scramble(); };
 	
-		scrambler.add(["3x3", scrambler.generic([["U","D"],["R","L"],["F","B"]],["","2","'"], 25)]);
-		scrambler.add(["4x4", scrambler.generic([["U","D","u"],["R","L","r"],["F","B","f"]],["","2","'"], 40)]);
-		scrambler.set(0);
+		scrambler.add_default();
 		ui.populate_scramblers_menu();
 
 		ui.reset();
