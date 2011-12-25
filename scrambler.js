@@ -33,7 +33,7 @@ var scrambler = {
 
 			for(var j = 0; j < length; j++){
 				var done = 0;
-				while(done == 0) {
+				while(done === 0) {
 					var first = Math.floor(Math.random()*turns.length);
 					var second = Math.floor(Math.random()*turns[first].length);
 
@@ -42,7 +42,7 @@ var scrambler = {
 						lastaxis = first;
 					}
 
-					if(donemoves[second] == 0) {
+					if(donemoves[second] === 0) {
 						donemoves[second] = 1;
 						s += isArray(turns[first][second]) ? rndEl(turns[first][second]) : turns[first][second];
 						s += rndEl(suffixes) + " ";

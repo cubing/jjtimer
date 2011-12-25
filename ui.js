@@ -24,7 +24,7 @@ var ui = {
 	},
 
 	key_up: function(ev) {
-		if(ev.keyCode == 27 && !timer.is_running()) {
+		if(ev.keyCode === 27 && !timer.is_running()) {
 			ui.reset(); return;
 		}
 		timer.key_up(ev);
@@ -42,9 +42,9 @@ var ui = {
 		for(var i = 0; i < session.times.length; ++i)
 		{
 			if(i != 0) { out += ", "; }
-			if(i == hilight_index) out += "<span class='h'>";
+			if(i === hilight_index) out += "<span class='h'>";
 			out += ui.time_link(i);
-			if(i == hilight_index + length) out += "</span>";
+			if(i === hilight_index + length) out += "</span>";
 		}
 		return out;
 	},

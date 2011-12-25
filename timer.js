@@ -1,6 +1,6 @@
 function $(id) { return document.getElementById(id); }
 function t(e, t) { e.innerHTML = t; }
-function toggle(e) { e.style.display = (e.style.display == "none") ? "" : "none"; }
+function toggle(e) { e.style.display = (e.style.display === "none") ? "" : "none"; }
 var timer = function() {
 	var state, Waiting = 0, Ready = 1, Running = 2;
 	var start_time, end_time, solve_time;
@@ -30,20 +30,20 @@ var timer = function() {
 		},
 
 		key_down: function(ev) {
-			if(Waiting == state) { state = Ready;  }
-			else if(Running == state) {
+			if(Waiting === state) { state = Ready;  }
+			else if(Running === state) {
 				set_stopped();
 			}
 		},
 
 		key_up: function(ev) {
-			if(Ready == state && ev.keyCode == 32) {
+			if(Ready === state && ev.keyCode === 32) {
 				set_running();
 			}
 		},
 
 		is_running: function() {
-			return Running == state;
+			return Running === state;
 		},
 		
 		current_time: function() {

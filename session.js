@@ -39,8 +39,8 @@ var session = {
 		for(var i = start; i < end; ++i)
 		{
 			var t = session.times[i];
-			if(t < min || -1 == min) min = t;
-			if(t > max || -1 == max) max = t;
+			if(t < min || -1 === min) min = t;
+			if(t > max || -1 === max) max = t;
 			sum += t;
 		}
 		sum -= min + max;
