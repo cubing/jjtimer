@@ -1,3 +1,10 @@
+function load(url) {
+	var file = document.createElement('script');
+	file.type = "text/javascript";
+	file.src = url;
+	document.getElementsByTagName("head")[0].appendChild(file);
+} 
+
 var ui = {
 	human_time: function (time) {
 		if(time < 0) return "DNF";
@@ -106,24 +113,43 @@ var ui = {
 	},
 
 	populate_scramblers_menu: function() {
-		var menu = $('scramblers');
+		var menu = $('scramble_menu');
 		for(var i = 0; i < scrambler.scramblers.length; i++)
 		{
 			menu.options[i] = new Option(scrambler.get_name(i));
 		}
 	},
 
+	clear_info: function() {
+		t($('info'), "");
+	},
+
+	load_plugin: function() {
+		var url = $('plugin_url').value;
+		load(url);
+		$('plugin_url').value = "";
+	},
+
+	plugin_loaded: function(name) {
+		t($('info'), "loaded " + name);
+		ui.populate_scramblers_menu();
+		setTimeout(ui.clear_info, 1000);
+	},
+
 	render_body: function() {
 		var out = '<div id="centre_div">'+
-               '<div id="timer_label">0.00</div>'+
-               '<div id="scramble_label"></div>'+
-               '<div id="times_label" class="a"></div>'+
-               '<div id="stats_label">'+
-               'times: <span id="s_t">0</span><br />'+
-               'current average: <span id="c_a_5"></span>, <span id="c_a_12"></span><br />'+
-               'session average: <span id="s_a"></span>, mean: <span id="s_m"></span></div>'+
-               '<div id="options_label" class="a"><span>options</span>: </div>'+
-               '<div id="options_panel" style="display: none;"><select id="scramblers"></select></div</div>';
+              '<div id="info"></div>'+
+              '<div id="timer_label">0.00</div>'+
+              '<div id="scramble_label"></div>'+
+              '<div id="times_label" class="a"></div>'+
+              '<div id="stats_label">'+
+              'times: <span id="s_t">0</span><br />'+
+              'current average: <span id="c_a_5"></span>, <span id="c_a_12"></span><br />'+
+              'session average: <span id="s_a"></span>, mean: <span id="s_m"></span></div>'+
+              '<div id="options_label" class="a"><span>options</span>: </div>'+
+              '<div id="options_panel" style="display: none;">'+
+              '<select id="scramble_menu"></select>'+
+              '<input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/></div></div>';
 		document.body.innerHTML = out;
 	},
 
@@ -136,7 +162,7 @@ var ui = {
 		$('s_m').onclick = function() { ui.hilight_current(session.times.length); };
 
 		$('options_label').onclick = function() { toggle($('options_panel')); };
-		$('scramblers').onchange = function(s) { scrambler.set($('scramblers').selectedIndex); ui.next_scramble(); };
+		$('scramble_menu').onchange = function(s) { scrambler.set($('scramble_menu').selectedIndex); ui.next_scramble(); };
 	
 		scrambler.add(["3x3", scrambler.generic([["U","D"],["R","L"],["F","B"]],["","2","'"], 25)]);
 		scrambler.add(["4x4", scrambler.generic([["U","D","u"],["R","L","r"],["F","B","f"]],["","2","'"], 40)]);
