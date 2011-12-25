@@ -31,7 +31,7 @@ var ui = {
 	},
 
 	time_link: function(index) {
-		var out = "<span onclick='ui.delete("+index+")'>";
+		var out = "<span onclick='ui.del("+index+")'>";
 		out += ui.human_time(session.times[index]) + "</span>";
 		return out;
 	},
@@ -90,7 +90,7 @@ var ui = {
 		t($('times_label'), ui.to_times_list());
 	},
 
-	delete: function(index) {
+	del: function(index) {
 		if(timer.is_running()) return;
 		session.del(index);
 		t($('times_label'), ui.to_times_list());
@@ -151,4 +151,5 @@ var ui = {
 		document.onkeyup = ui.key_up;
 	}
 };
+window['ui'] = ui;
 window.onload = ui.init;
