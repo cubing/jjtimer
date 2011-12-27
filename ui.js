@@ -4,13 +4,18 @@ function load_external(url) {
 	file.src = url;
 	document.getElementsByTagName("head")[0].appendChild(file);
 } 
+function $(id) { return document.getElementById(id); }
+function t(e, t) { e.innerHTML = t; }
+function toggle(e) { e.style.display = (e.style.display === "none") ? "" : "none"; }
 
-var ui = {
-	human_time: function (time) {
+var ui = function() {
+	var update_timer;
+	
+	function human_time(time) {
 		if(time < 0) return "DNF";
 		var useMilli = false;
 		time = Math.round(time / (useMilli ? 1 : 10));
- 		var bits = time % (useMilli ? 1000 : 100);
+		var bits = time % (useMilli ? 1000 : 100);
 		time = (time - bits) / (useMilli ? 1000 : 100);
 		var secs = time % 60;
 		var mins = ((time - secs) / 60) % 60;
@@ -24,50 +29,71 @@ var ui = {
 		if (mins < 20 && hours > 0) {s = "0" + s;}
 		if (hours > 0) {s = hours + ":" + s;}
 		return s;
-	},
+	}
 
+	function next_scramble()
+	{
+		t($('scramble_label'), scramble_manager.next());
+	}
+
+	function update_stats() {
+		t($('s_t'), session.length());
+		t($('c_a_5'), human_time(session.current_average(5)));
+		t($('c_a_12'), human_time(session.current_average(12)));
+		t($('b_a_5'), human_time(session.best_average(5)));
+		t($('b_a_12'), human_time(session.best_average(12)));
+		t($('s_a'), human_time(session.session_average()));
+		t($('s_m'), human_time(session.session_mean()));
+		t($('times_label'), to_times_list());
+	}
+
+	function time_link(index) {
+		var out = "<span onclick='ui.del("+index+")'>";
+		out += human_time(session.times()[index]) + "</span>";
+		return out;
+	}
+
+	function to_times_list(hilight_index, length) {
+		if(session.length() < 1) return "&nbsp;"
+		var out = "";
+		for(var i = 0; i < session.length(); ++i)
+		{
+			if(i != 0) out += ", ";
+			if(i === hilight_index) out += "<span class='h'>";
+			out += time_link(i);
+			if(i === hilight_index + length) out += "</span>";
+		}
+		return out;
+	}
+	
+	function populate_scramblers_menu() {
+		var menu = $('scramble_menu');
+		for(var i = 0; i < scramble_manager.scramblers.length; i++)
+		{
+			menu.options[i] = new Option(scramble_manager.get_name(i));
+		}
+	}
+
+	return {
 	key_down: function(ev) {
-		timer.key_down(ev);
+		timer.trigger_down();
 	},
 
 	key_up: function(ev) {
 		if(ev.keyCode === 27 && !timer.is_running()) {
 			ui.reset(); return;
 		}
-		timer.key_up(ev);
+		timer.trigger_up(ev.keyCode === 32);
 	},
 
-	time_link: function(index) {
-		var out = "<span onclick='ui.del("+index+")'>";
-		out += ui.human_time(session.times[index]) + "</span>";
-		return out;
-	},
-
-	to_times_list: function(hilight_index, length) {
-		if(session.times.length < 1) return "&nbsp;"
-		var out = "";
-		for(var i = 0; i < session.times.length; ++i)
-		{
-			if(i != 0) { out += ", "; }
-			if(i === hilight_index) out += "<span class='h'>";
-			out += ui.time_link(i);
-			if(i === hilight_index + length) out += "</span>";
-		}
-		return out;
-	},
-	
 	hilight_current: function(length)
 	{
 		if(timer.is_running()) return;
-		t($('times_label'), ui.to_times_list(session.times.length - length, length));
-	},
-
-	next_scramble: function()
-	{
-		t($('scramble_label'), scrambler.current());
+		t($('times_label'), to_times_list(session.length() - length, length));
 	},
 
 	on_running: function() {
+		update_timer = setInterval(ui.update_running, 10);
 		$('scramble_label').className = "g";
 		$('stats_label').className = "g";
 		$('times_label').className = "g";
@@ -75,53 +101,34 @@ var ui = {
 	},
 
 	update_running: function() {
-		t($('timer_label'), ui.human_time(timer.current_time()));
+		t($('timer_label'), human_time(timer.current_time()));
 	},
 
 	on_stop: function() {
-		t($('timer_label'), ui.human_time(timer.current_time()));
+		clearInterval(update_timer);
+		t($('timer_label'), human_time(timer.current_time()));
 		$('scramble_label').className = "";
 		$('stats_label').className = "";
 		$('times_label').className = "a";
 		$('options_label').className = "a";
-		ui.next_scramble();
-		ui.update_stats();
+		next_scramble();
+		update_stats();
 	},
 
-	update_stats: function() {
-		t($('s_t'), session.times.length);
-		t($('c_a_5'), ui.human_time(session.current_average(5)));
-		t($('c_a_12'), ui.human_time(session.current_average(12)));
-		t($('s_a'), ui.human_time(session.session_average()));
-		t($('s_m'), ui.human_time(session.session_mean()));
-		t($('times_label'), ui.to_times_list());
-	},
-
+	
 	del: function(index) {
 		if(timer.is_running()) return;
 		session.del(index);
-		t($('times_label'), ui.to_times_list());
-		ui.update_stats();
+		t($('times_label'), to_times_list());
+		update_stats();
 	},
 
 	reset: function() {
 		timer.reset();
-		ui.next_scramble();
-		ui.update_stats();
+		next_scramble();
+		update_stats();
 		t($('timer_label'), "0.00");	
 		t($('times_label'), "&nbsp;");
-	},
-
-	populate_scramblers_menu: function() {
-		var menu = $('scramble_menu');
-		for(var i = 0; i < scrambler.scramblers.length; i++)
-		{
-			menu.options[i] = new Option(scrambler.get_name(i));
-		}
-	},
-
-	clear_info: function() {
-		t($('info'), "");
 	},
 
 	load_plugin: function() {
@@ -132,8 +139,10 @@ var ui = {
 
 	plugin_loaded: function(name) {
 		t($('info'), "loaded " + name);
-		ui.populate_scramblers_menu();
-		setTimeout(ui.clear_info, 1000);
+		populate_scramblers_menu();
+		setTimeout(function() {
+		t($('info'), "");
+	}, 1000);
 	},
 
 	render_body: function() {
@@ -145,6 +154,7 @@ var ui = {
               '<div id="stats_label">'+
               'times: <span id="s_t">0</span><br />'+
               'current average: <span id="c_a_5"></span>, <span id="c_a_12"></span><br />'+
+              'best average: <span id="b_a_5"></span>, <span id="b_a_12"></span><br />'+
               'session average: <span id="s_a"></span>, mean: <span id="s_m"></span></div>'+
               '<div id="options_label" class="a"><span>options</span>: </div>'+
               '<div id="options_panel" style="display: none;">'+
@@ -158,20 +168,21 @@ var ui = {
 
 		$('c_a_5').onclick = function() { ui.hilight_current(5); };
 		$('c_a_12').onclick = function() { ui.hilight_current(12); };
-		$('s_a').onclick = function() { ui.hilight_current(session.times.length); };
-		$('s_m').onclick = function() { ui.hilight_current(session.times.length); };
+		$('s_a').onclick = function() { ui.hilight_current(session.length()); };
+		$('s_m').onclick = function() { ui.hilight_current(session.length()); };
 
 		$('options_label').onclick = function() { toggle($('options_panel')); };
-		$('scramble_menu').onchange = function(s) { scrambler.set($('scramble_menu').selectedIndex); ui.next_scramble(); };
+		$('scramble_menu').onchange = function(s) { scramble_manager.set($('scramble_menu').selectedIndex); next_scramble(); };
 	
-		scrambler.add_default();
-		ui.populate_scramblers_menu();
+		scramble_manager.add_default();
+		populate_scramblers_menu();
 
 		ui.reset();
 		
 		document.onkeydown = ui.key_down;	
 		document.onkeyup = ui.key_up;
 	}
-};
+	};
+}();
 window['ui'] = ui;
 window.onload = ui.init;

@@ -10,7 +10,10 @@ if ARGV[0] == "-o"
 	request = Net::HTTP::Post.new url.request_uri
 	request.set_form_data :compilation_level => 'ADVANCED_OPTIMIZATIONS', :output_format => 'text', :output_info => 'compiled_code', :js_code => merge 
 	response = http.request request
+	orig_size = merge.size
 	merge = response.body
+	new_size = merge.size
+	puts "Saved #{new_size*1.0/orig_size*100}%"
 end
 
 output = File.read "jjtimer.html"
