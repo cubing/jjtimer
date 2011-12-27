@@ -1,0 +1,28 @@
+@import url(http://fonts.googleapis.com/css?family=Droid+Sans+Mono);
+body { width: 100%; height: 100%; margin: 0; padding: 0; }
+#timer_label {
+	font-family: 'Droid Sans Mono', sans-serif;
+	font-weight: bold;
+	font-size: 5em;
+}
+#centre_div {
+	width: 700px; height: 500px;
+	position: absolute; left: 50%; top: 50%;
+	margin: -250px 0 0 -350px; 
+}
+#scramble_label {
+	font-weight: bold;
+	margin: auto 0 auto 0;
+}
+.a span {
+	color: blue;
+	cursor: pointer;
+	text-decoration: underline;
+}
+.g {
+	color: gray;
+}
+.h {
+	background-color: yellow;
+}
+
