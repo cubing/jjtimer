@@ -1,44 +1,50 @@
-var session = {
-	times: [],
-	scrambles: [],
+var session = function() {
+	var times = [];
+	var scrambles = [];
+
+	return {
+	times: function() { return times; },
+	scrambles: function() { return scrambles; },
+	length: function() { return times.length; },	
 
 	reset: function() {
-		session.times = [];
-		session.scrambles = [];
+		times = [];
+		scrambles = [];
 	},
 
 	add: function(time, scramble) {
-		session.times.push(time);
-		session.scrambles.push(scramble);
+		times.push(time);
+		scrambles.push(scramble);
 	},
 
 	del: function(index) {
-		session.times.splice(index, 1);
+		times.splice(index, 1);
+		scrambless.splice(index, 1);
 	},
 
 	mean: function() {
-		if(session.times.length < 1) return -1;
+		if(times.length < 1) return -1;
 
 		var sum = 0;
-		for(var i = 0; i < session.times.length; ++i)
+		for(var i = 0; i < times.length; ++i)
 		{
-			sum += session.times[i];
+			sum += times[i];
 		}
-		return sum / session.times.length;
+		return sum / times.length;
 	},
 
 	average: function(start, length) {
-		if(session.times.length < 3) return -1;
+		if(times.length < 3) return -1;
 
 		start = start || 0;
-		length = length || session.times.length;
-		if(length - start > session.times.length) return -1;
+		length = length || times.length;
+		if(length - start > times.length) return -1;
 		var end = start + length;
 
 		var min = -1, max = -1, sum = 0;
 		for(var i = start; i < end; ++i)
 		{
-			var t = session.times[i];
+			var t = times[i];
 			if(t < min || -1 === min) min = t;
 			if(t > max || -1 === max) max = t;
 			sum += t;
@@ -48,14 +54,25 @@ var session = {
 	},
 	
 	current_average: function(length) {
-		return session.average(session.times.length - length, length);
+		return session.average(times.length - length, length);
 	},
 
 	session_average: function() {
-		return session.average(0, session.times.length);
+		return session.average(0, times.length);
 	},
 
 	session_mean: function() {
-		return session.mean(0, session.times.length);
+		return session.mean(0, times.length);
+	},
+
+	best_average: function(length) {
+		var best = -1;
+		for(var i = 0; i < times.length - (length - 1); i++)
+		{
+			var a = session.average(i, length);
+			if(a < best || -1 === best) best = a;
+		}
+		return best;
 	}
-};
+	};
+}();
