@@ -7,6 +7,7 @@ function scrambler(name, scramble_func, init, dinit) {
 
 var scramble_manager = function() {
 	var scramblers = [];
+	var last_scramble;
 	var current = undefined;
 	var current_index = 0;
 
@@ -29,7 +30,7 @@ var scramble_manager = function() {
 	}
 
 	function next() {
-		return (current)();
+		return last_scramble = current();
 	}
 	
 	function get_name(index) {
@@ -44,6 +45,7 @@ var scramble_manager = function() {
 		set: set,
 
 		next: next,
+		last_scramble: function() { return last_scramble; },
 
 		get_name: get_name,
 

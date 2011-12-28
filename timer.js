@@ -13,7 +13,7 @@ var timer = function() {
 		end_time = new Date();
 		state = Waiting;
 		solve_time = end_time.getTime() - start_time.getTime();
-		session.add(solve_time, $('scramble_label').innerHTML);
+		session.add(solve_time, scramble_manager.last_scramble());
 		ui.on_stop();
 	}
 
