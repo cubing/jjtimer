@@ -19,7 +19,7 @@ var session = function() {
 
 	del: function(index) {
 		times.splice(index, 1);
-		scrambless.splice(index, 1);
+		scrambles.splice(index, 1);
 	},
 
 	mean: function() {
