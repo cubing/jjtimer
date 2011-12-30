@@ -4,13 +4,14 @@ function load_external(url) {
 	file.src = url;
 	document.getElementsByTagName("head")[0].appendChild(file);
 } 
+
 function $(id) { return document.getElementById(id); }
 function t(e, t) { e.innerHTML = t; }
 function toggle(e) { e.style.display = (e.style.display === "none") ? "" : "none"; }
 
 var ui = function() {
 	var update_timer;
-	
+
 	function human_time(time) {
 		if(time < 0) return "DNF";
 		var useMilli = false;
