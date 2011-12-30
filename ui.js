@@ -95,6 +95,10 @@ var ui = function() {
 		t($('times_label'), to_times_list(session.length() - length, length));
 	},
 
+	on_inspection: function() {
+		t($('timer_label'), "inspecting");
+	},
+
 	on_running: function() {
 		update_timer = setInterval(ui.update_running, 10);
 		$('scramble_label').className = "g";

@@ -1,6 +1,7 @@
 var timer = function() {
-	var state, Waiting = 0, Ready = 1, Running = 2, Delay = 3;
+	var state, Waiting = 0, Inspecting = 1, Ready = 2, Running = 3, Delay = 4;
 	var start_time, end_time, solve_time;
+	var use_inspection = true, inspection_id = undefined;
 
 	function set_running() {
 		solve_time = undefined;
@@ -25,13 +26,22 @@ var timer = function() {
 		},
 
 		trigger_down: function(ev) {
-			if(Waiting === state) { state = Ready; }
+			if((Waiting === state && !use_inspection) ||
+					Inspecting === state) {
+				state = Ready;
+			}
 			else if(Running === state) {
 				set_stopped();
 			}
 		},
 
 		trigger_up: function(ev) {
+			if(use_inspection && Waiting === state && ev)
+			{
+				state = Inspecting;
+				ui.on_inspection();
+				return;
+			}
 			if(Ready === state && ev) {
 				set_running();
 			}
