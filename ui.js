@@ -59,7 +59,7 @@ var ui = function() {
 
 	function time_link(index) {
 		var out = "<span onclick='ui.del("+index+")'>";
-		out += human_time(session.times()[index]) + "</span>";
+		out += human_time(session.solves()[index].time) + "</span>";
 		return out;
 	}
 
