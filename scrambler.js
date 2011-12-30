@@ -1,14 +1,15 @@
-function scrambler(name, scramble_func, init, dinit) {
+function scrambler(name, scramble_func, selected, unselected) {
 	this.name = name;
 	this.scramble_func = scramble_func;
-	this.init = init || function() {};
-	this.dinit = dinit || function() {};
+	this.selected = selected || function() {};
+	this.unselected = unselected || function() {};
 }
 
 var scramble_manager = function() {
 	var scramblers = [];
-	var current = undefined;
-	var current_index = 0;
+	var last_scramble;
+	var current_scrambler = undefined;
+	var current_index = undefined;
 
 	function add(s) {
 		scramblers.push(s);
@@ -21,15 +22,15 @@ var scramble_manager = function() {
 	}
 	
 	function set(index) {
-		if(current)
-			scramblers[current_index].dinit();
+		if(current_index)
+			scramblers[current_index].unselected();
 		current_index = index;
 		current = scramblers[index].scramble_func;
-		scramblers[index].init();
+		scramblers[index].selected();
 	}
 
 	function next() {
-		return (current)();
+		return last_scramble = current();
 	}
 	
 	function get_name(index) {
@@ -44,6 +45,7 @@ var scramble_manager = function() {
 		set: set,
 
 		next: next,
+		last_scramble: function() { return last_scramble; },
 
 		get_name: get_name,
 
