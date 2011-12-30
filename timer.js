@@ -1,5 +1,5 @@
 var timer = function() {
-	var state, Waiting = 0, Ready = 1, Running = 2;
+	var state, Waiting = 0, Ready = 1, Running = 2, Delay = 3;
 	var start_time, end_time, solve_time;
 
 	function set_running() {
@@ -11,10 +11,11 @@ var timer = function() {
 
 	function set_stopped() {
 		end_time = new Date();
-		state = Waiting;
+		state = Delay;
 		solve_time = end_time.getTime() - start_time.getTime();
 		session.add(solve_time, scramble_manager.last_scramble());
 		ui.on_stop();
+		setTimeout(function() { state = Waiting; }, 500);
 	}
 
 	return {
