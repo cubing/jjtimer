@@ -1,7 +1,7 @@
 var timer = function() {
 	var state, Waiting = 0, Inspecting = 1, Ready = 2, Running = 3, Delay = 4;
 	var start_time, end_time, solve_time;
-	var use_inspection = true, inspection_id = undefined;
+	var use_inspection = false;
 
 	function set_running() {
 		solve_time = undefined;
@@ -23,6 +23,10 @@ var timer = function() {
 		reset: function() {
 			state = Waiting;
 			session.reset();
+		},
+
+		toggle_inspection: function() {
+			use_inspection = !use_inspection;
 		},
 
 		trigger_down: function(ev) {

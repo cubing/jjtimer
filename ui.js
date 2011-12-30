@@ -10,7 +10,8 @@ function t(e, t) { e.innerHTML = t; }
 function toggle(e) { e.style.display = (e.style.display === "none") ? "" : "none"; }
 
 var ui = function() {
-	var update_timer;
+	var timer_label, scramble_label, stats_label, options_label;
+	var update_timer, inspection_timer, inspection_count = 15;
 
 	function human_time(time) {
 		if(time < 0) return "DNF";
@@ -32,9 +33,15 @@ var ui = function() {
 		return s;
 	}
 
+	function on_inspection() {
+		t(timer_label, inspection_count);
+		inspection_count -= 1;
+		inspection_timer = setTimeout(on_inspection, 1000);
+	}
+
 	function next_scramble()
 	{
-		t($('scramble_label'), scramble_manager.next());
+		t(scramble_label, scramble_manager.next());
 	}
 
 	function update_stats() {
@@ -47,7 +54,7 @@ var ui = function() {
 		t($('b_a_100'), human_time(session.best_average(100)));
 		t($('s_a'), human_time(session.session_average()));
 		t($('s_m'), human_time(session.session_mean()));
-		t($('times_label'), to_times_list());
+		t(times_label, to_times_list());
 	}
 
 	function time_link(index) {
@@ -92,32 +99,32 @@ var ui = function() {
 	hilight_current: function(length)
 	{
 		if(timer.is_running()) return;
-		t($('times_label'), to_times_list(session.length() - length, length));
+		t(times_label, to_times_list(session.length() - length, length));
 	},
 
-	on_inspection: function() {
-		t($('timer_label'), "inspecting");
-	},
+	on_inspection: on_inspection,
 
 	on_running: function() {
+		clearTimeout(inspection_timer);
+		inspection_count = 15;
 		update_timer = setInterval(ui.update_running, 10);
-		$('scramble_label').className = "g";
-		$('stats_label').className = "g";
-		$('times_label').className = "g";
-		$('options_label').className = "g";
+		scramble_label.className = "g";
+		stats_label.className = "g";
+		times_label.className = "g";
+		options_label.className = "g";
 	},
 
 	update_running: function() {
-		t($('timer_label'), human_time(timer.current_time()));
+		t(timer_label, human_time(timer.current_time()));
 	},
 
 	on_stop: function() {
 		clearInterval(update_timer);
-		t($('timer_label'), human_time(timer.current_time()));
-		$('scramble_label').className = "";
-		$('stats_label').className = "";
-		$('times_label').className = "a";
-		$('options_label').className = "a";
+		t(timer_label, human_time(timer.current_time()));
+		scramble_label.className = "";
+		stats_label.className = "";
+		times_label.className = "a";
+		options_label.className = "a";
 		next_scramble();
 		update_stats();
 	},
@@ -126,7 +133,7 @@ var ui = function() {
 	del: function(index) {
 		if(timer.is_running()) return;
 		session.del(index);
-		t($('times_label'), to_times_list());
+		t(times_label, to_times_list());
 		update_stats();
 	},
 
@@ -134,8 +141,8 @@ var ui = function() {
 		timer.reset();
 		next_scramble();
 		update_stats();
-		t($('timer_label'), "0.00");	
-		t($('times_label'), "&nbsp;");
+		t(timer_label, "0.00");	
+		t(times_label, "&nbsp;");
 	},
 
 	load_plugin: function() {
@@ -148,8 +155,8 @@ var ui = function() {
 		t($('info'), "loaded " + name);
 		populate_scramblers_menu();
 		setTimeout(function() {
-		t($('info'), "");
-	}, 1000);
+			t($('info'), "");
+		}, 1000);
 	},
 
 	render_body: function() {
@@ -166,12 +173,18 @@ var ui = function() {
               '<div id="options_label" class="a"><span>options</span>: </div>'+
               '<div id="options_panel" style="display: none;">'+
               '<select id="scramble_menu"></select>'+
-              '<input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/></div></div>';
+              '<input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/><input type="checkbox" id="use_inspection">use inspection</div></div>';
 		document.body.innerHTML = out;
 	},
 
 	init: function() {
 		ui.render_body();
+
+		timer_label = $('timer_label');
+		scramble_label = $('scramble_label');
+		stats_label = $('stats_label');
+		times_label = $('times_label');
+		options_label = $('options_label');
 
 		$('c_a_5').onclick = function() { ui.hilight_current(5); };
 		$('c_a_12').onclick = function() { ui.hilight_current(12); };
@@ -180,6 +193,7 @@ var ui = function() {
 
 		$('options_label').onclick = function() { toggle($('options_panel')); };
 		$('scramble_menu').onchange = function(s) { scramble_manager.set($('scramble_menu').selectedIndex); next_scramble(); };
+		$('use_inspection').onchange = function() { timer.toggle_inspection(); };
 	
 		scramble_manager.add_default();
 		populate_scramblers_menu();
