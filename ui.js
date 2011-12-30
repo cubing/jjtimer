@@ -41,8 +41,10 @@ var ui = function() {
 		t($('s_t'), session.length());
 		t($('c_a_5'), human_time(session.current_average(5)));
 		t($('c_a_12'), human_time(session.current_average(12)));
+		t($('c_a_100'), human_time(session.current_average(100)));
 		t($('b_a_5'), human_time(session.best_average(5)));
 		t($('b_a_12'), human_time(session.best_average(12)));
+		t($('b_a_100'), human_time(session.best_average(100)));
 		t($('s_a'), human_time(session.session_average()));
 		t($('s_m'), human_time(session.session_mean()));
 		t($('times_label'), to_times_list());
@@ -154,8 +156,8 @@ var ui = function() {
               '<div id="times_label" class="a"></div>'+
               '<div id="stats_label">'+
               'times: <span id="s_t">0</span><br />'+
-              'current average: <span id="c_a_5"></span>, <span id="c_a_12"></span><br />'+
-              'best average: <span id="b_a_5"></span>, <span id="b_a_12"></span><br />'+
+              'current average: <span id="c_a_5"></span>, <span id="c_a_12"></span>, <span id="c_a_100"></span><br />'+
+              'best average: <span id="b_a_5"></span>, <span id="b_a_12"></span>, <span id="b_a_100"></span><br />'+
               'session average: <span id="s_a"></span>, mean: <span id="s_m"></span></div>'+
               '<div id="options_label" class="a"><span>options</span>: </div>'+
               '<div id="options_panel" style="display: none;">'+
