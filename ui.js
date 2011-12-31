@@ -112,7 +112,7 @@ var ui = function() {
 	on_inspection: on_inspection,
 
 	on_running: function() {
-		clearTimeout(inspection_timer);
+			clearTimeout(inspection_timer);
 		inspection_count = 15;
 		update_timer = setInterval(ui.update_running, 10);
 		scramble_label.className = "g";
