@@ -1,10 +1,3 @@
-function scrambler(name, scramble_func, selected, unselected) {
-	this.name = name;
-	this.scramble_func = scramble_func;
-	this.selected = selected || function() {};
-	this.unselected = unselected || function() {};
-}
-
 var scramble_manager = function() {
 	var scramblers = [];
 	var last_scramble;
@@ -16,21 +9,23 @@ var scramble_manager = function() {
 	}
 	
 	function add_default() {
-		add(new scrambler("3x3", scramble_manager.generic([["U","D"],["R","L"],["F","B"]],["","2","'"], 25)));
-		add(new scrambler("4x4", scramble_manager.generic([["U","D","u"],["R","L","r"],["F","B","f"]],["","2","'"], 40)));
+		add({ name: '3x3', scramble_func: scramble_manager.generic([["U","D"],["R","L"],["F","B"]],["","2","'"], 25)});
+		add({ name: '4x4', scramble_func: scramble_manager.generic([["U","D","u"],["R","L","r"],["F","B","f"]],["","2","'"], 40)});
 		set(0);
 	}
 	
 	function set(index) {
-		if(current_index)
-			scramblers[current_index].unselected();
-		current_index = index;
-		current = scramblers[index].scramble_func;
-		scramblers[index].selected();
+		if(current_scrambler && current_scrambler.unselected)
+			current_scrambler.unselected();
+		
+		current_scrambler = scramblers[index];
+		
+		if(current_scrambler.selected)
+			current_scrambler.selected();
 	}
 
 	function next() {
-		return last_scramble = current();
+		return last_scramble = current_scrambler.scramble_func();
 	}
 	
 	function get_name(index) {
