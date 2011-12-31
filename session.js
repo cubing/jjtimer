@@ -81,7 +81,10 @@ var session = function() {
 	},
 
 	load: function() {
-		solves = JSON.parse(localStorage.getItem('session.solves'));	
+		if(localStorage)
+		{
+			solves = JSON.parse(localStorage.getItem('session.solves'));	
+		}
 	},
 
 	save: function() {
