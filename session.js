@@ -10,7 +10,7 @@ var session = function() {
 	},
 
 	add: function(time, scramble) {
-		solves.push({time: time, scramble: scramble, DNF: false, plus_two: false});
+		solves.push({'time': time, 'scramble': scramble, 'DNF': false, 'plus_two': false});
 	},
 
 	del: function(index) {
@@ -33,7 +33,7 @@ var session = function() {
 		var sum = 0;
 		for(var i = 0; i < solves.length; ++i)
 		{
-			sum += solves[i].time;
+			sum += solves[i]['time'];
 		}
 		return sum / solves.length;
 	},
@@ -49,7 +49,7 @@ var session = function() {
 		var min = -1, max = -1, sum = 0;
 		for(var i = start; i < end; ++i)
 		{
-			var t = solves[i].time;
+			var t = solves[i]['time'];
 			if(t < min || -1 === min) min = t;
 			if(t > max || -1 === max) max = t;
 			sum += t;
@@ -78,6 +78,20 @@ var session = function() {
 			if(a < best || -1 === best) best = a;
 		}
 		return best;
+	},
+
+	load: function() {
+		if(localStorage)
+		{
+			solves = JSON.parse(localStorage.getItem('session.solves'));	
+		}
+	},
+
+	save: function() {
+		if(localStorage)
+		{
+			localStorage.setItem('session.solves', JSON.stringify(solves));
+		}
 	}
 	};
 }();
