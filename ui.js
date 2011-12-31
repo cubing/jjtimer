@@ -59,8 +59,12 @@ var ui = function() {
 
 	function time_link(index) {
 		var out = "<span onclick='ui.del("+index+")'>";
-		out += human_time(session.solves()[index].time) + "</span>";
-		return out;
+		var solve = session.solves()[index];
+		if(solve.DNF)
+			out += "DNF";
+		else 
+			out += human_time(solve.time + (solve.plus_two ? 2000 : 0));
+		return out + "</span>";
 	}
 
 	function to_times_list(hilight_index, length) {
@@ -162,7 +166,7 @@ var ui = function() {
 	render_body: function() {
 		var out = '<div id="centre_div">'+
               '<div id="info"></div>'+
-              '<div id="timer_label">0.00</div>'+
+              '<div id="timer_label">0.00</div><div class="a"><span id="p2">+2</span> <span id="dnf">DNF</span></div>'+
               '<div id="scramble_label"></div>'+
               '<div id="times_label" class="a"></div>'+
               '<div id="stats_label">'+
@@ -186,6 +190,9 @@ var ui = function() {
 		times_label = $('times_label');
 		options_label = $('options_label');
 
+		$('p2').onclick = function() { session.toggle_plus_two(); update_stats(); };
+		$('dnf').onclick = function() { session.toggle_dnf(); update_stats(); };
+
 		$('c_a_5').onclick = function() { ui.hilight_current(5); };
 		$('c_a_12').onclick = function() { ui.hilight_current(12); };
 		$('s_a').onclick = function() { ui.hilight_current(session.length()); };
@@ -193,7 +200,7 @@ var ui = function() {
 
 		$('options_label').onclick = function() { toggle($('options_panel')); };
 		$('scramble_menu').onchange = function(s) { scramble_manager.set($('scramble_menu').selectedIndex); next_scramble(); };
-		$('use_inspection').onchange = function() { timer.toggle_inspection(); };
+		$('use_inspection').onchange = timer.toggle_inspection;
 	
 		scramble_manager.add_default();
 		populate_scramblers_menu();

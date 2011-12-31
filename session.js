@@ -10,21 +10,21 @@ var session = function() {
 	},
 
 	add: function(time, scramble) {
-		solves.push({time: time, scramble: scramble});
+		solves.push({time: time, scramble: scramble, DNF: false, plus_two: false});
 	},
 
 	del: function(index) {
 		solves.splice(index, 1);
 	},
 
-	set_dnf: function(index) {
-		index = index || solves.length - 1;
-		solves[index]['DNF'] = true;
+	toggle_dnf: function(index) {
+		if(typeof index != 'Number') index = solves.length - 1;
+		solves[index]['DNF'] = !solves[index]['DNF']; 
 	},
 
-	set_plus_two: function(index) {
-		index = index || solves.length - 1;
-		solves[index]['plus_two'] = true;
+	toggle_plus_two: function(index) {
+		if(typeof index != 'Number') index = solves.length - 1;
+		solves[index]['plus_two'] = !solves[index]['plus_two'];
 	},
 
 	mean: function() {
