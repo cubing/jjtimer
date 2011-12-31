@@ -78,6 +78,17 @@ var session = function() {
 			if(a < best || -1 === best) best = a;
 		}
 		return best;
+	},
+
+	load: function() {
+		session.solves = JSON.parse(localStorage.getItem('session.solves'));	
+	},
+
+	save: function() {
+		if(localStorage)
+		{
+			localStorage.setItem('session.solves', JSON.stringify(solves));
+		}
 	}
 	};
 }();
