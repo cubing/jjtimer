@@ -81,7 +81,7 @@ var session = function() {
 	},
 
 	load: function() {
-		session.solves = JSON.parse(localStorage.getItem('session.solves'));	
+		solves = JSON.parse(localStorage.getItem('session.solves'));	
 	},
 
 	save: function() {
