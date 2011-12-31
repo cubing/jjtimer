@@ -60,10 +60,10 @@ var ui = function() {
 	function time_link(index) {
 		var out = "<span onclick='ui.del("+index+")'>";
 		var solve = session.solves()[index];
-		if(solve.DNF)
+		if(solve['DNF'])
 			out += "DNF";
 		else 
-			out += human_time(solve.time + (solve.plus_two ? 2000 : 0));
+			out += human_time(solve['time'] + (solve['plus_two'] ? 2000 : 0));
 		return out + "</span>";
 	}
 
@@ -177,7 +177,7 @@ var ui = function() {
               '<div id="options_label" class="a"><span>options</span>: </div>'+
               '<div id="options_panel" style="display: none;">'+
               '<select id="scramble_menu"></select>'+
-              '<input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/><input type="checkbox" id="use_inspection">use inspection</div></div>';
+              '<input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/><input type="checkbox" id="use_inspection">use inspection <input type="submit" id="save_btn" value="save" /> <input type="submit" id="load_btn" value="load" /></div></div>';
 		document.body.innerHTML = out;
 	},
 
@@ -201,6 +201,8 @@ var ui = function() {
 		$('options_label').onclick = function() { toggle($('options_panel')); };
 		$('scramble_menu').onchange = function(s) { scramble_manager.set($('scramble_menu').selectedIndex); next_scramble(); };
 		$('use_inspection').onchange = timer.toggle_inspection;
+		$('load_btn').onclick = function() { session.save(); };
+		$('load_btn').onclick = function() { session.load(); update_stats(); };
 	
 		scramble_manager.add_default();
 		populate_scramblers_menu();
