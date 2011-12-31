@@ -112,7 +112,7 @@ var ui = function() {
 	on_inspection: on_inspection,
 
 	on_running: function() {
-			clearTimeout(inspection_timer);
+		clearTimeout(inspection_timer);
 		inspection_count = 15;
 		update_timer = setInterval(ui.update_running, 10);
 		scramble_label.className = "g";
@@ -167,20 +167,22 @@ var ui = function() {
 	},
 
 	render_body: function() {
-		var out = '<div id="centre_div">'+
-              '<div id="info"></div>'+
+		var out = '<div id="left"><div id="info"></div>'+
               '<div id="timer_label">0.00</div><div class="a"><span id="p2">+2</span> <span id="dnf">DNF</span></div>'+
               '<div id="scramble_label"></div>'+
-              '<div id="times_label" class="a"></div>'+
               '<div id="stats_label">'+
               'times: <span id="s_t">0</span><br />'+
               'current average: <span id="c_a_5"></span>, <span id="c_a_12"></span>, <span id="c_a_100"></span><br />'+
               'best average: <span id="b_a_5"></span>, <span id="b_a_12"></span>, <span id="b_a_100"></span><br />'+
               'session average: <span id="s_a"></span>, mean: <span id="s_m"></span></div>'+
-              '<div id="options_label" class="a"><span>options</span>: </div>'+
+              '<div id="options_label" class="a"><span>options</span>: </div></div>'+
+
+              '<div id="right"><div id="times_label" class="a"></div></div>'+
               '<div id="options_panel" style="display: none;">'+
               '<select id="scramble_menu"></select>'+
-              '<input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/><input type="checkbox" id="use_inspection">use inspection <input type="submit" id="save_btn" value="save" /> <input type="submit" id="load_btn" value="load" /></div></div>';
+              '<input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/>'+
+              '<input type="checkbox" id="use_inspection">use inspection <input type="submit" id="save_btn" value="save" /> <input type="submit" id="load_btn" value="load" /></div>'+
+              '<div id="grayOut"></div>';
 		document.body.innerHTML = out;
 	},
 
