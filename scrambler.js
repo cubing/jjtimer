@@ -1,10 +1,3 @@
-function scrambler(name, scramble_func, selected, unselected) {
-	return {name: name,
-					scramble_func: scramble_func,
-					selected: selected||function(){},
-					unselected: unselected||function(){}};
-}
-
 var scramble_manager = function() {
 	var scramblers = [];
 	var last_scramble;
