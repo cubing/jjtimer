@@ -60,10 +60,10 @@ var ui = function() {
 	function time_link(index) {
 		var out = "<span onclick='ui.del("+index+")'>";
 		var solve = session.solves()[index];
-		if(solve.DNF)
+		if(solve['DNF'])
 			out += "DNF";
 		else 
-			out += human_time(solve.time + (solve.plus_two ? 2000 : 0));
+			out += human_time(solve['time'] + (solve['plus_two'] ? 2000 : 0));
 		return out + "</span>";
 	}
 
