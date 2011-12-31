@@ -7,7 +7,8 @@ function load_external(url) {
 
 function $(id) { return document.getElementById(id); }
 function t(e, t) { e.innerHTML = t; }
-function toggle(e) { e.style.display = (e.style.display === "none") ? "" : "none"; }
+function toggle(e) { e.style.display = (e.style.display === "none") ? "inline" : "none"; }
+function is_visible(e) { return e.style.display !== "none"; }
 
 var ui = function() {
 	var timer_label, scramble_label, stats_label, options_label;
@@ -97,8 +98,17 @@ var ui = function() {
 	},
 
 	key_up: function(ev) {
-		if(ev.keyCode === 27 && !timer.is_running()) {
-			ui.reset(); return;
+		if(ev.keyCode === 27)
+		{
+			if(is_visible($('options')))
+			{
+				toggle($('options')); toggle($('grayOut')); 
+				return;
+			}
+			else if(!timer.is_running()) {
+				ui.reset();
+				return;
+			}
 		}
 		timer.trigger_up(ev.keyCode === 32);
 	},
@@ -178,11 +188,12 @@ var ui = function() {
               '<div id="options_label" class="a"><span>options</span>: </div></div>'+
 
               '<div id="right"><div id="times_label" class="a"></div></div>'+
-              '<div id="options_panel" style="display: none;">'+
-              '<select id="scramble_menu"></select>'+
-              '<input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/>'+
-              '<input type="checkbox" id="use_inspection">use inspection <input type="submit" id="save_btn" value="save" /> <input type="submit" id="load_btn" value="load" /></div>'+
-              '<div id="grayOut"></div>';
+              '<div id="options" style="display: none;">'+
+              '<p><select id="scramble_menu"></select></p>'+
+              '<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/></p>'+
+              '<p><input type="checkbox" id="use_inspection"><label for="use_inspection">use inspection</label>'+
+              '<p><input type="submit" id="save_btn" value="save" /> <input type="submit" id="load_btn" value="load" /></p></div>'+
+              '<div id="grayOut" style="display: none;"></div>';
 		document.body.innerHTML = out;
 	},
 
@@ -203,7 +214,7 @@ var ui = function() {
 		$('s_a').onclick = function() { ui.hilight_current(session.length()); };
 		$('s_m').onclick = function() { ui.hilight_current(session.length()); };
 
-		$('options_label').onclick = function() { toggle($('options_panel')); };
+		$('options_label').onclick = function() { toggle($('options')); toggle($('grayOut')); };
 		$('scramble_menu').onchange = function(s) { scramble_manager.set($('scramble_menu').selectedIndex); next_scramble(); };
 		$('use_inspection').onchange = timer.toggle_inspection;
 		$('load_btn').onclick = function() { session.save(); };

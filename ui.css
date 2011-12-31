@@ -60,4 +60,5 @@ html, body {
 	border: 1px solid;
 	top:40%; left:50%; margin-left:-12.5%; margin-top:-12.5%; width:25%; 
 	padding-left: 2%;
+	display: none;
 }
