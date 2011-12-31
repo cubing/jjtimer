@@ -68,6 +68,9 @@ var ui = function() {
 	}
 
 	function to_times_list(hilight_index, length) {
+		hilight_index = hilight_index || -1;
+		length = length ||-1;
+
 		if(session.length() < 1) return "&nbsp;"
 		var out = "";
 		for(var i = 0; i < session.length(); ++i)
