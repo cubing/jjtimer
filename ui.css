@@ -1,5 +1,5 @@
 .a span {
-	color: blue;
+	color: #36c;
 	cursor: pointer;
 	text-decoration: underline;
 }
@@ -13,6 +13,7 @@ html, body {
 	padding: 0; margin: 0;
 	width: 100%; height: 100%;
 	font-family: Helvetica, Tahoma, Arial, sans-serif;
+	background: #eee;
 }
 
 #left, #right {
@@ -20,17 +21,23 @@ html, body {
 }
 
 #left {
-	background: #eee;
+	background: #fff;
 	width: 70%; 
 	float: left;
 	height: 100%;
 	text-align: center;
+	position: relative;
+	box-shadow: 1px 3px 1px #ccc;
 }
 
 #timer_label {
 	font-size: 10em;
 	font-family: Monaco, monospace, Courier, sans-serif;
-	padding-top: 20%;
+	padding-top: 10%;
+}
+
+#scramble_label {
+	font-weight: bold;
 }
 
 #times_label {
@@ -40,7 +47,14 @@ html, body {
 	padding-top: 5px;
 }
 
-#grayOut {
+#bottom_bar {
+	text-align: justify;
+	position: absolute;
+	bottom: 0;
+	padding: 1%;
+}
+
+#gray_out {
 	z-index: 5;
 	background: black;
 	position: absolute;

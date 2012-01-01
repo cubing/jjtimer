@@ -69,8 +69,8 @@ var ui = function() {
 	}
 
 	function to_times_list(hilight_index, length) {
-		hilight_index = hilight_index || -1;
-		length = length ||-1;
+		//hilight_index = hilight_index || -1;
+		//length = length || -1;
 
 		if(session.length() < 1) return "&nbsp;"
 		var out = "";
@@ -102,7 +102,7 @@ var ui = function() {
 		{
 			if(is_visible($('options')))
 			{
-				toggle($('options')); toggle($('grayOut')); 
+				toggle($('options')); toggle($('gray_out')); 
 				return;
 			}
 			else if(!timer.is_running()) {
@@ -110,6 +110,7 @@ var ui = function() {
 				return;
 			}
 		}
+		if(is_visible($('options'))) return;
 		timer.trigger_up(ev.keyCode === 32);
 	},
 
@@ -180,12 +181,12 @@ var ui = function() {
 		var out = '<div id="left"><div id="info"></div>'+
               '<div id="timer_label">0.00</div><div class="a"><span id="p2">+2</span> <span id="dnf">DNF</span></div>'+
               '<div id="scramble_label"></div>'+
-              '<div id="stats_label">'+
+              '<div id="bottom_bar"><div id="stats_label">'+
               'times: <span id="s_t">0</span><br />'+
               'current average: <span id="c_a_5"></span>, <span id="c_a_12"></span>, <span id="c_a_100"></span><br />'+
               'best average: <span id="b_a_5"></span>, <span id="b_a_12"></span>, <span id="b_a_100"></span><br />'+
               'session average: <span id="s_a"></span>, mean: <span id="s_m"></span></div>'+
-              '<div id="options_label" class="a"><span>options</span>: </div></div>'+
+              '<div id="options_label" class="a"><span>options</span></div></div></div>'+
 
               '<div id="right"><div id="times_label" class="a"></div></div>'+
               '<div id="options" style="display: none;">'+
@@ -193,7 +194,7 @@ var ui = function() {
               '<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/></p>'+
               '<p><input type="checkbox" id="use_inspection"><label for="use_inspection">use inspection</label>'+
               '<p><input type="submit" id="save_btn" value="save" /> <input type="submit" id="load_btn" value="load" /></p></div>'+
-              '<div id="grayOut" style="display: none;"></div>';
+              '<div id="gray_out" style="display: none;"></div>';
 		document.body.innerHTML = out;
 	},
 
@@ -214,7 +215,7 @@ var ui = function() {
 		$('s_a').onclick = function() { ui.hilight_current(session.length()); };
 		$('s_m').onclick = function() { ui.hilight_current(session.length()); };
 
-		$('options_label').onclick = function() { toggle($('options')); toggle($('grayOut')); };
+		$('options_label').onclick = function() { toggle($('options')); toggle($('gray_out')); };
 		$('scramble_menu').onchange = function(s) { scramble_manager.set($('scramble_menu').selectedIndex); next_scramble(); };
 		$('use_inspection').onchange = timer.toggle_inspection;
 		$('load_btn').onclick = function() { session.save(); };
