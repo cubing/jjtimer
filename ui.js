@@ -34,6 +34,16 @@ var ui = function() {
 		return s;
 	}
 
+	function solve_time(solve) {
+		if(solve['DNF'])
+			out += "DNF(";
+		else 
+			out += human_time(solve['time'] + (solve['plus_two'] ? 2000 : 0));
+		if(solve['DNF'])
+			out += ")";
+		return out;
+	}
+
 	function on_inspection() {
 		t(timer_label, inspection_count);
 		inspection_count -= 1;
@@ -69,9 +79,6 @@ var ui = function() {
 	}
 
 	function to_times_list(hilight_index, length) {
-		//hilight_index = hilight_index || -1;
-		//length = length || -1;
-
 		if(session.length() < 1) return "&nbsp;"
 		var out = "";
 		for(var i = 0; i < session.length(); ++i)
@@ -189,7 +196,7 @@ var ui = function() {
               '<div id="options_label" class="a"><span>options</span></div></div></div>'+
 
               '<div id="right"><div id="times_label" class="a"></div></div>'+
-              '<div id="options" style="display: none;">'+
+              '<div id="options" style="display: none;"><h2 style="margin: 0; padding: 0">options</h2>'+
               '<p><select id="scramble_menu"></select></p>'+
               '<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/></p>'+
               '<p><input type="checkbox" id="use_inspection"><label for="use_inspection">use inspection</label>'+
