@@ -72,9 +72,11 @@ var ui = function() {
 		var out = "<span onclick='ui.del("+index+")'>";
 		var solve = session.solves()[index];
 		if(solve['DNF'])
-			out += "DNF";
-		else 
-			out += human_time(solve['time'] + (solve['plus_two'] ? 2000 : 0));
+			out += "DNF(";
+		out += human_time(solve['time'] + (solve['plus_two'] ? 2000 : 0));
+		out += solve['plus_two'] ? "+" : "";
+		if(solve['DNF'])
+			out += ")";
 		return out + "</span>";
 	}
 
