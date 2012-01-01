@@ -35,10 +35,13 @@ var ui = function() {
 	}
 
 	function solve_time(solve) {
+		var out = "";
 		if(solve['DNF'])
 			out += "DNF(";
-		else 
-			out += human_time(solve['time'] + (solve['plus_two'] ? 2000 : 0));
+
+		out += human_time(solve['time'] + (solve['plus_two'] ? 2000 : 0));
+		out += solve['plus_two'] ? "+" : "";
+
 		if(solve['DNF'])
 			out += ")";
 		return out;
@@ -70,13 +73,7 @@ var ui = function() {
 
 	function time_link(index) {
 		var out = "<span onclick='ui.del("+index+")'>";
-		var solve = session.solves()[index];
-		if(solve['DNF'])
-			out += "DNF(";
-		out += human_time(solve['time'] + (solve['plus_two'] ? 2000 : 0));
-		out += solve['plus_two'] ? "+" : "";
-		if(solve['DNF'])
-			out += ")";
+		out += solve_time(session.solves()[index]);
 		return out + "</span>";
 	}
 
@@ -216,8 +213,8 @@ var ui = function() {
 		times_label = $('times_label');
 		options_label = $('options_label');
 
-		$('p2').onclick = function() { session.toggle_plus_two(); update_stats(); };
-		$('dnf').onclick = function() { session.toggle_dnf(); update_stats(); };
+		$('p2').onclick = function() { session.toggle_plus_two(); update_stats(); t(timer_label, solve_time(session.last())); };
+		$('dnf').onclick = function() { session.toggle_dnf(); update_stats(); t(timer_label, solve_time(session.last())); };
 
 		$('c_a_5').onclick = function() { ui.hilight_current(5); };
 		$('c_a_12').onclick = function() { ui.hilight_current(12); };
