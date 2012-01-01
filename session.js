@@ -4,6 +4,7 @@ var session = function() {
 	return {
 	solves: function() { return solves; },
 	length: function() { return solves.length; },	
+	last: function() { return solves[solves.length - 1]; },
 
 	reset: function() {
 		solves = [];
