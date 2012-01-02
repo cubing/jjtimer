@@ -98,6 +98,11 @@ var ui = function() {
 		}
 	}
 
+	function toggle_options() {
+		toggle($('options'));
+		toggle($('gray_out')); 
+	}
+	
 	return {
 	key_down: function(ev) {
 		timer.trigger_down();
@@ -108,7 +113,7 @@ var ui = function() {
 		{
 			if(is_visible($('options')))
 			{
-				toggle($('options')); toggle($('gray_out')); 
+				toggle_options();
 				return;
 			}
 			else if(!timer.is_running()) {
@@ -136,6 +141,7 @@ var ui = function() {
 		stats_label.className = "g";
 		times_label.className = "g";
 		options_label.className = "g";
+		$('penalty').className = "g";
 	},
 
 	update_running: function() {
@@ -149,6 +155,7 @@ var ui = function() {
 		stats_label.className = "";
 		times_label.className = "a";
 		options_label.className = "a";
+		$('penalty').className = "a";
 		next_scramble();
 		update_stats();
 	},
@@ -185,8 +192,8 @@ var ui = function() {
 
 	render_body: function() {
 		var out = '<div id="left"><div id="info"></div>'+
-              '<div id="timer_label">0.00</div><div class="a"><span id="p2">+2</span> <span id="dnf">DNF</span></div>'+
-              '<div id="scramble_label"></div>'+
+              '<div id="timer_label">0.00</div>'+
+              '<div id="scramble_label"></div><div id="penalty" class="a">that time was: <span id="p2">+2</span> <span id="dnf">DNF</span></div>'+
               '<div id="bottom_bar"><div id="stats_label">'+
               'times: <span id="s_t">0</span><br />'+
               'current average: <span id="c_a_5"></span>, <span id="c_a_12"></span>, <span id="c_a_100"></span><br />'+
@@ -199,7 +206,7 @@ var ui = function() {
               '<p><select id="scramble_menu"></select></p>'+
               '<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/></p>'+
               '<p><input type="checkbox" id="use_inspection"><label for="use_inspection">use inspection</label>'+
-              '<p><input type="submit" id="save_btn" value="save" /> <input type="submit" id="load_btn" value="load" /></p></div>'+
+              '<p><input type="submit" id="save_btn" value="save" /> <input type="submit" id="load_btn" value="load" /></p><span class="a"><span id="close_options">close</span></span></div>'+
               '<div id="gray_out" style="display: none;"></div>';
 		document.body.innerHTML = out;
 	},
@@ -221,7 +228,8 @@ var ui = function() {
 		$('s_a').onclick = function() { ui.hilight_current(session.length()); };
 		$('s_m').onclick = function() { ui.hilight_current(session.length()); };
 
-		$('options_label').onclick = function() { toggle($('options')); toggle($('gray_out')); };
+		$('options_label').onclick = toggle_options;
+		$('close_options').onclick = toggle_options;
 		$('scramble_menu').onchange = function(s) { scramble_manager.set($('scramble_menu').selectedIndex); next_scramble(); };
 		$('use_inspection').onchange = timer.toggle_inspection;
 		$('load_btn').onclick = function() { session.save(); };
