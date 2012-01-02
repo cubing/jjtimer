@@ -99,7 +99,9 @@ var session = function() {
 	load: function() {
 		if(localStorage)
 		{
-			solves = JSON.parse(localStorage.getItem('session.solves'));	
+			var localSolves = localStorage.getItem('session.solves');
+			if(localSolves != null)
+				solves = JSON.parse(localSolves);	
 		}
 	},
 

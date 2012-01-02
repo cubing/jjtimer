@@ -206,6 +206,7 @@ var ui = function() {
               '<p><select id="scramble_menu"></select></p>'+
               '<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/></p>'+
               '<p><input type="checkbox" id="use_inspection"><label for="use_inspection">use inspection</label>'+
+              '<h3 style="margin: 0; padding: 0">session</h3>'+
               '<p><input type="submit" id="save_btn" value="save" /> <input type="submit" id="load_btn" value="load" /></p><span class="a"><span id="close_options">close</span></span></div>'+
               '<div id="gray_out" style="display: none;"></div>';
 		document.body.innerHTML = out;
