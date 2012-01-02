@@ -1,7 +1,6 @@
 .a span {
 	color: #36c;
 	cursor: pointer;
-	text-decoration: underline;
 }
 .g {
 	color: gray;
@@ -32,7 +31,6 @@ html, body {
 
 #timer_label {
 	font-size: 10em;
-	font-family: Monaco, monospace, Courier, sans-serif;
 	padding-top: 10%;
 }
 
@@ -45,6 +43,7 @@ html, body {
 	overflow-y: scroll;
 	padding-left: 5px;
 	padding-top: 5px;
+	font-size: 1.2em;
 }
 
 #bottom_bar {
