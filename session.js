@@ -1,6 +1,17 @@
 var session = function() {
 	var solves = [];
 
+	function get_trim_count(n) {
+		return Math.ceil((n/10)/2);	
+	};
+
+	function solve_sort(a, b){
+		var at = a['time'], bt = b['time'];
+		at = a['plus_two'] ? at + 2000 : at;		
+		bt = b['plus_two'] ? bt + 2000 : bt;		
+		return at - bt;
+	};
+
 	return {
 	solves: function() { return solves; },
 	length: function() { return solves.length; },	
@@ -48,15 +59,19 @@ var session = function() {
 		var end = start + length;
 
 		var min = -1, max = -1, sum = 0;
-		for(var i = start; i < end; ++i)
+		
+		var trim = get_trim_count(length);
+
+		var copy = solves.slice(start, end);
+		copy.sort(solve_sort);
+		copy.splice(0, trim);
+		copy.splice(copy.length - trim, trim);
+
+		for(var i = 0; i < copy.length; ++i)
 		{
-			var t = solves[i]['time'];
-			if(t < min || -1 === min) min = t;
-			if(t > max || -1 === max) max = t;
-			sum += t;
+			sum += copy[i]['time'];
 		}
-		sum -= min + max;
-		return sum / (length - 2);
+		return sum / (length - (2 * trim));
 	},
 	
 	current_average: function(length) {
