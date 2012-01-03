@@ -49,10 +49,8 @@ var session = function() {
 		for(var i = 0; i < solves.length; ++i)
 		{
 			var s = solves[i];
-			if(s['DNF'])
-				++dnfs;
-			else
-				sum += s['time'];
+			if(s['DNF']) ++dnfs;
+			else sum += s['time'];
 			if(s['plus_two'] && !s['DNF']) sum += 2000;
 		}
 		
@@ -81,7 +79,9 @@ var session = function() {
 
 		for(var i = 0; i < copy.length; ++i)
 		{
-			sum += copy[i]['time'];
+			var s = copy[i];
+			sum += s['time'];
+			if(s['plus_two']) sum += 2000;
 		}
 		return sum / (length - (2 * trim));
 	},
