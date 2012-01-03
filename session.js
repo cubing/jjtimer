@@ -42,12 +42,17 @@ var session = function() {
 	mean: function() {
 		if(solves.length < 1) return -1;
 
-		var sum = 0;
+		var sum = 0, dnfs = 0;
 		for(var i = 0; i < solves.length; ++i)
 		{
-			sum += solves[i]['time'];
+			var s = solves[i];
+			if(s['DNF'])
+				++dnfs;
+			else
+				sum += s['time'];
+			if(s['plus_two'] && !s['DNF']) sum += 2000;
 		}
-		return sum / solves.length;
+		return sum / (solves.length - dnfs);
 	},
 
 	average: function(start, length) {
