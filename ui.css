@@ -26,6 +26,8 @@ html, body {
 
 #scramble_label {
 	font-weight: bold;
+	width: 80%;
+	margin: auto;
 }
 
 #times_label {
