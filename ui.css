@@ -1,13 +1,3 @@
-.a span {
-	color: #36c;
-	cursor: pointer;
-}
-.g {
-	color: gray;
-}
-.h {
-	background-color: yellow;
-}
 html, body {
 	padding: 0; margin: 0;
 	width: 100%; height: 100%;
@@ -36,6 +26,8 @@ html, body {
 
 #scramble_label {
 	font-weight: bold;
+	width: 80%;
+	margin: auto;
 }
 
 #times_label {
@@ -76,4 +68,17 @@ html, body {
 	padding-left: 2%;
 	display: none;
 	box-shadow: 1px 3px 1px #888;
+}
+
+.a span {
+	color: #36c;
+	cursor: pointer;
+}
+
+.g {
+	color: gray;
+}
+
+.h {
+	background-color: yellow;
 }

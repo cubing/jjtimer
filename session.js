@@ -6,6 +6,9 @@ var session = function() {
 	};
 
 	function solve_sort(a, b){
+		if(a['DNF']) return -1;
+		if(b['DNF']) return 1;
+
 		var at = a['time'], bt = b['time'];
 		at = a['plus_two'] ? at + 2000 : at;		
 		bt = b['plus_two'] ? bt + 2000 : bt;		
@@ -42,12 +45,17 @@ var session = function() {
 	mean: function() {
 		if(solves.length < 1) return -1;
 
-		var sum = 0;
+		var sum = 0, dnfs = 0;
 		for(var i = 0; i < solves.length; ++i)
 		{
-			sum += solves[i]['time'];
+			var s = solves[i];
+			if(s['DNF']) ++dnfs;
+			else sum += s['time'];
+			if(s['plus_two'] && !s['DNF']) sum += 2000;
 		}
-		return sum / solves.length;
+		
+		if(solves.length - dnfs === 0) return -1;
+		return sum / (solves.length - dnfs);
 	},
 
 	average: function(start, length) {
@@ -67,9 +75,13 @@ var session = function() {
 		copy.splice(0, trim);
 		copy.splice(copy.length - trim, trim);
 
+		if(copy[0]['DNF']) return -1;
+
 		for(var i = 0; i < copy.length; ++i)
 		{
-			sum += copy[i]['time'];
+			var s = copy[i];
+			sum += s['time'];
+			if(s['plus_two']) sum += 2000;
 		}
 		return sum / (length - (2 * trim));
 	},
@@ -87,13 +99,16 @@ var session = function() {
 	},
 
 	best_average: function(length) {
-		var best = -1;
+		var best = -1, best_index = -1;
 		for(var i = 0; i < solves.length - (length - 1); i++)
 		{
 			var a = session.average(i, length);
-			if(a < best || -1 === best) best = a;
+			if(a < best || -1 === best) {
+				best = a;
+				best_index = i;
+			}
 		}
-		return best;
+		return {'avg': best, 'index': best_index};
 	},
 
 	load: function() {
