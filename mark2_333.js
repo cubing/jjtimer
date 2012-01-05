@@ -5,7 +5,7 @@ var mark2_333 = {
 
 	scramble_func: function() {
 		var s = scramblers["333"].getRandomScramble(); 
-		return s.scramble;
+		return s.scramble_string;
 	},
 
 	selected: function(){
