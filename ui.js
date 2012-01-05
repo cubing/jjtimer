@@ -145,6 +145,7 @@ var ui = function() {
 		times_label.className = "g";
 		options_label.className = "g";
 		$('penalty').className = "g";
+		$('stats_link').className = "g";
 	},
 
 	update_running: function() {
@@ -159,6 +160,7 @@ var ui = function() {
 		times_label.className = "a";
 		options_label.className = "a";
 		$('penalty').className = "a";
+		$('stats_link').className = "a";
 		next_scramble();
 		update_stats();
 	},
@@ -199,9 +201,10 @@ var ui = function() {
               '<div id="scramble_label"></div><div id="penalty" class="a">that time was: <span id="p2">+2</span> <span id="dnf">DNF</span></div>'+
               '<div id="bottom_bar"><div id="stats_label">'+
               'times: <span id="s_t">0</span><br />'+
+              '<span id="stats_link" class="a">'+
               'current average: <span id="c_a_5"></span>, <span id="c_a_12"></span>, <span id="c_a_100"></span><br />'+
               'best average: <span id="b_a_5"></span>, <span id="b_a_12"></span>, <span id="b_a_100"></span><br />'+
-              'session average: <span id="s_a"></span>, mean: <span id="s_m"></span></div>'+
+              'session average: <span id="s_a"></span>, mean: <span id="s_m"></span></span></div>'+
               '<div id="options_label" class="a"><span>options</span></div></div></div>'+
 
               '<div id="right"><div id="times_label" class="a"></div></div>'+
