@@ -99,13 +99,16 @@ var session = function() {
 	},
 
 	best_average: function(length) {
-		var best = -1;
+		var best = -1, best_index = -1;
 		for(var i = 0; i < solves.length - (length - 1); i++)
 		{
 			var a = session.average(i, length);
-			if(a < best || -1 === best) best = a;
+			if(a < best || -1 === best) {
+				best = a;
+				best_index = i;
+			}
 		}
-		return best;
+		return {'avg': best, 'index': best_index};
 	},
 
 	load: function() {
