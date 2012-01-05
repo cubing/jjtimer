@@ -112,12 +112,11 @@ var ui = function() {
 		highlight(session.length() - length, length);
 	}
 
-	return {
-	key_down: function(ev) {
+	function key_down(ev) {
 		timer.trigger_down();
-	},
+	}
 
-	key_up: function(ev) {
+	function key_up(ev) {
 		if(ev.keyCode === 27)
 		{
 			if(is_visible($('options')))
@@ -132,8 +131,9 @@ var ui = function() {
 		}
 		if(is_visible($('options'))) return;
 		timer.trigger_up(ev.keyCode === 32);
-	},
+	}
 
+	return {
 	on_inspection: on_inspection,
 
 	on_running: function() {
@@ -250,8 +250,8 @@ var ui = function() {
 
 		ui.reset();
 		
-		document.onkeydown = ui.key_down;	
-		document.onkeyup = ui.key_up;
+		document.onkeydown = key_down;	
+		document.onkeyup = key_up;
 	}
 	};
 }();
