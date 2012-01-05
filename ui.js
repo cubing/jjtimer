@@ -63,9 +63,9 @@ var ui = function() {
 		t($('c_a_5'), human_time(session.current_average(5)));
 		t($('c_a_12'), human_time(session.current_average(12)));
 		t($('c_a_100'), human_time(session.current_average(100)));
-		t($('b_a_5'), human_time(session.best_average(5)));
-		t($('b_a_12'), human_time(session.best_average(12)));
-		t($('b_a_100'), human_time(session.best_average(100)));
+		t($('b_a_5'), human_time(session.best_average(5)['avg']));
+		t($('b_a_12'), human_time(session.best_average(12)['avg']));
+		t($('b_a_100'), human_time(session.best_average(100)['avg']));
 		t($('s_a'), human_time(session.session_average()));
 		t($('s_m'), human_time(session.session_mean()));
 		t(times_label, to_times_list());
@@ -103,12 +103,20 @@ var ui = function() {
 		toggle($('gray_out')); 
 	}
 	
-	return {
-	key_down: function(ev) {
-		timer.trigger_down();
-	},
+	function highlight(start, length) {
+		if(timer.is_running()) return;
+		t(times_label, to_times_list(start, length - 1));
+	}
 
-	key_up: function(ev) {
+	function hilight_current(length) {
+		highlight(session.length() - length, length);
+	}
+
+	function key_down(ev) {
+		timer.trigger_down();
+	}
+
+	function key_up(ev) {
 		if(ev.keyCode === 27)
 		{
 			if(is_visible($('options')))
@@ -123,14 +131,9 @@ var ui = function() {
 		}
 		if(is_visible($('options'))) return;
 		timer.trigger_up(ev.keyCode === 32);
-	},
+	}
 
-	hilight_current: function(length)
-	{
-		if(timer.is_running()) return;
-		t(times_label, to_times_list(session.length() - length, length));
-	},
-
+	return {
 	on_inspection: on_inspection,
 
 	on_running: function() {
@@ -142,6 +145,7 @@ var ui = function() {
 		times_label.className = "g";
 		options_label.className = "g";
 		$('penalty').className = "g";
+		$('stats_link').className = "g";
 	},
 
 	update_running: function() {
@@ -156,6 +160,7 @@ var ui = function() {
 		times_label.className = "a";
 		options_label.className = "a";
 		$('penalty').className = "a";
+		$('stats_link').className = "a";
 		next_scramble();
 		update_stats();
 	},
@@ -196,9 +201,10 @@ var ui = function() {
               '<div id="scramble_label"></div><div id="penalty" class="a">that time was: <span id="p2">+2</span> <span id="dnf">DNF</span></div>'+
               '<div id="bottom_bar"><div id="stats_label">'+
               'times: <span id="s_t">0</span><br />'+
+              '<span id="stats_link" class="a">'+
               'current average: <span id="c_a_5"></span>, <span id="c_a_12"></span>, <span id="c_a_100"></span><br />'+
               'best average: <span id="b_a_5"></span>, <span id="b_a_12"></span>, <span id="b_a_100"></span><br />'+
-              'session average: <span id="s_a"></span>, mean: <span id="s_m"></span></div>'+
+              'session average: <span id="s_a"></span>, mean: <span id="s_m"></span></span></div>'+
               '<div id="options_label" class="a"><span>options</span></div></div></div>'+
 
               '<div id="right"><div id="times_label" class="a"></div></div>'+
@@ -207,7 +213,8 @@ var ui = function() {
               '<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/></p>'+
               '<p><input type="checkbox" id="use_inspection"><label for="use_inspection">use inspection</label>'+
               '<h3 style="margin: 0; padding: 0">session</h3>'+
-              '<p><input type="submit" id="save_btn" value="save" /> <input type="submit" id="load_btn" value="load" /></p><span class="a"><span id="close_options">close</span></span></div>'+
+              '<p><input type="submit" id="save_btn" value="save" /> <input type="submit" id="load_btn" value="load" /></p>'+
+              '<span class="a"><span id="close_options">close</span></span></div>'+
               '<div id="gray_out" style="display: none;"></div>';
 		document.body.innerHTML = out;
 	},
@@ -224,10 +231,12 @@ var ui = function() {
 		$('p2').onclick = function() { session.toggle_plus_two(); update_stats(); t(timer_label, solve_time(session.last())); };
 		$('dnf').onclick = function() { session.toggle_dnf(); update_stats(); t(timer_label, solve_time(session.last())); };
 
-		$('c_a_5').onclick = function() { ui.hilight_current(5); };
-		$('c_a_12').onclick = function() { ui.hilight_current(12); };
-		$('s_a').onclick = function() { ui.hilight_current(session.length()); };
-		$('s_m').onclick = function() { ui.hilight_current(session.length()); };
+		$('c_a_5').onclick = function() { hilight_current(5); };
+		$('b_a_5').onclick = function() { var index = session.best_average(5)['index']; highlight(index, 5); };
+		$('c_a_12').onclick = function() { hilight_current(12); };
+		$('b_a_12').onclick = function() { var index = session.best_average(12)['index']; highlight(index, 12); };
+		$('s_a').onclick = function() { hilight_current(session.length()); };
+		$('s_m').onclick = function() { hilight_current(session.length()); };
 
 		$('options_label').onclick = toggle_options;
 		$('close_options').onclick = toggle_options;
@@ -241,8 +250,8 @@ var ui = function() {
 
 		ui.reset();
 		
-		document.onkeydown = ui.key_down;	
-		document.onkeyup = ui.key_up;
+		document.onkeydown = key_down;	
+		document.onkeyup = key_up;
 	}
 	};
 }();

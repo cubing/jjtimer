@@ -6,7 +6,7 @@ var mark2_222 = {
 
 	scramble_func: function() {
 		var s = scramblers["222"].getRandomScramble(); 
-		t($('info'), "");
+		$('info').html("");
 		scramblers["222"].drawScramble($('info'), s.state, 100, 80);
 		return s.scramble;
 	},
@@ -16,7 +16,7 @@ var mark2_222 = {
 	},
 
 	unselected: function(){
-		t($('info'), "");
+		$('info').html("");
 	}
 };
 
