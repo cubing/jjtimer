@@ -63,12 +63,12 @@ var ui = function() {
 		t($('c_a_5'), human_time(session.current_average(5)));
 		t($('c_a_12'), human_time(session.current_average(12)));
 		t($('c_a_100'), human_time(session.current_average(100)));
-		t($('b_a_5'), human_time(session.best_average(5)['avg']));
-		t($('b_a_12'), human_time(session.best_average(12)['avg']));
-		t($('b_a_100'), human_time(session.best_average(100)['avg']));
+		t($('b_a_5'), human_time(session.best_average(5, false)['avg']));
+		t($('b_a_12'), human_time(session.best_average(12, false)['avg']));
+		t($('b_a_100'), human_time(session.best_average(100, false)['avg']));
 		t($('s_a'), human_time(session.session_average()));
 		t($('s_m'), human_time(session.session_mean()));
-		t(times_label, to_times_list(null, null));
+		t(times_label, to_times_list(null, null, null, null));
 	}
 
 	function time_link(index) {
@@ -77,14 +77,16 @@ var ui = function() {
 		return out + "</span>";
 	}
 
-	function to_times_list(hilight_index, length) {
+	function to_times_list(hilight_index, length, paren_i, paren_j) {
 		if(session.length() < 1) return "&nbsp;"
 		var out = "";
 		for(var i = 0; i < session.length(); ++i)
 		{
 			if(i != 0) out += ", ";
 			if(i === hilight_index) out += "<span class='h'>";
+			if(i === paren_i || i === paren_j) out += "(";
 			out += time_link(i);
+			if(i === paren_i || i === paren_j) out += ")";
 			if(i === hilight_index + length) out += "</span>";
 		}
 		return out;
@@ -103,13 +105,13 @@ var ui = function() {
 		toggle($('gray_out')); 
 	}
 	
-	function highlight(start, length) {
+	function highlight(start, length, paren_i, paren_j) {
 		if(timer.is_running()) return;
-		t(times_label, to_times_list(start, length - 1));
+		t(times_label, to_times_list(start, length - 1, paren_i, paren_j));
 	}
 
-	function hilight_current(length) {
-		highlight(session.length() - length, length);
+	function hilight_current(length, paren_i, paren_j) {
+		highlight(session.length() - length, length, paren_i, paren_j);
 	}
 
 	function key_down(ev) {
@@ -165,7 +167,7 @@ var ui = function() {
 	del: function(index) {
 		if(timer.is_running()) return;
 		session.del(index);
-		t(times_label, to_times_list(null, null));
+		t(times_label, to_times_list(null, null, null, null));
 		update_stats();
 	},
 
@@ -230,9 +232,15 @@ var ui = function() {
 		$('dnf').onclick = function() { session.toggle_dnf(); update_stats(); t(timer_label, solve_time(session.last())); };
 
 		$('c_a_5').onclick = function() { hilight_current(5); };
-		$('b_a_5').onclick = function() { var index = session.best_average(5)['index']; highlight(index, 5); };
+		$('b_a_5').onclick = function() {
+			var a = session.best_average(5, true);
+			highlight(a['index'], 5, a['best_single_index'], a['worst_single_index']);
+		};
 		$('c_a_12').onclick = function() { hilight_current(12); };
-		$('b_a_12').onclick = function() { var index = session.best_average(12)['index']; highlight(index, 12); };
+		$('b_a_12').onclick = function() {
+			var a = session.best_average(12, true);
+			highlight(a['index'], 12, a['best_single_index'], a['worst_single_index']);
+		};
 		$('s_a').onclick = function() { hilight_current(session.length()); };
 		$('s_m').onclick = function() { hilight_current(session.length()); };
 

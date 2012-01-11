@@ -98,17 +98,32 @@ var session = function() {
 		return session.mean(0, solves.length);
 	},
 
-	best_average: function(length) {
+	best_average: function(length, find_best_singles) {
 		var best = -1, best_index = -1;
-		for(var i = 0; i < solves.length - (length - 1); i++)
-		{
+		for(var i = 0; i < solves.length - (length - 1); i++) {
 			var a = session.average(i, length);
 			if(a < best || -1 === best) {
 				best = a;
 				best_index = i;
 			}
 		}
-		return {'avg': best, 'index': best_index};
+		if(find_best_singles && best_index !== -1) {
+			var best_single = -1, worst_single = -1;
+			var best_single_index = -1, worst_single_index = -1;
+
+			for(var i = 0; i < length; i++) {
+				if(solves[i+best_index]['time'] < best_single || best_single === -1) {
+					best_single = solves[i+best_index]['time'];
+					best_single_index = best_index + i;
+				}
+				if(solves[i+best_index]['time'] > worst_single || worst_single === -1) {
+					worst_single = solves[i+best_index]['time'];
+					worst_single_index = best_index + i;
+				}
+			}
+		}
+		return {'avg': best, 'index': best_index,
+			'best_single_index': best_single_index, 'worst_single_index': worst_single_index};
 	},
 
 	load: function() {
