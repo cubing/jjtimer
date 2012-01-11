@@ -11,7 +11,7 @@ function toggle(e) { e.style.display = (e.style.display === "none") ? "inline" :
 function is_visible(e) { return e.style.display !== "none"; }
 
 var ui = function() {
-	var timer_label, scramble_label, stats_label, options_label;
+	var timer_label, scramble_label, stats_label, options_label, to_hide;
 	var update_timer, inspection_timer, inspection_count = 15;
 
 	function human_time(time) {
@@ -140,7 +140,6 @@ var ui = function() {
 		clearTimeout(inspection_timer);
 		inspection_count = 15;
 		update_timer = setInterval(ui.update_running, 10);
-		var to_hide = document.getElementsByClassName("hide_running");
 		for(var i = 0; i < to_hide.length; i++)
 		{
 			to_hide[i].className = to_hide[i].className + " g";
@@ -154,7 +153,6 @@ var ui = function() {
 	on_stop: function() {
 		clearInterval(update_timer);
 		t(timer_label, human_time(timer.current_time()));
-		var to_hide = document.getElementsByClassName("hide_running");
 		for(var i = 0; i < to_hide.length; i++)
 		{
 			to_hide[i].className = to_hide[i].className.substr(0, to_hide[i].className.length-2);
@@ -226,6 +224,7 @@ var ui = function() {
 		stats_label = $('stats_label');
 		times_label = $('times_label');
 		options_label = $('options_label');
+		to_hide = document.getElementsByClassName("hide_running");
 
 		$('p2').onclick = function() { session.toggle_plus_two(); update_stats(); t(timer_label, solve_time(session.last())); };
 		$('dnf').onclick = function() { session.toggle_dnf(); update_stats(); t(timer_label, solve_time(session.last())); };
@@ -239,6 +238,7 @@ var ui = function() {
 
 		$('options_label').onclick = toggle_options;
 		$('close_options').onclick = toggle_options;
+		$('gray_out').onclick = toggle_options;
 		$('scramble_menu').onchange = function(s) { scramble_manager.set($('scramble_menu').selectedIndex); next_scramble(); };
 		$('use_inspection').onchange = timer.toggle_inspection;
 		$('load_btn').onclick = session.save;
