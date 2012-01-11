@@ -8,7 +8,7 @@ var mark2_222 = {
 		var s = scramblers["222"].getRandomScramble(); 
 		t($('info'), "");
 		scramblers["222"].drawScramble($('info'), s.state, 100, 80);
-		return s.scramble;
+		return s.scramble_string;
 	},
 
 	selected: function(){
