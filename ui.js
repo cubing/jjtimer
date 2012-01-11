@@ -140,12 +140,11 @@ var ui = function() {
 		clearTimeout(inspection_timer);
 		inspection_count = 15;
 		update_timer = setInterval(ui.update_running, 10);
-		scramble_label.className = "g";
-		stats_label.className = "g";
-		times_label.className = "g";
-		options_label.className = "g";
-		$('penalty').className = "g";
-		$('stats_link').className = "g";
+		var to_hide = document.getElementsByClassName("hide_running");
+		for(var i = 0; i < to_hide.length; i++)
+		{
+			to_hide[i].className = to_hide[i].className + " g";
+		}
 	},
 
 	update_running: function() {
@@ -155,12 +154,11 @@ var ui = function() {
 	on_stop: function() {
 		clearInterval(update_timer);
 		t(timer_label, human_time(timer.current_time()));
-		scramble_label.className = "";
-		stats_label.className = "";
-		times_label.className = "a";
-		options_label.className = "a";
-		$('penalty').className = "a";
-		$('stats_link').className = "a";
+		var to_hide = document.getElementsByClassName("hide_running");
+		for(var i = 0; i < to_hide.length; i++)
+		{
+			to_hide[i].className = to_hide[i].className.substr(0, to_hide[i].className.length-2);
+		}
 		next_scramble();
 		update_stats();
 	},
@@ -198,8 +196,8 @@ var ui = function() {
 	render_body: function() {
 		var out = '<div id="left"><div id="info"></div>'+
               '<div id="timer_label">0.00</div>'+
-              '<div id="scramble_label"></div><div id="penalty" class="a">that time was: <span id="p2">+2</span> <span id="dnf">DNF</span></div>'+
-              '<div id="bottom_bar"><div id="stats_label">'+
+              '<div class="hide_running" id="scramble_label"></div><div id="penalty" class="hide_running a">that time was: <span id="p2">+2</span> <span id="dnf">DNF</span></div>'+
+              '<div id="bottom_bar" class="hide_running"><div id="stats_label">'+
               'times: <span id="s_t">0</span><br />'+
               '<span id="stats_link" class="a">'+
               'current average: <span id="c_a_5"></span>, <span id="c_a_12"></span>, <span id="c_a_100"></span><br />'+
@@ -207,7 +205,7 @@ var ui = function() {
               'session average: <span id="s_a"></span>, mean: <span id="s_m"></span></span></div>'+
               '<div id="options_label" class="a"><span>options</span></div></div></div>'+
 
-              '<div id="right"><div id="times_label" class="a"></div></div>'+
+              '<div id="right"><div id="times_label" class="hide_running a"></div></div>'+
               '<div id="options" style="display: none;"><h2 style="margin: 0; padding: 0">options</h2>'+
               '<p><select id="scramble_menu"></select></p>'+
               '<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/></p>'+
