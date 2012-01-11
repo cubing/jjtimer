@@ -9,8 +9,8 @@ var scramble_manager = function() {
 	}
 	
 	function add_default() {
-		add({ name: '3x3', scramble_func: scramble_manager.generic([["U","D"],["R","L"],["F","B"]],["","2","'"], 25)});
-		add({ name: '4x4', scramble_func: scramble_manager.generic([["U","D","u"],["R","L","r"],["F","B","f"]],["","2","'"], 40)});
+		add({ name: '3x3', scramble_func: scramble_manager.generic([["U","D"],["R","L"],["F","B"]],["","2","'"], 25), selected: function(){}, unselected: function(){}});
+		add({ name: '4x4', scramble_func: scramble_manager.generic([["U","D","u"],["R","L","r"],["F","B","f"]],["","2","'"], 40), selected: function(){}, unselected: function(){}});
 		set(0);
 	}
 	

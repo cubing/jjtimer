@@ -68,7 +68,7 @@ var ui = function() {
 		t($('b_a_100'), human_time(session.best_average(100)['avg']));
 		t($('s_a'), human_time(session.session_average()));
 		t($('s_m'), human_time(session.session_mean()));
-		t(times_label, to_times_list());
+		t(times_label, to_times_list(null, null));
 	}
 
 	function time_link(index) {
@@ -167,7 +167,7 @@ var ui = function() {
 	del: function(index) {
 		if(timer.is_running()) return;
 		session.del(index);
-		t(times_label, to_times_list());
+		t(times_label, to_times_list(null, null));
 		update_stats();
 	},
 
@@ -196,7 +196,8 @@ var ui = function() {
 	render_body: function() {
 		var out = '<div id="left"><div id="info"></div>'+
               '<div id="timer_label">0.00</div>'+
-              '<div class="hide_running" id="scramble_label"></div><div id="penalty" class="hide_running a">that time was: <span id="p2">+2</span> <span id="dnf">DNF</span></div>'+
+              '<div class="hide_running" id="scramble_label"></div>'+
+							'<div id="penalty" class="a hide_running">that time was: <span id="p2">+2</span> <span id="dnf">DNF</span></div>'+
               '<div id="bottom_bar" class="hide_running"><div id="stats_label">'+
               'times: <span id="s_t">0</span><br />'+
               '<span id="stats_link" class="a">'+
@@ -240,7 +241,7 @@ var ui = function() {
 		$('close_options').onclick = toggle_options;
 		$('scramble_menu').onchange = function(s) { scramble_manager.set($('scramble_menu').selectedIndex); next_scramble(); };
 		$('use_inspection').onchange = timer.toggle_inspection;
-		$('load_btn').onclick = function() { session.save(); };
+		$('load_btn').onclick = session.save;
 		$('load_btn').onclick = function() { session.load(); update_stats(); };
 	
 		scramble_manager.add_default();
