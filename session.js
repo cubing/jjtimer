@@ -10,8 +10,6 @@ var session = function() {
 		if(b['DNF']) return 1;
 
 		var at = a['time'], bt = b['time'];
-		at = a['plus_two'] ? at + 2000 : at;		
-		bt = b['plus_two'] ? bt + 2000 : bt;		
 		return at - bt;
 	};
 
@@ -40,6 +38,7 @@ var session = function() {
 	toggle_plus_two: function(index) {
 		if(typeof index != 'Number') index = solves.length - 1;
 		solves[index]['plus_two'] = !solves[index]['plus_two'];
+		solves[index]['time'] += solves[index]['plus_two'] ? 2000 : -2000;
 	},
 
 	mean: function() {
@@ -49,9 +48,7 @@ var session = function() {
 		for(var i = 0; i < solves.length; ++i)
 		{
 			var s = solves[i];
-			if(s['DNF']) ++dnfs;
-			else sum += s['time'];
-			if(s['plus_two'] && !s['DNF']) sum += 2000;
+			s['DNF'] ? ++dnfs : sum += s['time'];
 		}
 		
 		if(solves.length - dnfs === 0) return -1;
@@ -79,9 +76,7 @@ var session = function() {
 
 		for(var i = 0; i < copy.length; ++i)
 		{
-			var s = copy[i];
-			sum += s['time'];
-			if(s['plus_two']) sum += 2000;
+			sum += copy[i]['time'];
 		}
 		return sum / (length - (2 * trim));
 	},

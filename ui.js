@@ -39,7 +39,7 @@ var ui = function() {
 		if(solve['DNF'])
 			out += "DNF(";
 
-		out += human_time(solve['time'] + (solve['plus_two'] ? 2000 : 0));
+		out += human_time(solve['time']);
 		out += solve['plus_two'] ? "+" : "";
 
 		if(solve['DNF'])
