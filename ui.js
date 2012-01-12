@@ -13,6 +13,7 @@ function is_visible(e) { return e.style.display !== "none"; }
 var ui = function() {
 	var timer_label, scramble_label, stats_label, options_label, to_hide;
 	var update_timer, inspection_timer, inspection_count = 15;
+	var config;
 
 	function human_time(time) {
 		if(time < 0) return "DNF";
@@ -220,6 +221,12 @@ var ui = function() {
 		}, 1000);
 	},
 
+	auto_save: function() {
+		if(config['auto_save'])
+			session.save();
+		localStorage.setItem("ui.config", JSON.stringify(config));
+	},
+
 	render_body: function() {
 		document.body.innerHTML = '<div id="left"><div id="info"></div>'+
               '<div id="timer_label">0.00</div>'+
@@ -241,6 +248,7 @@ var ui = function() {
               '<p><input type="checkbox" id="use_inspection"><label for="use_inspection">use inspection</label>'+
               '<h3 style="margin: 0; padding: 0">session</h3>'+
               '<p><input type="submit" id="save_btn" value="save" /> <input type="submit" id="load_btn" value="load" /></p>'+
+							'<p><input type="checkbox" id="auto_save"><label for="auto_save">automatically save/load session</label></p>'+
               '<span class="a"><span id="close_options">close</span></span></div>'+
 
 							'<div id="solve_popup" style="display: none;">'+
@@ -296,8 +304,9 @@ var ui = function() {
 			next_scramble();
 		};
 		$('use_inspection').onchange = timer.toggle_inspection;
-		$('load_btn').onclick = session.save;
+		$('save_btn').onclick = session.save;
 		$('load_btn').onclick = function() { session.load(); update_stats(); };
+		$('auto_save').onchange = function() { config['auto_save'] = $('auto_save').checked;  };
 	
 		scramble_manager.add_default();
 		populate_scramblers_menu();
@@ -306,8 +315,20 @@ var ui = function() {
 		
 		document.onkeydown = key_down;	
 		document.onkeyup = key_up;
+
+		if(localStorage)
+			config = JSON.parse(localStorage.getItem("ui.config"));
+		if(config == null)
+			config = {};
+
+		if(config['auto_save']) {
+			$('auto_save').checked = true;
+			session.load();
+			update_stats();
+		}
 	}
 	};
 }();
 window['ui'] = ui;
 window.onload = ui.init;
+window.onbeforeunload = ui.auto_save;
