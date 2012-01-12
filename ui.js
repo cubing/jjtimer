@@ -72,12 +72,6 @@ var ui = function() {
 		times_label.scrollTop = times_label.scrollHeight;
 	}
 
-	function time_link(index) {
-		var out = "<span onclick='ui.del("+index+")'>";
-		out += solve_time(session.solves()[index]);
-		return out + "</span>";
-	}
-
 	function to_times_list(hilight_index, length, paren_i, paren_j) {
 		if(session.length() < 1) return "&nbsp;"
 		var out = "";
@@ -86,7 +80,11 @@ var ui = function() {
 			if(i != 0) out += ", ";
 			if(i === hilight_index) out += "<span class='h'>";
 			if(i === paren_i || i === paren_j) out += "(";
-			out += time_link(i);
+
+			out += "<span onclick='ui.del("+i+")'>";
+			out += solve_time(session.solves()[i]);
+			out += "</span>";
+
 			if(i === paren_i || i === paren_j) out += ")";
 			if(i === hilight_index + length) out += "</span>";
 		}
