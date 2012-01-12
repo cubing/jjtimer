@@ -312,7 +312,10 @@ var ui = function() {
 			scramble_manager.set($('scramble_menu').selectedIndex);
 			next_scramble();
 		};
-		$('use_inspection').onchange = timer.toggle_inspection;
+		$('use_inspection').onchange = function() {
+			timer.toggle_inspection();
+			config['use_inspection'] = $('use_inspection').checked;
+		}
 		$('save_btn').onclick = session.save;
 		$('load_btn').onclick = function() { session.load(); update_stats(); };
 		$('auto_save').onchange = function() { config['auto_save'] = $('auto_save').checked;  };
@@ -334,6 +337,10 @@ var ui = function() {
 			$('auto_save').checked = true;
 			session.load();
 			update_stats();
+		}
+		if(config['use_inspection']) {
+			$('use_inspection').checked = true;
+			timer.toggle_inspection();
 		}
 	}
 	};
