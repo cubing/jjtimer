@@ -10,8 +10,6 @@ var session = function() {
 		if(b['DNF']) return 1;
 
 		var at = a['time'], bt = b['time'];
-		at = a['plus_two'] ? at + 2000 : at;		
-		bt = b['plus_two'] ? bt + 2000 : bt;		
 		return at - bt;
 	};
 
@@ -33,13 +31,14 @@ var session = function() {
 	},
 
 	toggle_dnf: function(index) {
-		if(typeof index != 'Number') index = solves.length - 1;
+		if(index === null) index = solves.length - 1;
 		solves[index]['DNF'] = !solves[index]['DNF']; 
 	},
 
 	toggle_plus_two: function(index) {
-		if(typeof index != 'Number') index = solves.length - 1;
+		if(index === null) index = solves.length - 1;
 		solves[index]['plus_two'] = !solves[index]['plus_two'];
+		solves[index]['time'] += solves[index]['plus_two'] ? 2000 : -2000;
 	},
 
 	mean: function() {
@@ -49,9 +48,7 @@ var session = function() {
 		for(var i = 0; i < solves.length; ++i)
 		{
 			var s = solves[i];
-			if(s['DNF']) ++dnfs;
-			else sum += s['time'];
-			if(s['plus_two'] && !s['DNF']) sum += 2000;
+			s['DNF'] ? ++dnfs : sum += s['time'];
 		}
 		
 		if(solves.length - dnfs === 0) return -1;
@@ -79,9 +76,7 @@ var session = function() {
 
 		for(var i = 0; i < copy.length; ++i)
 		{
-			var s = copy[i];
-			sum += s['time'];
-			if(s['plus_two']) sum += 2000;
+			sum += copy[i]['time'];
 		}
 		return sum / (length - (2 * trim));
 	},
@@ -98,17 +93,32 @@ var session = function() {
 		return session.mean(0, solves.length);
 	},
 
-	best_average: function(length) {
+	best_average: function(length, find_best_singles) {
 		var best = -1, best_index = -1;
-		for(var i = 0; i < solves.length - (length - 1); i++)
-		{
+		for(var i = 0; i < solves.length - (length - 1); i++) {
 			var a = session.average(i, length);
 			if(a < best || -1 === best) {
 				best = a;
 				best_index = i;
 			}
 		}
-		return {'avg': best, 'index': best_index};
+		if(find_best_singles && best_index !== -1) {
+			var best_single = -1, worst_single = -1;
+			var best_single_index = -1, worst_single_index = -1;
+
+			for(var i = 0; i < length; i++) {
+				if(solves[i+best_index]['time'] < best_single || best_single === -1) {
+					best_single = solves[i+best_index]['time'];
+					best_single_index = best_index + i;
+				}
+				if(solves[i+best_index]['time'] > worst_single || worst_single === -1) {
+					worst_single = solves[i+best_index]['time'];
+					worst_single_index = best_index + i;
+				}
+			}
+		}
+		return {'avg': best, 'index': best_index,
+			'best_single_index': best_single_index, 'worst_single_index': worst_single_index};
 	},
 
 	load: function() {
