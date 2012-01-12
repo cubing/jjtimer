@@ -240,7 +240,7 @@ var ui = function() {
 		document.body.innerHTML = '<div id="left"><div id="info"></div>'+
               '<div id="timer_label">0.00</div>'+
               '<div class="hide_running" id="scramble_label"></div>'+
-							'<div id="penalty" class="a hide_running">that time was: <span id="p2">+2</span> <span id="dnf">DNF</span></div>'+
+              '<div id="penalty" class="a hide_running">that time was: <span id="p2">+2</span> <span id="dnf">DNF</span></div>'+
               '<div id="bottom_bar" class="hide_running"><div id="stats_label">'+
               'times: <span id="s_t">0</span><br />'+
               '<span id="stats_link" class="a">'+
@@ -251,7 +251,7 @@ var ui = function() {
 
               '<div id="right"><div id="times_label" class="hide_running a"></div></div>'+
 
-							'<div id="options" style="display: none;"><h2 style="margin: 0; padding: 0">options</h2>'+
+              '<div id="options" style="display: none;"><h2 style="margin: 0; padding: 0">options</h2>'+
               '<p><select id="scramble_menu"></select></p>'+
               '<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/></p>'+
               '<p><input type="checkbox" id="use_inspection"><label for="use_inspection">use inspection</label>'+
@@ -260,15 +260,15 @@ var ui = function() {
 							'<p><input type="checkbox" id="auto_save"><label for="auto_save">automatically save/load session</label></p>'+
               '<span class="a"><span id="close_options">close</span></span></div>'+
 
-							'<div id="solve_popup" style="display: none;">'+
-							'Solve <span id="solve_popup_index"></span>'+
-							'<br /><span id="solve_popup_time"></span>'+
-							'<br /><span id="solve_popup_scramble"></span>'+
-							'<br /><span class="a">'+
-							'<span id="solve_popup_p2">+2</span> <span id="solve_popup_dnf">DNF</span> <span id="solve_popup_del">delete</span>'+
-							'</span></div>'+
+              '<div id="solve_popup" style="display: none;">'+
+              'Solve <span id="solve_popup_index"></span>'+
+              '<br /><span id="solve_popup_time"></span>'+
+              '<br /><span id="solve_popup_scramble"></span>'+
+              '<br /><span class="a">'+
+              '<span id="solve_popup_p2">+2</span> <span id="solve_popup_dnf">DNF</span> <span id="solve_popup_del">delete</span>'+
+              '</span></div>'+
 
-							'<div id="gray_out" style="display: none;"></div>';
+              '<div id="gray_out" style="display: none;"></div>';
 	},
 
 	init: function() {
