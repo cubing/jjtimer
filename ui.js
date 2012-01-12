@@ -109,14 +109,12 @@ var ui = function() {
 
 	function toggle_solve_popup(index) {
 		if(index !== null) {
-			var out = "Solve " + (index + 1);
-			out += "<br />" + solve_time(session.solves()[index]);
-			out += "<br />" + session.solves()[index]['scramble'];
-			out += "<br /><span class='a'>";
-			out += "<span onclick='session.toggle_plus_two("+index+")'>+2</span> ";
-			out += "<span onclick='session.toggle_dnf("+index+")'>DNF</span> ";
-			out += "<span onclick='ui.del("+index+"); ui.toggle_solve_popup(null)'>delete</span></span>";
-			$('solve_popup').innerHTML = out;
+			$('solve_popup_index').innerHTML = index;
+			$('solve_popup_time').innerHTML = solve_time(session.solves()[index]);
+			$('solve_popup_scramble').innerHTML = session.solves()[index]['scramble'];
+			$('solve_popup_p2').onclick = function() { session.toggle_plus_two(index); };
+			$('solve_popup_dnf').onclick = function() { session.toggle_dnf(index); };
+			$('solve_popup_del').onclick = function() { ui.del(index); toggle_popup(); };
 		}
 		toggle($('solve_popup'));
 		toggle($('gray_out'));
@@ -124,7 +122,10 @@ var ui = function() {
 
 	function toggle_popup() {
 		if(is_visible($('options'))) toggle($('options'));
-		if(is_visible($('solve_popup'))) toggle($('solve_popup'));
+		else if(is_visible($('solve_popup'))) {
+			toggle($('solve_popup'));
+			update_stats();
+		}
 		toggle($('gray_out'));
 	}
 	
@@ -220,7 +221,7 @@ var ui = function() {
 	},
 
 	render_body: function() {
-		var out = '<div id="left"><div id="info"></div>'+
+		document.body.innerHTML = '<div id="left"><div id="info"></div>'+
               '<div id="timer_label">0.00</div>'+
               '<div class="hide_running" id="scramble_label"></div>'+
 							'<div id="penalty" class="a hide_running">that time was: <span id="p2">+2</span> <span id="dnf">DNF</span></div>'+
@@ -233,16 +234,24 @@ var ui = function() {
               '<div id="options_label" class="a"><span>options</span></div></div></div>'+
 
               '<div id="right"><div id="times_label" class="hide_running a"></div></div>'+
-              '<div id="options" style="display: none;"><h2 style="margin: 0; padding: 0">options</h2>'+
+
+							'<div id="options" style="display: none;"><h2 style="margin: 0; padding: 0">options</h2>'+
               '<p><select id="scramble_menu"></select></p>'+
               '<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/></p>'+
               '<p><input type="checkbox" id="use_inspection"><label for="use_inspection">use inspection</label>'+
               '<h3 style="margin: 0; padding: 0">session</h3>'+
               '<p><input type="submit" id="save_btn" value="save" /> <input type="submit" id="load_btn" value="load" /></p>'+
               '<span class="a"><span id="close_options">close</span></span></div>'+
-							'<div id="solve_popup" style="display: none;"></div>'+
-              '<div id="gray_out" style="display: none;"></div>';
-		document.body.innerHTML = out;
+
+							'<div id="solve_popup" style="display: none;">'+
+							'Solve <span id="solve_popup_index"></span>'+
+							'<br /><span id="solve_popup_time"></span>'+
+							'<br /><span id="solve_popup_scramble"></span>'+
+							'<br /><span class="a">'+
+							'<span id="solve_popup_p2">+2</span> <span id="solve_popup_dnf">DNF</span> <span id="solve_popup_del">delete</span>'+
+							'</span></div>'+
+
+							'<div id="gray_out" style="display: none;"></div>';
 	},
 
 	init: function() {
