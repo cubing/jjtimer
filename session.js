@@ -31,12 +31,12 @@ var session = function() {
 	},
 
 	toggle_dnf: function(index) {
-		if(typeof index != 'Number') index = solves.length - 1;
+		if(index === null) index = solves.length - 1;
 		solves[index]['DNF'] = !solves[index]['DNF']; 
 	},
 
 	toggle_plus_two: function(index) {
-		if(typeof index != 'Number') index = solves.length - 1;
+		if(index === null) index = solves.length - 1;
 		solves[index]['plus_two'] = !solves[index]['plus_two'];
 		solves[index]['time'] += solves[index]['plus_two'] ? 2000 : -2000;
 	},

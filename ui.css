@@ -58,7 +58,7 @@ html, body {
 	display: none;
 }
 
-#options {
+#options, #solve_popup {
 	z-index: 6;
 	position: absolute;
 	background-color: #eee;
