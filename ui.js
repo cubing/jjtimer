@@ -69,6 +69,7 @@ var ui = function() {
 		t($('s_a'), human_time(session.session_average()));
 		t($('s_m'), human_time(session.session_mean()));
 		t(times_label, to_times_list(null, null, null, null));
+		times_label.scrollTop = times_label.scrollHeight;
 	}
 
 	function time_link(index) {
@@ -167,7 +168,6 @@ var ui = function() {
 	del: function(index) {
 		if(timer.is_running()) return;
 		session.del(index);
-		t(times_label, to_times_list(null, null, null, null));
 		update_stats();
 	},
 
