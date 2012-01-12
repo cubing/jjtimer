@@ -113,9 +113,18 @@ var ui = function() {
 			$('solve_popup_index').innerHTML = index;
 			$('solve_popup_time').innerHTML = solve_time(session.solves()[index]);
 			$('solve_popup_scramble').innerHTML = session.solves()[index]['scramble'];
-			$('solve_popup_p2').onclick = function() { session.toggle_plus_two(index); };
-			$('solve_popup_dnf').onclick = function() { session.toggle_dnf(index); };
-			$('solve_popup_del').onclick = function() { ui.del(index); toggle_popup(); };
+			$('solve_popup_p2').onclick = function() {
+				session.toggle_plus_two(index);
+				$('solve_popup_time').innerHTML = solve_time(session.solves()[index]);
+			};
+			$('solve_popup_dnf').onclick = function() {
+				session.toggle_dnf(index);
+				$('solve_popup_time').innerHTML = solve_time(session.solves()[index]);
+			};
+			$('solve_popup_del').onclick = function() {
+				ui.del(index);
+				toggle_popup();
+			};
 		}
 		toggle($('solve_popup'));
 		toggle($('gray_out'));
