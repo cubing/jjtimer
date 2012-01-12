@@ -39,7 +39,7 @@ var ui = function() {
 		if(solve['DNF'])
 			out += "DNF(";
 
-		out += human_time(solve['time'] + (solve['plus_two'] ? 2000 : 0));
+		out += human_time(solve['time']);
 		out += solve['plus_two'] ? "+" : "";
 
 		if(solve['DNF'])
@@ -63,28 +63,32 @@ var ui = function() {
 		t($('c_a_5'), human_time(session.current_average(5)));
 		t($('c_a_12'), human_time(session.current_average(12)));
 		t($('c_a_100'), human_time(session.current_average(100)));
-		t($('b_a_5'), human_time(session.best_average(5)['avg']));
-		t($('b_a_12'), human_time(session.best_average(12)['avg']));
-		t($('b_a_100'), human_time(session.best_average(100)['avg']));
+		t($('b_a_5'), human_time(session.best_average(5, false)['avg']));
+		t($('b_a_12'), human_time(session.best_average(12, false)['avg']));
+		t($('b_a_100'), human_time(session.best_average(100, false)['avg']));
 		t($('s_a'), human_time(session.session_average()));
 		t($('s_m'), human_time(session.session_mean()));
-		t(times_label, to_times_list(null, null));
+		t(times_label, to_times_list(null, null, null, null));
+		times_label.scrollTop = times_label.scrollHeight;
 	}
 
-	function time_link(index) {
-		var out = "<span onclick='ui.del("+index+")'>";
-		out += solve_time(session.solves()[index]);
-		return out + "</span>";
-	}
-
-	function to_times_list(hilight_index, length) {
+	function to_times_list(hilight_index, length, paren_i, paren_j) {
 		if(session.length() < 1) return "&nbsp;"
+		if(hilight_index === null)
+			hilight_index = length = paren_i = paren_j = -1;
+
 		var out = "";
 		for(var i = 0; i < session.length(); ++i)
 		{
 			if(i != 0) out += ", ";
 			if(i === hilight_index) out += "<span class='h'>";
-			out += time_link(i);
+			if(i === paren_i || i === paren_j) out += "(";
+
+			out += "<span onclick='ui.toggle_solve_popup("+i+")'>";
+			out += solve_time(session.solves()[i]);
+			out += "</span>";
+
+			if(i === paren_i || i === paren_j) out += ")";
 			if(i === hilight_index + length) out += "</span>";
 		}
 		return out;
@@ -102,14 +106,39 @@ var ui = function() {
 		toggle($('options'));
 		toggle($('gray_out')); 
 	}
-	
-	function highlight(start, length) {
-		if(timer.is_running()) return;
-		t(times_label, to_times_list(start, length - 1));
+
+	function toggle_solve_popup(index) {
+		if(index !== null) {
+			$('solve_popup_index').innerHTML = index;
+			$('solve_popup_time').innerHTML = solve_time(session.solves()[index]);
+			$('solve_popup_scramble').innerHTML = session.solves()[index]['scramble'];
+			$('solve_popup_p2').onclick = function() { session.toggle_plus_two(index); };
+			$('solve_popup_dnf').onclick = function() { session.toggle_dnf(index); };
+			$('solve_popup_del').onclick = function() { ui.del(index); toggle_popup(); };
+		}
+		toggle($('solve_popup'));
+		toggle($('gray_out'));
 	}
 
-	function hilight_current(length) {
-		highlight(session.length() - length, length);
+	function toggle_popup() {
+		if(is_visible($('options'))) toggle($('options'));
+		else if(is_visible($('solve_popup'))) {
+			toggle($('solve_popup'));
+			update_stats();
+		}
+		toggle($('gray_out'));
+	}
+	
+	function highlight(start, length, paren_i, paren_j) {
+		if(timer.is_running()) return;
+		if(paren_i === null || paren_j === null) paren_i = paren_j = -1;
+		t(times_label, to_times_list(start, length - 1, paren_i, paren_j));
+	}
+
+	function hilight_current(length, paren_i, paren_j) {
+		if(timer.is_running()) return;
+		if(paren_i === null || paren_j === null) paren_i = paren_j = -1;
+		highlight(session.length() - length, length, paren_i, paren_j);
 	}
 
 	function key_down(ev) {
@@ -119,7 +148,7 @@ var ui = function() {
 	function key_up(ev) {
 		if(ev.keyCode === 27)
 		{
-			if(is_visible($('options')))
+			if(is_visible($('gray_out')))
 			{
 				toggle_options();
 				return;
@@ -129,7 +158,7 @@ var ui = function() {
 				return;
 			}
 		}
-		if(is_visible($('options'))) return;
+		if(is_visible($('gray_out'))) return;
 		timer.trigger_up(ev.keyCode === 32);
 	}
 
@@ -161,11 +190,11 @@ var ui = function() {
 		update_stats();
 	},
 
+	toggle_solve_popup: toggle_solve_popup,
 	
 	del: function(index) {
 		if(timer.is_running()) return;
 		session.del(index);
-		t(times_label, to_times_list(null, null));
 		update_stats();
 	},
 
@@ -192,7 +221,7 @@ var ui = function() {
 	},
 
 	render_body: function() {
-		var out = '<div id="left"><div id="info"></div>'+
+		document.body.innerHTML = '<div id="left"><div id="info"></div>'+
               '<div id="timer_label">0.00</div>'+
               '<div class="hide_running" id="scramble_label"></div>'+
 							'<div id="penalty" class="a hide_running">that time was: <span id="p2">+2</span> <span id="dnf">DNF</span></div>'+
@@ -205,15 +234,24 @@ var ui = function() {
               '<div id="options_label" class="a"><span>options</span></div></div></div>'+
 
               '<div id="right"><div id="times_label" class="hide_running a"></div></div>'+
-              '<div id="options" style="display: none;"><h2 style="margin: 0; padding: 0">options</h2>'+
+
+							'<div id="options" style="display: none;"><h2 style="margin: 0; padding: 0">options</h2>'+
               '<p><select id="scramble_menu"></select></p>'+
               '<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/></p>'+
               '<p><input type="checkbox" id="use_inspection"><label for="use_inspection">use inspection</label>'+
               '<h3 style="margin: 0; padding: 0">session</h3>'+
               '<p><input type="submit" id="save_btn" value="save" /> <input type="submit" id="load_btn" value="load" /></p>'+
               '<span class="a"><span id="close_options">close</span></span></div>'+
-              '<div id="gray_out" style="display: none;"></div>';
-		document.body.innerHTML = out;
+
+							'<div id="solve_popup" style="display: none;">'+
+							'Solve <span id="solve_popup_index"></span>'+
+							'<br /><span id="solve_popup_time"></span>'+
+							'<br /><span id="solve_popup_scramble"></span>'+
+							'<br /><span class="a">'+
+							'<span id="solve_popup_p2">+2</span> <span id="solve_popup_dnf">DNF</span> <span id="solve_popup_del">delete</span>'+
+							'</span></div>'+
+
+							'<div id="gray_out" style="display: none;"></div>';
 	},
 
 	init: function() {
@@ -226,19 +264,25 @@ var ui = function() {
 		options_label = $('options_label');
 		to_hide = document.getElementsByClassName("hide_running");
 
-		$('p2').onclick = function() { session.toggle_plus_two(); update_stats(); t(timer_label, solve_time(session.last())); };
-		$('dnf').onclick = function() { session.toggle_dnf(); update_stats(); t(timer_label, solve_time(session.last())); };
+		$('p2').onclick = function() { session.toggle_plus_two(null); update_stats(); t(timer_label, solve_time(session.last())); };
+		$('dnf').onclick = function() { session.toggle_dnf(null); update_stats(); t(timer_label, solve_time(session.last())); };
 
-		$('c_a_5').onclick = function() { hilight_current(5); };
-		$('b_a_5').onclick = function() { var index = session.best_average(5)['index']; highlight(index, 5); };
-		$('c_a_12').onclick = function() { hilight_current(12); };
-		$('b_a_12').onclick = function() { var index = session.best_average(12)['index']; highlight(index, 12); };
-		$('s_a').onclick = function() { hilight_current(session.length()); };
-		$('s_m').onclick = function() { hilight_current(session.length()); };
+		$('c_a_5').onclick = function() { hilight_current(5, null, null); };
+		$('b_a_5').onclick = function() {
+			var a = session.best_average(5, true);
+			highlight(a['index'], 5, a['best_single_index'], a['worst_single_index']);
+		};
+		$('c_a_12').onclick = function() { hilight_current(12, null, null); };
+		$('b_a_12').onclick = function() {
+			var a = session.best_average(12, true);
+			highlight(a['index'], 12, a['best_single_index'], a['worst_single_index']);
+		};
+		$('s_a').onclick = function() { hilight_current(session.length(), null, null); };
+		$('s_m').onclick = function() { hilight_current(session.length(), null, null); };
 
 		$('options_label').onclick = toggle_options;
 		$('close_options').onclick = toggle_options;
-		$('gray_out').onclick = toggle_options;
+		$('gray_out').onclick = toggle_popup;
 		$('scramble_menu').onchange = function(s) { scramble_manager.set($('scramble_menu').selectedIndex); next_scramble(); };
 		$('use_inspection').onchange = timer.toggle_inspection;
 		$('load_btn').onclick = session.save;
