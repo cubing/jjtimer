@@ -257,7 +257,7 @@ var ui = function() {
               '<p><input type="checkbox" id="use_inspection"><label for="use_inspection">use inspection</label>'+
               '<h3 style="margin: 0; padding: 0">session</h3>'+
               '<p><input type="submit" id="save_btn" value="save" /> <input type="submit" id="load_btn" value="load" /></p>'+
-							'<p><input type="checkbox" id="auto_save"><label for="auto_save">automatically save/load session</label></p>'+
+              '<p><input type="checkbox" id="auto_save"><label for="auto_save">automatically save/load session</label></p>'+
               '<span class="a"><span id="close_options">close</span></span></div>'+
 
               '<div id="solve_popup" style="display: none;">'+
