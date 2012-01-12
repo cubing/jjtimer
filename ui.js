@@ -264,8 +264,16 @@ var ui = function() {
 		options_label = $('options_label');
 		to_hide = document.getElementsByClassName("hide_running");
 
-		$('p2').onclick = function() { session.toggle_plus_two(null); update_stats(); t(timer_label, solve_time(session.last())); };
-		$('dnf').onclick = function() { session.toggle_dnf(null); update_stats(); t(timer_label, solve_time(session.last())); };
+		$('p2').onclick = function() {
+			session.toggle_plus_two(null);
+			update_stats();
+			t(timer_label, solve_time(session.last()));
+		};
+		$('dnf').onclick = function() {
+			session.toggle_dnf(null);
+			update_stats();
+			t(timer_label, solve_time(session.last()));
+		};
 
 		$('c_a_5').onclick = function() { hilight_current(5, null, null); };
 		$('b_a_5').onclick = function() {
@@ -283,7 +291,10 @@ var ui = function() {
 		$('options_label').onclick = toggle_options;
 		$('close_options').onclick = toggle_options;
 		$('gray_out').onclick = toggle_popup;
-		$('scramble_menu').onchange = function(s) { scramble_manager.set($('scramble_menu').selectedIndex); next_scramble(); };
+		$('scramble_menu').onchange = function(s) {
+			scramble_manager.set($('scramble_menu').selectedIndex);
+			next_scramble();
+		};
 		$('use_inspection').onchange = timer.toggle_inspection;
 		$('load_btn').onclick = session.save;
 		$('load_btn').onclick = function() { session.load(); update_stats(); };
