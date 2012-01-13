@@ -13,6 +13,7 @@ function is_visible(e) { return e.style.display !== "none"; }
 var ui = function() {
 	var timer_label, scramble_label, stats_label, options_label, to_hide;
 	var update_timer, inspection_timer, inspection_count = 15;
+	var config;
 
 	function human_time(time) {
 		if(time < 0) return "DNF";
@@ -81,10 +82,12 @@ var ui = function() {
 		for(var i = 0; i < session.length(); ++i)
 		{
 			if(i != 0) out += ", ";
-			if(i === hilight_index) out += "<span class='h'>";
+			if(i === hilight_index) out += "<span class='h' onclick='ui.toggle_avg_popup("+hilight_index+", "+(hilight_index + length)+")'>";
 			if(i === paren_i || i === paren_j) out += "(";
 
-			out += "<span onclick='ui.toggle_solve_popup("+i+")'>";
+			if(hilight_index !== -1 && i >= hilight_index)
+				out += "<span>";
+			else out += "<span onclick='ui.toggle_solve_popup("+i+")'>";
 			out += solve_time(session.solves()[i]);
 			out += "</span>";
 
@@ -109,14 +112,38 @@ var ui = function() {
 
 	function toggle_solve_popup(index) {
 		if(index !== null) {
-			$('solve_popup_index').innerHTML = index;
+			$('solve_popup_index').innerHTML = index + 1;
 			$('solve_popup_time').innerHTML = solve_time(session.solves()[index]);
 			$('solve_popup_scramble').innerHTML = session.solves()[index]['scramble'];
-			$('solve_popup_p2').onclick = function() { session.toggle_plus_two(index); };
-			$('solve_popup_dnf').onclick = function() { session.toggle_dnf(index); };
-			$('solve_popup_del').onclick = function() { ui.del(index); toggle_popup(); };
+			$('solve_popup_p2').onclick = function() {
+				session.toggle_plus_two(index);
+				$('solve_popup_time').innerHTML = solve_time(session.solves()[index]);
+			};
+			$('solve_popup_dnf').onclick = function() {
+				session.toggle_dnf(index);
+				$('solve_popup_time').innerHTML = solve_time(session.solves()[index]);
+			};
+			$('solve_popup_del').onclick = function() {
+				ui.del(index);
+				toggle_popup();
+			};
 		}
 		toggle($('solve_popup'));
+		toggle($('gray_out'));
+	}
+
+	function toggle_avg_popup(index, end) {
+		if(index !== null) {
+			var out = "";
+			for(var i = index; i < end+1; i++)
+			{
+				out += solve_time(session.solves()[i]) + " ";
+				out += session.solves()[i]['scramble'] + "<br />";
+			}
+			$('avg_popup_list').innerHTML = out;
+			$('avg_popup_header').innerHTML = "solves " + (index+1) + " - " + (end+1);
+		}
+		toggle($('avg_popup'));
 		toggle($('gray_out'));
 	}
 
@@ -126,6 +153,8 @@ var ui = function() {
 			toggle($('solve_popup'));
 			update_stats();
 		}
+		else if(is_visible($('avg_popup')))
+			toggle($('avg_popup'));
 		toggle($('gray_out'));
 	}
 	
@@ -150,7 +179,7 @@ var ui = function() {
 		{
 			if(is_visible($('gray_out')))
 			{
-				toggle_options();
+				toggle_popup();
 				return;
 			}
 			else if(!timer.is_running()) {
@@ -191,6 +220,7 @@ var ui = function() {
 	},
 
 	toggle_solve_popup: toggle_solve_popup,
+	toggle_avg_popup: toggle_avg_popup,
 	
 	del: function(index) {
 		if(timer.is_running()) return;
@@ -220,11 +250,17 @@ var ui = function() {
 		}, 1000);
 	},
 
+	auto_save: function() {
+		if(config['auto_save'])
+			session.save();
+		localStorage.setItem("ui.config", JSON.stringify(config));
+	},
+
 	render_body: function() {
 		document.body.innerHTML = '<div id="left"><div id="info"></div>'+
               '<div id="timer_label">0.00</div>'+
               '<div class="hide_running" id="scramble_label"></div>'+
-							'<div id="penalty" class="a hide_running">that time was: <span id="p2">+2</span> <span id="dnf">DNF</span></div>'+
+              '<div id="penalty" class="a hide_running">that time was: <span id="p2">+2</span> <span id="dnf">DNF</span></div>'+
               '<div id="bottom_bar" class="hide_running"><div id="stats_label">'+
               'times: <span id="s_t">0</span><br />'+
               '<span id="stats_link" class="a">'+
@@ -234,24 +270,31 @@ var ui = function() {
               '<div id="options_label" class="a"><span>options</span></div></div></div>'+
 
               '<div id="right"><div id="times_label" class="hide_running a"></div></div>'+
-
-							'<div id="options" style="display: none;"><h2 style="margin: 0; padding: 0">options</h2>'+
+              '<div id="options" style="display: none;"><h2>options</h2>'+
               '<p><select id="scramble_menu"></select></p>'+
               '<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/></p>'+
+              '<h3>timer</h3>'+
               '<p><input type="checkbox" id="use_inspection"><label for="use_inspection">use inspection</label>'+
-              '<h3 style="margin: 0; padding: 0">session</h3>'+
+              '<h3>session</h3>'+
               '<p><input type="submit" id="save_btn" value="save" /> <input type="submit" id="load_btn" value="load" /></p>'+
+              '<p><input type="checkbox" id="auto_save"><label for="auto_save">automatically save/load session</label></p>'+
               '<span class="a"><span id="close_options">close</span></span></div>'+
 
-							'<div id="solve_popup" style="display: none;">'+
-							'Solve <span id="solve_popup_index"></span>'+
-							'<br /><span id="solve_popup_time"></span>'+
-							'<br /><span id="solve_popup_scramble"></span>'+
-							'<br /><span class="a">'+
-							'<span id="solve_popup_p2">+2</span> <span id="solve_popup_dnf">DNF</span> <span id="solve_popup_del">delete</span>'+
-							'</span></div>'+
+              '<div id="solve_popup" style="display: none;">'+
+              '<h3>solve <span id="solve_popup_index"></span></h3>'+
+              '<span id="solve_popup_time"></span>'+
+              '<br /><span id="solve_popup_scramble"></span>'+
+              '<br /><span class="a">'+
+              '<span id="solve_popup_p2">+2</span> <span id="solve_popup_dnf">DNF</span> <span id="solve_popup_del">delete</span>'+
+              '<span id="solve_popup_close">close</span>'+
+              '</span></div>'+
 
-							'<div id="gray_out" style="display: none;"></div>';
+              '<div id="avg_popup" style="display: none;">'+
+              '<h3 id="avg_popup_header"></h3>'+
+              '<span id="avg_popup_list"></span>'+
+              '</div>'+
+
+              '<div id="gray_out" style="display: none;"></div>';
 	},
 
 	init: function() {
@@ -264,8 +307,16 @@ var ui = function() {
 		options_label = $('options_label');
 		to_hide = document.getElementsByClassName("hide_running");
 
-		$('p2').onclick = function() { session.toggle_plus_two(null); update_stats(); t(timer_label, solve_time(session.last())); };
-		$('dnf').onclick = function() { session.toggle_dnf(null); update_stats(); t(timer_label, solve_time(session.last())); };
+		$('p2').onclick = function() {
+			session.toggle_plus_two(null);
+			update_stats();
+			t(timer_label, solve_time(session.last()));
+		};
+		$('dnf').onclick = function() {
+			session.toggle_dnf(null);
+			update_stats();
+			t(timer_label, solve_time(session.last()));
+		};
 
 		$('c_a_5').onclick = function() { hilight_current(5, null, null); };
 		$('b_a_5').onclick = function() {
@@ -283,11 +334,20 @@ var ui = function() {
 		$('options_label').onclick = toggle_options;
 		$('close_options').onclick = toggle_options;
 		$('gray_out').onclick = toggle_popup;
-		$('scramble_menu').onchange = function(s) { scramble_manager.set($('scramble_menu').selectedIndex); next_scramble(); };
-		$('use_inspection').onchange = timer.toggle_inspection;
-		$('load_btn').onclick = session.save;
+		$('scramble_menu').onchange = function(s) {
+			scramble_manager.set($('scramble_menu').selectedIndex);
+			next_scramble();
+		};
+		$('use_inspection').onchange = function() {
+			timer.toggle_inspection();
+			config['use_inspection'] = $('use_inspection').checked;
+		}
+		$('save_btn').onclick = session.save;
 		$('load_btn').onclick = function() { session.load(); update_stats(); };
-	
+		$('auto_save').onchange = function() { config['auto_save'] = $('auto_save').checked;  };
+
+		$('solve_popup_close').onclick = toggle_popup;
+
 		scramble_manager.add_default();
 		populate_scramblers_menu();
 
@@ -295,8 +355,24 @@ var ui = function() {
 		
 		document.onkeydown = key_down;	
 		document.onkeyup = key_up;
+
+		if(localStorage)
+			config = JSON.parse(localStorage.getItem("ui.config"));
+		if(config == null)
+			config = {};
+
+		if(config['auto_save']) {
+			$('auto_save').checked = true;
+			session.load();
+			update_stats();
+		}
+		if(config['use_inspection']) {
+			$('use_inspection').checked = true;
+			timer.toggle_inspection();
+		}
 	}
 	};
 }();
 window['ui'] = ui;
 window.onload = ui.init;
+window.onbeforeunload = ui.auto_save;
