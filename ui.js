@@ -110,7 +110,7 @@ var ui = function() {
 
 	function toggle_solve_popup(index) {
 		if(index !== null) {
-			$('solve_popup_index').innerHTML = index;
+			$('solve_popup_index').innerHTML = index + 1;
 			$('solve_popup_time').innerHTML = solve_time(session.solves()[index]);
 			$('solve_popup_scramble').innerHTML = session.solves()[index]['scramble'];
 			$('solve_popup_p2').onclick = function() {
@@ -250,19 +250,19 @@ var ui = function() {
               '<div id="options_label" class="a"><span>options</span></div></div></div>'+
 
               '<div id="right"><div id="times_label" class="hide_running a"></div></div>'+
-
-              '<div id="options" style="display: none;"><h2 style="margin: 0; padding: 0">options</h2>'+
+              '<div id="options" style="display: none;"><h2>options</h2>'+
               '<p><select id="scramble_menu"></select></p>'+
               '<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/></p>'+
+              '<h3>timer</h3>'+
               '<p><input type="checkbox" id="use_inspection"><label for="use_inspection">use inspection</label>'+
-              '<h3 style="margin: 0; padding: 0">session</h3>'+
+              '<h3>session</h3>'+
               '<p><input type="submit" id="save_btn" value="save" /> <input type="submit" id="load_btn" value="load" /></p>'+
               '<p><input type="checkbox" id="auto_save"><label for="auto_save">automatically save/load session</label></p>'+
               '<span class="a"><span id="close_options">close</span></span></div>'+
 
               '<div id="solve_popup" style="display: none;">'+
-              'Solve <span id="solve_popup_index"></span>'+
-              '<br /><span id="solve_popup_time"></span>'+
+              '<h3>solve <span id="solve_popup_index"></span></h3>'+
+              '<span id="solve_popup_time"></span>'+
               '<br /><span id="solve_popup_scramble"></span>'+
               '<br /><span class="a">'+
               '<span id="solve_popup_p2">+2</span> <span id="solve_popup_dnf">DNF</span> <span id="solve_popup_del">delete</span>'+
