@@ -85,7 +85,7 @@ var ui = function() {
 			if(i === hilight_index) out += "<span class='h' onclick='ui.toggle_avg_popup("+hilight_index+", "+(hilight_index + length)+")'>";
 			if(i === paren_i || i === paren_j) out += "(";
 
-			if(hilight_index !== -1 && i > hilight_index)
+			if(hilight_index !== -1 && i >= hilight_index)
 				out += "<span>";
 			else out += "<span onclick='ui.toggle_solve_popup("+i+")'>";
 			out += solve_time(session.solves()[i]);
