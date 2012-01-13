@@ -21,6 +21,6 @@ output.gsub!(/<script type="text\/javascript" src="[^"]+"><\/script>\n/, "")
 output.gsub!(/<\/head>/, "<script type='text/javascript'>" + merge + "</script></head>")
 output.gsub!(/<link rel="stylesheet" href="css\/ui.css" \/>/, "<style type='text/css'>\n#{File.read("css/ui.css").chomp}</style>")
 
-File.open("index.html", "w") do |out|
+File.open("release.html", "w") do |out|
 	out.print output
 end
