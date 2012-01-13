@@ -135,13 +135,13 @@ var ui = function() {
 	function toggle_avg_popup(index, end) {
 		if(index !== null) {
 			var out = "";
-			alert(index);alert(end);
 			for(var i = index; i < end+1; i++)
 			{
 				out += solve_time(session.solves()[i]) + " ";
 				out += session.solves()[i]['scramble'] + "<br />";
 			}
 			$('avg_popup_list').innerHTML = out;
+			$('avg_popup_header').innerHTML = "solves " + (index+1) + " - " + (end+1);
 		}
 		toggle($('avg_popup'));
 		toggle($('gray_out'));
@@ -290,6 +290,7 @@ var ui = function() {
               '</span></div>'+
 
               '<div id="avg_popup" style="display: none;">'+
+              '<h3 id="avg_popup_header"></h3>'+
               '<span id="avg_popup_list"></span>'+
               '</div>'+
 
