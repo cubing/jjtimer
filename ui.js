@@ -266,6 +266,7 @@ var ui = function() {
               '<br /><span id="solve_popup_scramble"></span>'+
               '<br /><span class="a">'+
               '<span id="solve_popup_p2">+2</span> <span id="solve_popup_dnf">DNF</span> <span id="solve_popup_del">delete</span>'+
+              '<span id="solve_popup_close">close</span>'+
               '</span></div>'+
 
               '<div id="gray_out" style="display: none;"></div>';
@@ -319,7 +320,9 @@ var ui = function() {
 		$('save_btn').onclick = session.save;
 		$('load_btn').onclick = function() { session.load(); update_stats(); };
 		$('auto_save').onchange = function() { config['auto_save'] = $('auto_save').checked;  };
-	
+
+		$('solve_popup_close').onclick = toggle_popup;
+
 		scramble_manager.add_default();
 		populate_scramblers_menu();
 

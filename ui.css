@@ -80,6 +80,11 @@ h2, h3 {
 
 #solve_popup {
 	line-height: 150%;
+	max-width: 40%;
+}
+
+#solve_popup_close {
+	float: right;
 }
 
 .a span {
