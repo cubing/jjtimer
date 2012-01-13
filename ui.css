@@ -63,7 +63,7 @@ h2, h3 {
 	display: none;
 }
 
-#options, #solve_popup {
+#options, #solve_popup, #avg_popup {
 	z-index: 6;
 	position: absolute;
 	background-color: #eee;
@@ -90,6 +90,10 @@ h2, h3 {
 .a span {
 	color: #36c;
 	cursor: pointer;
+}
+
+.a span:hover {
+	text-decoration: underline;
 }
 
 .g, .g span {

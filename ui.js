@@ -82,10 +82,12 @@ var ui = function() {
 		for(var i = 0; i < session.length(); ++i)
 		{
 			if(i != 0) out += ", ";
-			if(i === hilight_index) out += "<span class='h'>";
+			if(i === hilight_index) out += "<span class='h' onclick='ui.toggle_avg_popup("+hilight_index+", "+(hilight_index + length)+")'>";
 			if(i === paren_i || i === paren_j) out += "(";
 
-			out += "<span onclick='ui.toggle_solve_popup("+i+")'>";
+			if(hilight_index !== -1 && i > hilight_index)
+				out += "<span>";
+			else out += "<span onclick='ui.toggle_solve_popup("+i+")'>";
 			out += solve_time(session.solves()[i]);
 			out += "</span>";
 
@@ -130,12 +132,29 @@ var ui = function() {
 		toggle($('gray_out'));
 	}
 
+	function toggle_avg_popup(index, end) {
+		if(index !== null) {
+			var out = "";
+			alert(index);alert(end);
+			for(var i = index; i < end+1; i++)
+			{
+				out += solve_time(session.solves()[i]) + " ";
+				out += session.solves()[i]['scramble'] + "<br />";
+			}
+			$('avg_popup_list').innerHTML = out;
+		}
+		toggle($('avg_popup'));
+		toggle($('gray_out'));
+	}
+
 	function toggle_popup() {
 		if(is_visible($('options'))) toggle($('options'));
 		else if(is_visible($('solve_popup'))) {
 			toggle($('solve_popup'));
 			update_stats();
 		}
+		else if(is_visible($('avg_popup')))
+			toggle($('avg_popup'));
 		toggle($('gray_out'));
 	}
 	
@@ -201,6 +220,7 @@ var ui = function() {
 	},
 
 	toggle_solve_popup: toggle_solve_popup,
+	toggle_avg_popup: toggle_avg_popup,
 	
 	del: function(index) {
 		if(timer.is_running()) return;
@@ -268,6 +288,10 @@ var ui = function() {
               '<span id="solve_popup_p2">+2</span> <span id="solve_popup_dnf">DNF</span> <span id="solve_popup_del">delete</span>'+
               '<span id="solve_popup_close">close</span>'+
               '</span></div>'+
+
+              '<div id="avg_popup" style="display: none;">'+
+              '<span id="avg_popup_list"></span>'+
+              '</div>'+
 
               '<div id="gray_out" style="display: none;"></div>';
 	},
