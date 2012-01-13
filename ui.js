@@ -179,7 +179,7 @@ var ui = function() {
 		{
 			if(is_visible($('gray_out')))
 			{
-				toggle_options();
+				toggle_popup();
 				return;
 			}
 			else if(!timer.is_running()) {
