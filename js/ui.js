@@ -267,7 +267,7 @@ var ui = function() {
               'current average: <span id="c_a_5"></span>, <span id="c_a_12"></span>, <span id="c_a_100"></span><br />'+
               'best average: <span id="b_a_5"></span>, <span id="b_a_12"></span>, <span id="b_a_100"></span><br />'+
               'session average: <span id="s_a"></span>, mean: <span id="s_m"></span></span></div>'+
-              '<span class="a"><span id="options_label">options</span></span></div></div>'+
+              '<span class="a"><span id="toggle_stats">hide stats</span> | <span id="options_label">options</span></span></div></div>'+
 
               '<div id="right"><div id="times_label" class="hide_running a"></div></div>'+
               '<div id="options" style="display: none;"><h2>options</h2>'+
@@ -331,6 +331,14 @@ var ui = function() {
 		};
 		$('s_a').onclick = function() { hilight_current(session.length(), null, null); };
 		$('s_m').onclick = function() { hilight_current(session.length(), null, null); };
+
+		$('toggle_stats').onclick = function() {
+			toggle($('stats_link'));
+			if(is_visible($('stats_link')))
+				$('toggle_stats').innerHTML = "hide stats";
+			else
+				$('toggle_stats').innerHTML = "show stats";
+		};
 
 		$('options_label').onclick = toggle_options;
 		$('close_options').onclick = toggle_options;
