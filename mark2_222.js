@@ -1,4 +1,4 @@
-load_external("http://www.cubing.net/mark2-test/inc/raphael-min.js")
+load_external("http://www.cubing.net/mark2/inc/lib/raphael-min.js")
 load_external("http://www.cubing.net/mark2/inc/scramblers/scramble_222.js")
 
 var mark2_222 = {
