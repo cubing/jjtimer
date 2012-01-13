@@ -17,16 +17,16 @@ var ui = function() {
 
 	function human_time(time) {
 		if(time < 0) return "DNF";
-		var useMilli = false;
-		time = Math.round(time / (useMilli ? 1 : 10));
-		var bits = time % (useMilli ? 1000 : 100);
-		time = (time - bits) / (useMilli ? 1000 : 100);
+
+		time = Math.round(time / (config['use_milli'] ? 1 : 10));
+		var bits = time % (config['use_milli'] ? 1000 : 100);
+		time = (time - bits) / (config['use_milli'] ? 1000 : 100);
 		var secs = time % 60;
 		var mins = ((time - secs) / 60) % 60;
 		var hours = (time - secs - 60 * mins) / 3600;
 		var s = "" + bits;
 		if (bits < 10) {s = "0" + s;}
-		if (bits < 100 && useMilli) {s = "0" + s;}
+		if (bits < 100 && config['use_milli']) {s = "0" + s;}
 		s = secs + "." + s;
 		if (secs < 10 && (mins > 0 || hours > 0)) {s = "0" + s;}
 		if (mins > 0 || hours > 0) {s = mins + ":" + s;}
@@ -267,7 +267,7 @@ var ui = function() {
               'current average: <span id="c_a_5"></span>, <span id="c_a_12"></span>, <span id="c_a_100"></span><br />'+
               'best average: <span id="b_a_5"></span>, <span id="b_a_12"></span>, <span id="b_a_100"></span><br />'+
               'session average: <span id="s_a"></span>, mean: <span id="s_m"></span></span></div>'+
-							'<span class="a"><span id="options_label">options</span></span></div></div>'+
+              '<span class="a"><span id="options_label">options</span></span></div></div>'+
 
               '<div id="right"><div id="times_label" class="hide_running a"></div></div>'+
               '<div id="options" style="display: none;"><h2>options</h2>'+
@@ -275,6 +275,7 @@ var ui = function() {
               '<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/></p>'+
               '<h3>timer</h3>'+
               '<p><input type="checkbox" id="use_inspection"><label for="use_inspection">use inspection</label>'+
+              '<input type="checkbox" id="use_milli"><label for="use_milli">use milliseconds</label></p>'+
               '<h3>session</h3>'+
               '<p><input type="submit" id="save_btn" value="save" /> <input type="submit" id="load_btn" value="load" /></p>'+
               '<p><input type="checkbox" id="auto_save"><label for="auto_save">automatically save/load session</label></p>'+
@@ -342,6 +343,11 @@ var ui = function() {
 			timer.toggle_inspection();
 			config['use_inspection'] = $('use_inspection').checked;
 		}
+		$('use_milli').onchange = function() {
+			config['use_milli'] = $('use_milli').checked;
+			update_stats();
+			t(timer_label, human_time(timer.current_time()));
+		}
 		$('save_btn').onclick = session.save;
 		$('load_btn').onclick = function() { session.load(); update_stats(); };
 		$('auto_save').onchange = function() { config['auto_save'] = $('auto_save').checked;  };
@@ -370,6 +376,8 @@ var ui = function() {
 			$('use_inspection').checked = true;
 			timer.toggle_inspection();
 		}
+
+		$('use_milli').checked = config['use_milli'];
 	}
 	};
 }();
