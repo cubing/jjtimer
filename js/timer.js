@@ -54,7 +54,7 @@ var timer = function() {
 			return Running === state;
 		},
 		
-		current_time: function() {
+		get_time: function() {
 			return solve_time || new Date().getTime() - start_time.getTime();
 		}
 	};

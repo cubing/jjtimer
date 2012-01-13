@@ -205,12 +205,12 @@ var ui = function() {
 	},
 
 	update_running: function() {
-		t(timer_label, human_time(timer.current_time()));
+		t(timer_label, human_time(timer.get_time()));
 	},
 
 	on_stop: function() {
 		clearInterval(update_timer);
-		t(timer_label, human_time(timer.current_time()));
+		t(timer_label, human_time(timer.get_time()));
 		for(var i = 0; i < to_hide.length; i++)
 		{
 			to_hide[i].className = to_hide[i].className.substr(0, to_hide[i].className.length-2);
@@ -346,7 +346,7 @@ var ui = function() {
 		$('use_milli').onchange = function() {
 			config['use_milli'] = $('use_milli').checked;
 			update_stats();
-			t(timer_label, human_time(timer.current_time()));
+			t(timer_label, human_time(timer.get_time()));
 		}
 		$('save_btn').onclick = session.save;
 		$('load_btn').onclick = function() { session.load(); update_stats(); };
