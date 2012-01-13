@@ -44,9 +44,8 @@ var timer = function() {
 			{
 				state = Inspecting;
 				ui.on_inspection();
-				return;
 			}
-			if(Ready === state && ev) {
+			else if(Ready === state && ev) {
 				set_running();
 			}
 		},

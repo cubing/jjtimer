@@ -3,7 +3,7 @@ var session = function() {
 
 	function get_trim_count(n) {
 		return Math.ceil((n/10)/2);	
-	};
+	}
 
 	function solve_sort(a, b){
 		if(a['DNF']) return -1;
@@ -11,37 +11,9 @@ var session = function() {
 
 		var at = a['time'], bt = b['time'];
 		return at - bt;
-	};
+	}
 
-	return {
-	solves: function() { return solves; },
-	length: function() { return solves.length; },	
-	last: function() { return solves[solves.length - 1]; },
-
-	reset: function() {
-		solves = [];
-	},
-
-	add: function(time, scramble) {
-		solves.push({'time': time, 'scramble': scramble, 'DNF': false, 'plus_two': false});
-	},
-
-	del: function(index) {
-		solves.splice(index, 1);
-	},
-
-	toggle_dnf: function(index) {
-		if(index === null) index = solves.length - 1;
-		solves[index]['DNF'] = !solves[index]['DNF']; 
-	},
-
-	toggle_plus_two: function(index) {
-		if(index === null) index = solves.length - 1;
-		solves[index]['plus_two'] = !solves[index]['plus_two'];
-		solves[index]['time'] += solves[index]['plus_two'] ? 2000 : -2000;
-	},
-
-	mean: function() {
+	function mean() {
 		if(solves.length < 1) return -1;
 
 		var sum = 0, dnfs = 0;
@@ -53,9 +25,9 @@ var session = function() {
 		
 		if(solves.length - dnfs === 0) return -1;
 		return sum / (solves.length - dnfs);
-	},
+	}
 
-	average: function(start, length) {
+	function average(start, length) {
 		if(solves.length < 3) return -1;
 
 		start = start || 0;
@@ -79,24 +51,56 @@ var session = function() {
 			sum += copy[i]['time'];
 		}
 		return sum / (length - (2 * trim));
+	}
+
+	return {
+	solves: function() { return solves; },
+	length: function() { return solves.length; },
+	last: function() { return solves[solves.length - 1]; },
+
+	reset: function() {
+		solves = [];
 	},
+
+	add: function(time, scramble) {
+		solves.push({'time': time, 'scramble': scramble});
+	},
+
+	del: function(index) {
+		solves.splice(index, 1);
+	},
+
+	toggle_dnf: function(index) {
+		if(index === null) index = solves.length - 1;
+		solves[index]['DNF'] = !solves[index]['DNF'];
+	},
+
+	toggle_plus_two: function(index) {
+		if(index === null) index = solves.length - 1;
+		solves[index]['plus_two'] = !solves[index]['plus_two'];
+		solves[index]['time'] += solves[index]['plus_two'] ? 2000 : -2000;
+	},
+
+	mean: mean,
+
+	average: average,
 	
 	current_average: function(length) {
-		return session.average(solves.length - length, length);
+		return average(solves.length - length, length);
 	},
 
 	session_average: function() {
-		return session.average(0, solves.length);
+		return average(0, solves.length);
 	},
 
 	session_mean: function() {
-		return session.mean(0, solves.length);
+		return mean(0, solves.length);
 	},
 
 	best_average: function(length, find_best_singles) {
 		var best = -1, best_index = -1;
 		for(var i = 0; i < solves.length - (length - 1); i++) {
-			var a = session.average(i, length);
+			var a = average(i, length);
 			if(a < best || -1 === best) {
 				best = a;
 				best_index = i;
