@@ -398,8 +398,10 @@ var ui = function() {
 
 		ui.reset();
 		
-		document.onkeydown = key_down;	
-		document.onkeyup = key_up;
+		shortcut_manager.init();
+		shortcut_manager.add_key_down(32, {'func': key_down});
+		shortcut_manager.add_key_up(32, {'func': key_up});
+		shortcut_manager.add_key_up(27, {'func': key_up});
 
 		if(localStorage)
 			config = JSON.parse(localStorage.getItem("ui.config"));
