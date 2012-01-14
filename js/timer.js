@@ -25,6 +25,10 @@ var timer = function() {
 			session.reset();
 		},
 
+		use_inspection: function() {
+			return use_inspection;
+		},
+
 		toggle_inspection: function() {
 			use_inspection = !use_inspection;
 		},

@@ -50,7 +50,15 @@ var ui = function() {
 	}
 
 	function on_inspection() {
-		t(timer_label, inspection_count);
+		if(inspection_count > 0) {
+			t(timer_label, inspection_count);
+		}
+		else if(inspection_count > -2) {
+			t(timer_label, "+2");
+		}
+		else {
+			t(timer_label, "DNF");
+		}
 		inspection_count -= 1;
 		inspection_timer = setTimeout(on_inspection, 1000);
 	}
@@ -196,7 +204,6 @@ var ui = function() {
 
 	on_running: function() {
 		clearTimeout(inspection_timer);
-		inspection_count = 15;
 		update_timer = setInterval(ui.update_running, 10);
 		for(var i = 0; i < to_hide.length; i++)
 		{
@@ -211,6 +218,15 @@ var ui = function() {
 	on_stop: function() {
 		clearInterval(update_timer);
 		t(timer_label, human_time(timer.get_time()));
+		if(timer.use_inspection() && inspection_count < 0) {
+			if(inspection_count >= -2) {
+				session.toggle_plus_two(null);
+			}
+			else {
+				session.toggle_dnf(null);
+			}
+			inspection_count = 15;
+		}
 		for(var i = 0; i < to_hide.length; i++)
 		{
 			to_hide[i].className = to_hide[i].className.substr(0, to_hide[i].className.length-2);
