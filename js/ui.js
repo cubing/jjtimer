@@ -175,20 +175,17 @@ var ui = function() {
 	}
 
 	function key_up(ev) {
-		if(ev.keyCode === 27)
-		{
-			if(is_visible($('gray_out')))
-			{
+		if(is_visible($('gray_out'))) {
+			if(ev.keyCode === 27) {
 				toggle_popup();
-				return;
-			}
-			else if(!timer.is_running()) {
-				ui.reset();
-				return;
 			}
 		}
-		if(is_visible($('gray_out'))) return;
-		timer.trigger_up(ev.keyCode === 32);
+		else if (ev.keyCode === 27){
+			ui.reset();
+		}
+		else {
+			timer.trigger_up(ev.keyCode === 32);
+		}
 	}
 
 	return {
