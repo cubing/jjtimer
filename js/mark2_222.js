@@ -20,6 +20,13 @@ var mark2_222 = {
 	}
 };
 
-scramble_manager.add(mark2_222);
-ui.plugin_loaded("mark2_222");
+var mark2_ = {
+	name: 'mark2_222',
+
+	onload: function() {
+		scramble_manager.add(mark2_222);
+	}
+};
+
+ui.plugin_loaded(mark2_);
 

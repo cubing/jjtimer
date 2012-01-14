@@ -14,7 +14,7 @@ var ui = function() {
 
 	var timer_label, scramble_label, stats_label, options_label, to_hide;
 	var update_timer, inspection_timer, inspection_count = 15;
-	var config;
+	var config, plugins = [];
 
 	function human_time(time) {
 		if(time < 0) return "DNF";
@@ -115,10 +115,15 @@ var ui = function() {
 		}
 	}
 
-	function toggle_options() {
+	function toggle_options_popup() {
 		if(timer.is_running()) return;
 		toggle($('options'));
 		toggle($('gray_out')); 
+	}
+
+	function toggle_plugins_popup() {
+		toggle($('plugins'));
+		toggle($('gray_out'));
 	}
 
 	function toggle_solve_popup(index) {
@@ -167,6 +172,8 @@ var ui = function() {
 		}
 		else if(is_visible($('avg_popup')))
 			toggle($('avg_popup'));
+		else if(is_visible($('plugins')))
+			toggle($('plugins'));
 		toggle($('gray_out'));
 	}
 	
@@ -256,11 +263,14 @@ var ui = function() {
 		$('plugin_url').value = "";
 	},
 
-	plugin_loaded: function(name) {
-		t($('info'), "loaded " + name);
+	plugin_loaded: function(plugin) {
+		t($('plugins_load_status'), "loaded " + plugin['name']);
+		t($('plugins_list'), $('plugins_list').innerHTML + "<br />" + plugin['name']);
+		plugins[plugins.length] = plugin['name'];
+		plugin.onload();
 		populate_scramblers_menu();
 		setTimeout(function() {
-			t($('info'), "");
+			t($('plugins_load_status'), "");
 		}, 1000);
 	},
 
@@ -281,12 +291,13 @@ var ui = function() {
               'current average: <span id="c_a_5"></span>, <span id="c_a_12"></span>, <span id="c_a_100"></span><br />'+
               'best average: <span id="b_a_5"></span>, <span id="b_a_12"></span>, <span id="b_a_100"></span><br />'+
               'session average: <span id="s_a"></span>, mean: <span id="s_m"></span></span></div>'+
-              '<span class="a"><span id="toggle_stats">hide stats</span> | <span id="options_label">options</span></span></div></div>'+
+              '<span class="a"><span id="toggle_stats">hide stats</span> | <span id="options_label">options</span>'+
+              ' | <span id="plugins_label">plugins</span></span></div></div>'+
 
               '<div id="right"><div id="times_label" class="hide_running a"></div></div>'+
-              '<div id="options" style="display: none;"><h2>options</h2>'+
+
+              '<div id="options" class="popup" style="display: none;"><h2>options</h2>'+
               '<p><select id="scramble_menu"></select></p>'+
-              '<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/></p>'+
               '<h3>timer</h3>'+
               '<p><input type="checkbox" id="use_inspection"><label for="use_inspection">use inspection</label>'+
               '<input type="checkbox" id="use_milli"><label for="use_milli">use milliseconds</label></p>'+
@@ -295,7 +306,12 @@ var ui = function() {
               '<p><input type="checkbox" id="auto_save"><label for="auto_save">automatically save/load</label></p>'+
               '<span class="a"><span id="close_options">close</span></span></div>'+
 
-              '<div id="solve_popup" style="display: none;">'+
+              '<div id="plugins" class="popup" style="display: none;"><h2>plugins</h2>'+
+              '<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/> '+
+              '<span style="color: green;" id="plugins_load_status"></span></p>'+
+              '<p><span id="plugins_list"></span></p></div>'+
+
+              '<div id="solve_popup" class="popup" style="display: none;">'+
               '<h3>solve <span id="solve_popup_index"></span></h3>'+
               '<span id="solve_popup_time"></span>'+
               '<br /><span id="solve_popup_scramble"></span>'+
@@ -304,7 +320,7 @@ var ui = function() {
               '<span id="solve_popup_close">close</span>'+
               '</span></div>'+
 
-              '<div id="avg_popup" style="display: none;">'+
+              '<div id="avg_popup" class="popup" style="display: none;">'+
               '<h3 id="avg_popup_header"></h3>'+
               '<span id="avg_popup_list"></span>'+
               '</div>'+
@@ -371,8 +387,8 @@ var ui = function() {
 				$('toggle_stats').innerHTML = "show stats";
 		};
 
-		$('options_label').onclick = toggle_options;
-		$('close_options').onclick = toggle_options;
+		$('options_label').onclick = toggle_options_popup;
+		$('close_options').onclick = toggle_options_popup;
 		$('gray_out').onclick = toggle_popup;
 		$('scramble_menu').onchange = function(s) {
 			scramble_manager.set($('scramble_menu').selectedIndex);
@@ -390,6 +406,8 @@ var ui = function() {
 		$('save_btn').onclick = session.save;
 		$('load_btn').onclick = function() { session.load(); update_stats(); };
 		$('auto_save').onchange = function() { config['auto_save'] = $('auto_save').checked;  };
+
+		$('plugins_label').onclick = toggle_plugins_popup; 
 
 		$('solve_popup_close').onclick = toggle_popup;
 
