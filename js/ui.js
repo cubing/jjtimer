@@ -7,10 +7,11 @@ function load_external(url) {
 
 function $(id) { return document.getElementById(id); }
 function t(e, t) { e.innerHTML = t; }
-function toggle(e) { e.style.display = (e.style.display === "none") ? "inline" : "none"; }
-function is_visible(e) { return e.style.display !== "none"; }
 
 var ui = function() {
+	function toggle(e) { e.style.display = (e.style.display === "none") ? "inline" : "none"; }
+	function is_visible(e) { return e.style.display !== "none"; }
+
 	var timer_label, scramble_label, stats_label, options_label, to_hide;
 	var update_timer, inspection_timer, inspection_count = 15;
 	var config;
@@ -106,11 +107,13 @@ var ui = function() {
 	}
 
 	function toggle_options() {
+		if(timer.is_running()) return;
 		toggle($('options'));
 		toggle($('gray_out')); 
 	}
 
 	function toggle_solve_popup(index) {
+		if(timer.is_running()) return;
 		if(index !== null) {
 			$('solve_popup_index').innerHTML = index + 1;
 			$('solve_popup_time').innerHTML = solve_time(session.solves()[index]);
@@ -124,7 +127,7 @@ var ui = function() {
 				$('solve_popup_time').innerHTML = solve_time(session.solves()[index]);
 			};
 			$('solve_popup_del').onclick = function() {
-				ui.del(index);
+				session.del(index);
 				toggle_popup();
 			};
 		}
@@ -219,12 +222,6 @@ var ui = function() {
 	toggle_solve_popup: toggle_solve_popup,
 	toggle_avg_popup: toggle_avg_popup,
 	
-	del: function(index) {
-		if(timer.is_running()) return;
-		session.del(index);
-		update_stats();
-	},
-
 	reset: function() {
 		timer.reset();
 		next_scramble();
@@ -247,7 +244,7 @@ var ui = function() {
 		}, 1000);
 	},
 
-	auto_save: function() {
+	on_close: function() {
 		if(config['auto_save'])
 			session.save();
 		localStorage.setItem("ui.config", JSON.stringify(config));
@@ -306,30 +303,47 @@ var ui = function() {
 		to_hide = document.getElementsByClassName("hide_running");
 
 		$('p2').onclick = function() {
+			if(timer.is_running()) return;
 			session.toggle_plus_two(null);
 			update_stats();
 			t(timer_label, solve_time(session.last()));
 		};
 		$('dnf').onclick = function() {
+			if(timer.is_running()) return;
 			session.toggle_dnf(null);
 			update_stats();
 			t(timer_label, solve_time(session.last()));
 		};
 
-		$('c_a_5').onclick = function() { hilight_current(5, null, null); };
+		$('c_a_5').onclick = function() {
+			if(timer.is_running()) return;
+			hilight_current(5, null, null);
+		};
 		$('b_a_5').onclick = function() {
+			if(timer.is_running()) return;
 			var a = session.best_average(5, true);
 			highlight(a['index'], 5, a['best_single_index'], a['worst_single_index']);
 		};
-		$('c_a_12').onclick = function() { hilight_current(12, null, null); };
+		$('c_a_12').onclick = function() {
+			if(timer.is_running()) return;
+			hilight_current(12, null, null);
+		};
 		$('b_a_12').onclick = function() {
+			if(timer.is_running()) return;
 			var a = session.best_average(12, true);
 			highlight(a['index'], 12, a['best_single_index'], a['worst_single_index']);
 		};
-		$('s_a').onclick = function() { hilight_current(session.length(), null, null); };
-		$('s_m').onclick = function() { hilight_current(session.length(), null, null); };
+		$('s_a').onclick = function() {
+			if(timer.is_running()) return;
+			hilight_current(session.length(), null, null);
+		};
+		$('s_m').onclick = function() {
+			if(timer.is_running()) return;
+			hilight_current(session.length(), null, null);
+		};
 
 		$('toggle_stats').onclick = function() {
+			if(timer.is_running()) return;
 			toggle($('stats_link'));
 			if(is_visible($('stats_link')))
 				$('toggle_stats').innerHTML = "hide stats";
@@ -388,4 +402,4 @@ var ui = function() {
 }();
 window['ui'] = ui;
 window.onload = ui.init;
-window.onbeforeunload = ui.auto_save;
+window.onbeforeunload = ui.on_close;
