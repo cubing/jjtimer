@@ -50,6 +50,7 @@ var ui = function() {
 	}
 
 	function on_inspection() {
+		timer_label.style.color = "red";
 		if(inspection_count > 0) {
 			t(timer_label, inspection_count);
 		}
@@ -203,6 +204,7 @@ var ui = function() {
 	on_inspection: on_inspection,
 
 	on_running: function() {
+		timer_label.style.color = "black";
 		clearTimeout(inspection_timer);
 		update_timer = setInterval(ui.update_running, 10);
 		for(var i = 0; i < to_hide.length; i++)
@@ -218,12 +220,14 @@ var ui = function() {
 	on_stop: function() {
 		clearInterval(update_timer);
 		t(timer_label, human_time(timer.get_time()));
-		if(timer.use_inspection() && inspection_count < 0) {
-			if(inspection_count >= -2) {
-				session.toggle_plus_two(null);
-			}
-			else {
-				session.toggle_dnf(null);
+		if(timer.use_inspection()) {
+			if(inspection_count < 0) {
+				if(inspection_count >= -2) {
+					session.toggle_plus_two(null);
+				}
+				else {
+					session.toggle_dnf(null);
+				}
 			}
 			inspection_count = 15;
 		}
