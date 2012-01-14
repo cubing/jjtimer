@@ -14,7 +14,7 @@ var ui = function() {
 
 	var timer_label, scramble_label, stats_label, options_label, to_hide;
 	var update_timer, inspection_timer, inspection_count = 15;
-	var config, plugins = [];
+	var config;
 
 	function human_time(time) {
 		if(time < 0) return "DNF";
@@ -260,13 +260,13 @@ var ui = function() {
 	load_plugin: function() {
 		var url = $('plugin_url').value;
 		load_external(url);
+		config['plugins'].push(url);
 		$('plugin_url').value = "";
 	},
 
 	plugin_loaded: function(plugin) {
 		t($('plugins_load_status'), "loaded " + plugin['name']);
 		t($('plugins_list'), $('plugins_list').innerHTML + "<br />" + plugin['name']);
-		plugins[plugins.length] = plugin['name'];
 		plugin.onload();
 		populate_scramblers_menu();
 		setTimeout(function() {
@@ -435,6 +435,13 @@ var ui = function() {
 		}
 
 		$('use_milli').checked = config['use_milli'];
+
+		config['plugins'] = config['plugins'] || [];
+		for(var i = 0; i < config['plugins'].length; i++)
+		{
+		alert(config['plugins'][i]);
+			load_external(config['plugins'][i]);
+		}
 	}
 	};
 }();
