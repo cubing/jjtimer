@@ -1,4 +1,4 @@
-var scramble_manager = function() {
+var scramble_manager = (function() {
 	var scramblers = [];
 	var last_scramble;
 	var current_scrambler = undefined;
@@ -77,4 +77,4 @@ var scramble_manager = function() {
 			};
 		}
 	};
-}();
+})();

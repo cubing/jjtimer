@@ -7,26 +7,27 @@ function load_external(url) {
 
 function $(id) { return document.getElementById(id); }
 function t(e, t) { e.innerHTML = t; }
-function toggle(e) { e.style.display = (e.style.display === "none") ? "inline" : "none"; }
-function is_visible(e) { return e.style.display !== "none"; }
 
-var ui = function() {
+var ui = (function() {
+	function toggle(e) { e.style.display = (e.style.display === "none") ? "inline" : "none"; }
+	function is_visible(e) { return e.style.display !== "none"; }
+
 	var timer_label, scramble_label, stats_label, options_label, to_hide;
 	var update_timer, inspection_timer, inspection_count = 15;
 	var config;
 
 	function human_time(time) {
 		if(time < 0) return "DNF";
-		var useMilli = false;
-		time = Math.round(time / (useMilli ? 1 : 10));
-		var bits = time % (useMilli ? 1000 : 100);
-		time = (time - bits) / (useMilli ? 1000 : 100);
+
+		time = Math.round(time / (config['use_milli'] ? 1 : 10));
+		var bits = time % (config['use_milli'] ? 1000 : 100);
+		time = (time - bits) / (config['use_milli'] ? 1000 : 100);
 		var secs = time % 60;
 		var mins = ((time - secs) / 60) % 60;
 		var hours = (time - secs - 60 * mins) / 3600;
 		var s = "" + bits;
 		if (bits < 10) {s = "0" + s;}
-		if (bits < 100 && useMilli) {s = "0" + s;}
+		if (bits < 100 && config['use_milli']) {s = "0" + s;}
 		s = secs + "." + s;
 		if (secs < 10 && (mins > 0 || hours > 0)) {s = "0" + s;}
 		if (mins > 0 || hours > 0) {s = mins + ":" + s;}
@@ -49,7 +50,16 @@ var ui = function() {
 	}
 
 	function on_inspection() {
-		t(timer_label, inspection_count);
+		timer_label.style.color = "red";
+		if(inspection_count > 0) {
+			t(timer_label, inspection_count);
+		}
+		else if(inspection_count > -2) {
+			t(timer_label, "+2");
+		}
+		else {
+			t(timer_label, "DNF");
+		}
 		inspection_count -= 1;
 		inspection_timer = setTimeout(on_inspection, 1000);
 	}
@@ -106,11 +116,13 @@ var ui = function() {
 	}
 
 	function toggle_options() {
+		if(timer.is_running()) return;
 		toggle($('options'));
 		toggle($('gray_out')); 
 	}
 
 	function toggle_solve_popup(index) {
+		if(timer.is_running()) return;
 		if(index !== null) {
 			$('solve_popup_index').innerHTML = index + 1;
 			$('solve_popup_time').innerHTML = solve_time(session.solves()[index]);
@@ -124,7 +136,7 @@ var ui = function() {
 				$('solve_popup_time').innerHTML = solve_time(session.solves()[index]);
 			};
 			$('solve_popup_del').onclick = function() {
-				ui.del(index);
+				session.del(index);
 				toggle_popup();
 			};
 		}
@@ -170,33 +182,30 @@ var ui = function() {
 		highlight(session.length() - length, length, paren_i, paren_j);
 	}
 
-	function key_down(ev) {
+	function spacebar_down(ev) {
 		timer.trigger_down();
 	}
 
-	function key_up(ev) {
-		if(ev.keyCode === 27)
-		{
-			if(is_visible($('gray_out')))
-			{
-				toggle_popup();
-				return;
-			}
-			else if(!timer.is_running()) {
-				ui.reset();
-				return;
-			}
+	function spacebar_up(ev) {
+			timer.trigger_up(true);
+	}
+
+	function esc_up(ev) {
+		if(is_visible($('gray_out'))) {
+			toggle_popup();
 		}
-		if(is_visible($('gray_out'))) return;
-		timer.trigger_up(ev.keyCode === 32);
+		else {
+			if(timer.is_running()) timer.trigger_down();
+			ui.reset();
+		}
 	}
 
 	return {
 	on_inspection: on_inspection,
 
 	on_running: function() {
+		timer_label.style.color = "black";
 		clearTimeout(inspection_timer);
-		inspection_count = 15;
 		update_timer = setInterval(ui.update_running, 10);
 		for(var i = 0; i < to_hide.length; i++)
 		{
@@ -205,12 +214,23 @@ var ui = function() {
 	},
 
 	update_running: function() {
-		t(timer_label, human_time(timer.current_time()));
+		t(timer_label, human_time(timer.get_time()));
 	},
 
 	on_stop: function() {
 		clearInterval(update_timer);
-		t(timer_label, human_time(timer.current_time()));
+		t(timer_label, human_time(timer.get_time()));
+		if(timer.use_inspection()) {
+			if(inspection_count < 0) {
+				if(inspection_count >= -2) {
+					session.toggle_plus_two(null);
+				}
+				else {
+					session.toggle_dnf(null);
+				}
+			}
+			inspection_count = 15;
+		}
 		for(var i = 0; i < to_hide.length; i++)
 		{
 			to_hide[i].className = to_hide[i].className.substr(0, to_hide[i].className.length-2);
@@ -222,12 +242,6 @@ var ui = function() {
 	toggle_solve_popup: toggle_solve_popup,
 	toggle_avg_popup: toggle_avg_popup,
 	
-	del: function(index) {
-		if(timer.is_running()) return;
-		session.del(index);
-		update_stats();
-	},
-
 	reset: function() {
 		timer.reset();
 		next_scramble();
@@ -250,7 +264,7 @@ var ui = function() {
 		}, 1000);
 	},
 
-	auto_save: function() {
+	on_close: function() {
 		if(config['auto_save'])
 			session.save();
 		localStorage.setItem("ui.config", JSON.stringify(config));
@@ -267,7 +281,7 @@ var ui = function() {
               'current average: <span id="c_a_5"></span>, <span id="c_a_12"></span>, <span id="c_a_100"></span><br />'+
               'best average: <span id="b_a_5"></span>, <span id="b_a_12"></span>, <span id="b_a_100"></span><br />'+
               'session average: <span id="s_a"></span>, mean: <span id="s_m"></span></span></div>'+
-              '<div id="options_label" class="a"><span>options</span></div></div></div>'+
+              '<span class="a"><span id="toggle_stats">hide stats</span> | <span id="options_label">options</span></span></div></div>'+
 
               '<div id="right"><div id="times_label" class="hide_running a"></div></div>'+
               '<div id="options" style="display: none;"><h2>options</h2>'+
@@ -275,9 +289,10 @@ var ui = function() {
               '<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/></p>'+
               '<h3>timer</h3>'+
               '<p><input type="checkbox" id="use_inspection"><label for="use_inspection">use inspection</label>'+
+              '<input type="checkbox" id="use_milli"><label for="use_milli">use milliseconds</label></p>'+
               '<h3>session</h3>'+
               '<p><input type="submit" id="save_btn" value="save" /> <input type="submit" id="load_btn" value="load" /></p>'+
-              '<p><input type="checkbox" id="auto_save"><label for="auto_save">automatically save/load session</label></p>'+
+              '<p><input type="checkbox" id="auto_save"><label for="auto_save">automatically save/load</label></p>'+
               '<span class="a"><span id="close_options">close</span></span></div>'+
 
               '<div id="solve_popup" style="display: none;">'+
@@ -308,28 +323,53 @@ var ui = function() {
 		to_hide = document.getElementsByClassName("hide_running");
 
 		$('p2').onclick = function() {
+			if(timer.is_running()) return;
 			session.toggle_plus_two(null);
 			update_stats();
 			t(timer_label, solve_time(session.last()));
 		};
 		$('dnf').onclick = function() {
+			if(timer.is_running()) return;
 			session.toggle_dnf(null);
 			update_stats();
 			t(timer_label, solve_time(session.last()));
 		};
 
-		$('c_a_5').onclick = function() { hilight_current(5, null, null); };
+		$('c_a_5').onclick = function() {
+			if(timer.is_running()) return;
+			hilight_current(5, null, null);
+		};
 		$('b_a_5').onclick = function() {
+			if(timer.is_running()) return;
 			var a = session.best_average(5, true);
 			highlight(a['index'], 5, a['best_single_index'], a['worst_single_index']);
 		};
-		$('c_a_12').onclick = function() { hilight_current(12, null, null); };
+		$('c_a_12').onclick = function() {
+			if(timer.is_running()) return;
+			hilight_current(12, null, null);
+		};
 		$('b_a_12').onclick = function() {
+			if(timer.is_running()) return;
 			var a = session.best_average(12, true);
 			highlight(a['index'], 12, a['best_single_index'], a['worst_single_index']);
 		};
-		$('s_a').onclick = function() { hilight_current(session.length(), null, null); };
-		$('s_m').onclick = function() { hilight_current(session.length(), null, null); };
+		$('s_a').onclick = function() {
+			if(timer.is_running()) return;
+			hilight_current(session.length(), null, null);
+		};
+		$('s_m').onclick = function() {
+			if(timer.is_running()) return;
+			hilight_current(session.length(), null, null);
+		};
+
+		$('toggle_stats').onclick = function() {
+			if(timer.is_running()) return;
+			toggle($('stats_link'));
+			if(is_visible($('stats_link')))
+				$('toggle_stats').innerHTML = "hide stats";
+			else
+				$('toggle_stats').innerHTML = "show stats";
+		};
 
 		$('options_label').onclick = toggle_options;
 		$('close_options').onclick = toggle_options;
@@ -342,6 +382,11 @@ var ui = function() {
 			timer.toggle_inspection();
 			config['use_inspection'] = $('use_inspection').checked;
 		}
+		$('use_milli').onchange = function() {
+			config['use_milli'] = $('use_milli').checked;
+			update_stats();
+			t(timer_label, human_time(timer.get_time()));
+		}
 		$('save_btn').onclick = session.save;
 		$('load_btn').onclick = function() { session.load(); update_stats(); };
 		$('auto_save').onchange = function() { config['auto_save'] = $('auto_save').checked;  };
@@ -353,8 +398,10 @@ var ui = function() {
 
 		ui.reset();
 		
-		document.onkeydown = key_down;	
-		document.onkeyup = key_up;
+		shortcuts.init();
+		shortcuts.add_key_down(32, {'func': spacebar_down});
+		shortcuts.add_key_up(32, {'func': spacebar_up});
+		shortcuts.add_key_up(27, {'func': esc_up});
 
 		if(localStorage)
 			config = JSON.parse(localStorage.getItem("ui.config"));
@@ -370,9 +417,11 @@ var ui = function() {
 			$('use_inspection').checked = true;
 			timer.toggle_inspection();
 		}
+
+		$('use_milli').checked = config['use_milli'];
 	}
 	};
-}();
+})();
 window['ui'] = ui;
 window.onload = ui.init;
-window.onbeforeunload = ui.auto_save;
+window.onbeforeunload = ui.on_close;
