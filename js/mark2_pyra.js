@@ -13,5 +13,12 @@ var mark2_pyra = {
 	}
 };
 
-scramble_manager.add(mark2_pyra);
-ui.plugin_loaded("mark2_pyra");
+var mark2_ = {
+	name: 'mark2_pyra',
+
+	onload: function() {
+		scramble_manager.add(mark2_pyra);
+	}
+};
+
+ui.plugin_loaded(mark2_);

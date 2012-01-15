@@ -29,4 +29,3 @@ var mark2_ = {
 };
 
 ui.plugin_loaded(mark2_);
-
