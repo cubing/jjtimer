@@ -115,15 +115,10 @@ var ui = function() {
 		}
 	}
 
-	function toggle_options_popup() {
+	function toggle_options() {
 		if(timer.is_running()) return;
 		toggle($('options'));
 		toggle($('gray_out')); 
-	}
-
-	function toggle_plugins_popup() {
-		toggle($('plugins'));
-		toggle($('gray_out'));
 	}
 
 	function toggle_solve_popup(index) {
@@ -172,8 +167,6 @@ var ui = function() {
 		}
 		else if(is_visible($('avg_popup')))
 			toggle($('avg_popup'));
-		else if(is_visible($('plugins')))
-			toggle($('plugins'));
 		toggle($('gray_out'));
 	}
 	
@@ -189,21 +182,21 @@ var ui = function() {
 		highlight(session.length() - length, length, paren_i, paren_j);
 	}
 
-	function spacebar_down(ev) {
+	function key_down(ev) {
 		timer.trigger_down();
 	}
 
-	function spacebar_up(ev) {
-			timer.trigger_up(true);
-	}
-
-	function esc_up(ev) {
+	function key_up(ev) {
 		if(is_visible($('gray_out'))) {
-			toggle_popup();
+			if(ev.keyCode === 27) {
+				toggle_popup();
+			}
+		}
+		else if (ev.keyCode === 27){
+			ui.reset();
 		}
 		else {
-			if(timer.is_running()) timer.trigger_down();
-			ui.reset();
+			timer.trigger_up(ev.keyCode === 32);
 		}
 	}
 
@@ -260,17 +253,14 @@ var ui = function() {
 	load_plugin: function() {
 		var url = $('plugin_url').value;
 		load_external(url);
-		config['plugins'].push(url);
 		$('plugin_url').value = "";
 	},
 
-	plugin_loaded: function(plugin) {
-		t($('plugins_load_status'), "loaded " + plugin['name']);
-		t($('plugins_list'), $('plugins_list').innerHTML + "<br />" + plugin['name']);
-		plugin.onload();
+	plugin_loaded: function(name) {
+		t($('info'), "loaded " + name);
 		populate_scramblers_menu();
 		setTimeout(function() {
-			t($('plugins_load_status'), "");
+			t($('info'), "");
 		}, 1000);
 	},
 
@@ -291,13 +281,12 @@ var ui = function() {
               'current average: <span id="c_a_5"></span>, <span id="c_a_12"></span>, <span id="c_a_100"></span><br />'+
               'best average: <span id="b_a_5"></span>, <span id="b_a_12"></span>, <span id="b_a_100"></span><br />'+
               'session average: <span id="s_a"></span>, mean: <span id="s_m"></span></span></div>'+
-              '<span class="a"><span id="toggle_stats">hide stats</span> | <span id="options_label">options</span>'+
-              ' | <span id="plugins_label">plugins</span></span></div></div>'+
+              '<span class="a"><span id="toggle_stats">hide stats</span> | <span id="options_label">options</span></span></div></div>'+
 
               '<div id="right"><div id="times_label" class="hide_running a"></div></div>'+
-
-              '<div id="options" class="popup" style="display: none;"><h2>options</h2>'+
+              '<div id="options" style="display: none;"><h2>options</h2>'+
               '<p><select id="scramble_menu"></select></p>'+
+              '<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/></p>'+
               '<h3>timer</h3>'+
               '<p><input type="checkbox" id="use_inspection"><label for="use_inspection">use inspection</label>'+
               '<input type="checkbox" id="use_milli"><label for="use_milli">use milliseconds</label></p>'+
@@ -306,12 +295,7 @@ var ui = function() {
               '<p><input type="checkbox" id="auto_save"><label for="auto_save">automatically save/load</label></p>'+
               '<span class="a"><span id="close_options">close</span></span></div>'+
 
-              '<div id="plugins" class="popup" style="display: none;"><h2>plugins</h2>'+
-              '<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/> '+
-              '<span style="color: green;" id="plugins_load_status"></span></p>'+
-              '<p><span id="plugins_list"></span></p></div>'+
-
-              '<div id="solve_popup" class="popup" style="display: none;">'+
+              '<div id="solve_popup" style="display: none;">'+
               '<h3>solve <span id="solve_popup_index"></span></h3>'+
               '<span id="solve_popup_time"></span>'+
               '<br /><span id="solve_popup_scramble"></span>'+
@@ -320,7 +304,7 @@ var ui = function() {
               '<span id="solve_popup_close">close</span>'+
               '</span></div>'+
 
-              '<div id="avg_popup" class="popup" style="display: none;">'+
+              '<div id="avg_popup" style="display: none;">'+
               '<h3 id="avg_popup_header"></h3>'+
               '<span id="avg_popup_list"></span>'+
               '</div>'+
@@ -387,8 +371,8 @@ var ui = function() {
 				$('toggle_stats').innerHTML = "show stats";
 		};
 
-		$('options_label').onclick = toggle_options_popup;
-		$('close_options').onclick = toggle_options_popup;
+		$('options_label').onclick = toggle_options;
+		$('close_options').onclick = toggle_options;
 		$('gray_out').onclick = toggle_popup;
 		$('scramble_menu').onchange = function(s) {
 			scramble_manager.set($('scramble_menu').selectedIndex);
@@ -407,8 +391,6 @@ var ui = function() {
 		$('load_btn').onclick = function() { session.load(); update_stats(); };
 		$('auto_save').onchange = function() { config['auto_save'] = $('auto_save').checked;  };
 
-		$('plugins_label').onclick = toggle_plugins_popup; 
-
 		$('solve_popup_close').onclick = toggle_popup;
 
 		scramble_manager.add_default();
@@ -416,10 +398,8 @@ var ui = function() {
 
 		ui.reset();
 		
-		shortcut_manager.init();
-		shortcut_manager.add_key_down(32, {'func': spacebar_down});
-		shortcut_manager.add_key_up(32, {'func': spacebar_up});
-		shortcut_manager.add_key_up(27, {'func': esc_up});
+		document.onkeydown = key_down;	
+		document.onkeyup = key_up;
 
 		if(localStorage)
 			config = JSON.parse(localStorage.getItem("ui.config"));
@@ -437,12 +417,6 @@ var ui = function() {
 		}
 
 		$('use_milli').checked = config['use_milli'];
-
-		config['plugins'] = config['plugins'] || [];
-		for(var i = 0; i < config['plugins'].length; i++)
-		{
-			load_external(config['plugins'][i]);
-		}
 	}
 	};
 }();

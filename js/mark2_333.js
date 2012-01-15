@@ -13,12 +13,5 @@ var mark2_333 = {
 	}
 };
 
-var mark2_ = {
-	name: 'mark2_333',
-
-	onload: function() {
-		scramble_manager.add(mark2_333);
-	}
-};
-
-ui.plugin_loaded(mark2_);
+scramble_manager.add(mark2_333);
+ui.plugin_loaded("mark2_333");

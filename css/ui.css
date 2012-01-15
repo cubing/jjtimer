@@ -63,7 +63,7 @@ h2, h3 {
 	display: none;
 }
 
-.popup {
+#options, #solve_popup, #avg_popup {
 	z-index: 6;
 	position: absolute;
 	background-color: #fff;
@@ -74,6 +74,7 @@ h2, h3 {
 	margin-left:-12.5%;
 	margin-top:-12.5%;
 	padding: 1%;
+	display: none;
 	box-shadow: 1px 2px 1px #888;
 }
 
