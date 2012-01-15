@@ -439,7 +439,6 @@ var ui = function() {
 		config['plugins'] = config['plugins'] || [];
 		for(var i = 0; i < config['plugins'].length; i++)
 		{
-		alert(config['plugins'][i]);
 			load_external(config['plugins'][i]);
 		}
 	}
