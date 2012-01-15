@@ -1,4 +1,4 @@
-var session = function() {
+var session = (function() {
 	var solves = [];
 
 	function get_trim_count(n) {
@@ -141,4 +141,4 @@ var session = function() {
 		}
 	}
 	};
-}();
+})();

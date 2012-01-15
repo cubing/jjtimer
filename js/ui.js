@@ -8,7 +8,7 @@ function load_external(url) {
 function $(id) { return document.getElementById(id); }
 function t(e, t) { e.innerHTML = t; }
 
-var ui = function() {
+var ui = (function() {
 	function toggle(e) { e.style.display = (e.style.display === "none") ? "inline" : "none"; }
 	function is_visible(e) { return e.style.display !== "none"; }
 
@@ -182,21 +182,21 @@ var ui = function() {
 		highlight(session.length() - length, length, paren_i, paren_j);
 	}
 
-	function key_down(ev) {
+	function spacebar_down(ev) {
 		timer.trigger_down();
 	}
 
-	function key_up(ev) {
+	function spacebar_up(ev) {
+			timer.trigger_up(true);
+	}
+
+	function esc_up(ev) {
 		if(is_visible($('gray_out'))) {
-			if(ev.keyCode === 27) {
-				toggle_popup();
-			}
-		}
-		else if (ev.keyCode === 27){
-			ui.reset();
+			toggle_popup();
 		}
 		else {
-			timer.trigger_up(ev.keyCode === 32);
+			if(timer.is_running()) timer.trigger_down();
+			ui.reset();
 		}
 	}
 
@@ -398,8 +398,10 @@ var ui = function() {
 
 		ui.reset();
 		
-		document.onkeydown = key_down;	
-		document.onkeyup = key_up;
+		shortcuts.init();
+		shortcuts.add_key_down(32, {'func': spacebar_down});
+		shortcuts.add_key_up(32, {'func': spacebar_up});
+		shortcuts.add_key_up(27, {'func': esc_up});
 
 		if(localStorage)
 			config = JSON.parse(localStorage.getItem("ui.config"));
@@ -419,7 +421,7 @@ var ui = function() {
 		$('use_milli').checked = config['use_milli'];
 	}
 	};
-}();
+})();
 window['ui'] = ui;
 window.onload = ui.init;
 window.onbeforeunload = ui.on_close;
