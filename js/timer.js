@@ -25,6 +25,10 @@ var timer = function() {
 			session.reset();
 		},
 
+		use_inspection: function() {
+			return use_inspection;
+		},
+
 		toggle_inspection: function() {
 			use_inspection = !use_inspection;
 		},
@@ -44,9 +48,8 @@ var timer = function() {
 			{
 				state = Inspecting;
 				ui.on_inspection();
-				return;
 			}
-			if(Ready === state && ev) {
+			else if(Ready === state && ev) {
 				set_running();
 			}
 		},
@@ -55,7 +58,7 @@ var timer = function() {
 			return Running === state;
 		},
 		
-		current_time: function() {
+		get_time: function() {
 			return solve_time || new Date().getTime() - start_time.getTime();
 		}
 	};

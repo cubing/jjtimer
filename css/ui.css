@@ -59,14 +59,14 @@ h2, h3 {
 	left: 0px;
 	width: 100%;
 	height: 100%;
-	opacity: 0.2;
+	opacity: 0.3;
 	display: none;
 }
 
 #options, #solve_popup, #avg_popup {
 	z-index: 6;
 	position: absolute;
-	background-color: #eee;
+	background-color: #fff;
 	border: 1px solid #ddd;
 	padding: 5px;
 	top:40%;

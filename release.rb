@@ -1,5 +1,5 @@
 js_files = %w(session timer scrambler ui)
-merge = js_files.map {|f| File.read f + ".js" }.join
+merge = js_files.map {|f| File.read "js/" + f + ".js" }.join
 
 if ARGV[0] == "-o"
 	require "net/http"
@@ -16,11 +16,11 @@ if ARGV[0] == "-o"
 	puts "Saved #{new_size*1.0/orig_size*100}%"
 end
 
-output = File.read "jjtimer.html"
+output = File.read "index.html"
 output.gsub!(/<script type="text\/javascript" src="[^"]+"><\/script>\n/, "")
 output.gsub!(/<\/head>/, "<script type='text/javascript'>" + merge + "</script></head>")
-output.gsub!(/<link rel="stylesheet" href="ui.css" \/>/, "<style type='text/css'>\n#{File.read("ui.css").chomp}</style>")
+output.gsub!(/<link rel="stylesheet" href="css\/ui.css" \/>/, "<style type='text/css'>\n#{File.read("css/ui.css").chomp}</style>")
 
-File.open("index.html", "w") do |out|
+File.open("release.html", "w") do |out|
 	out.print output
 end
