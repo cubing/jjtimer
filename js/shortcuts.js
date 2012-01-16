@@ -45,6 +45,7 @@ var shortcuts = (function() {
 		up: 1,
 
 		space: 32,
+		esc: 27,
 
 		init: init,
 		add_key_down: add_key_down,

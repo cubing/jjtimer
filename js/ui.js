@@ -399,9 +399,9 @@ var ui = (function() {
 		ui.reset();
 		
 		shortcuts.init();
-		shortcuts.add_key_down(32, {'func': spacebar_down});
-		shortcuts.add_key_up(32, {'func': spacebar_up});
-		shortcuts.add_key_up(27, {'func': esc_up});
+		shortcuts.add_key_down(shortcuts.space, {'func': spacebar_down});
+		shortcuts.add_key_up(shortcuts.space, {'func': spacebar_up});
+		shortcuts.add_key_up(shortcuts.esc, {'func': esc_up});
 
 		if(localStorage)
 			config = JSON.parse(localStorage.getItem("ui.config"));
