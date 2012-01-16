@@ -187,7 +187,7 @@ var ui = (function() {
 	}
 
 	function spacebar_up(ev) {
-			timer.trigger_up(ev);
+		timer.trigger_up(ev);
 	}
 
 	function esc_up(ev) {
@@ -198,6 +198,12 @@ var ui = (function() {
 			if(timer.is_running()) timer.trigger_down();
 			ui.reset();
 		}
+	}
+
+	function on_close() {
+		if(config['auto_save'])
+			session.save();
+		localStorage.setItem("ui.config", JSON.stringify(config));
 	}
 
 	return {
@@ -262,12 +268,6 @@ var ui = (function() {
 		setTimeout(function() {
 			t($('info'), "");
 		}, 1000);
-	},
-
-	on_close: function() {
-		if(config['auto_save'])
-			session.save();
-		localStorage.setItem("ui.config", JSON.stringify(config));
 	},
 
 	render_body: function() {
@@ -421,9 +421,12 @@ var ui = (function() {
 		}
 
 		$('use_milli').checked = config['use_milli'];
+
+		window.onbeforeunload = on_close;
+		window.onblur = function() { timer_label.style.color="gray"; }
+		window.onfocus = function() { timer_label.style.color="black"; }
 	}
 	};
 })();
 window['ui'] = ui;
 window.onload = ui.init;
-window.onbeforeunload = ui.on_close;
