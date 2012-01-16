@@ -9,8 +9,7 @@ var session = (function() {
 		if(a['DNF']) return -1;
 		if(b['DNF']) return 1;
 
-		var at = a['time'], bt = b['time'];
-		return at - bt;
+		return a['time'] - b['time'];
 	}
 
 	function mean() {
@@ -35,8 +34,6 @@ var session = (function() {
 		if(length - start > solves.length) return -1;
 		var end = start + length;
 
-		var min = -1, max = -1, sum = 0;
-		
 		var trim = get_trim_count(length);
 
 		var copy = solves.slice(start, end);
@@ -46,6 +43,7 @@ var session = (function() {
 
 		if(copy[0]['DNF']) return -1;
 
+		var sum = 0;
 		for(var i = 0; i < copy.length; ++i)
 		{
 			sum += copy[i]['time'];
@@ -98,29 +96,32 @@ var session = (function() {
 	},
 
 	best_average: function(length, find_best_singles) {
-		var best = -1, best_index = -1;
+		var best = Infinity, best_index;
 		for(var i = 0; i < solves.length - (length - 1); i++) {
 			var a = average(i, length);
-			if(a < best || -1 === best) {
+			if(a < best) {
 				best = a;
 				best_index = i;
 			}
 		}
+		
 		if(find_best_singles && best_index !== -1) {
-			var best_single = -1, worst_single = -1;
-			var best_single_index = -1, worst_single_index = -1;
+			var best_single = Infinity, worst_single = -Infinity;
+			var best_single_index, worst_single_index;
 
-			for(var i = 0; i < length; i++) {
-				if(solves[i+best_index]['time'] < best_single || best_single === -1) {
-					best_single = solves[i+best_index]['time'];
-					best_single_index = best_index + i;
+			for(var i = best_index; i < (best_index + length); i++) {
+				if(solves[i]['time'] < best_single) {
+					best_single = solves[i]['time'];
+					best_single_index = i;
 				}
-				if(solves[i+best_index]['time'] > worst_single || worst_single === -1) {
-					worst_single = solves[i+best_index]['time'];
-					worst_single_index = best_index + i;
+				if(solves[i]['time'] > worst_single) {
+					worst_single = solves[i]['time'];
+					worst_single_index = i;
 				}
 			}
 		}
+
+		if(best === Infinity) best = -1;
 		return {'avg': best, 'index': best_index,
 			'best_single_index': best_single_index, 'worst_single_index': worst_single_index};
 	},
