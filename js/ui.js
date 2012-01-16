@@ -115,7 +115,7 @@ var ui = (function() {
 		}
 	}
 
-	function toggle_options() {
+	function toggle_options_popup() {
 		if(timer.is_running()) return;
 		toggle($('options'));
 		toggle($('gray_out')); 
@@ -301,13 +301,11 @@ var ui = (function() {
               '<br /><span id="solve_popup_scramble"></span>'+
               '<br /><span class="a">'+
               '<span id="solve_popup_p2">+2</span> <span id="solve_popup_dnf">DNF</span> <span id="solve_popup_del">delete</span>'+
-              '<span id="solve_popup_close">close</span>'+
-              '</span></div>'+
+              '<span id="solve_popup_close">close</span></span></div>'+
 
               '<div id="avg_popup" style="display: none;">'+
               '<h3 id="avg_popup_header"></h3>'+
-              '<span id="avg_popup_list"></span>'+
-              '</div>'+
+              '<span id="avg_popup_list"></span></div>'+
 
               '<div id="gray_out" style="display: none;"></div>';
 	},
@@ -371,8 +369,8 @@ var ui = (function() {
 				$('toggle_stats').innerHTML = "show stats";
 		};
 
-		$('options_label').onclick = toggle_options;
-		$('close_options').onclick = toggle_options;
+		$('options_label').onclick = toggle_options_popup;
+		$('close_options').onclick = toggle_options_popup;
 		$('gray_out').onclick = toggle_popup;
 		$('scramble_menu').onchange = function(s) {
 			scramble_manager.set($('scramble_menu').selectedIndex);
@@ -403,8 +401,9 @@ var ui = (function() {
 		shortcuts.add_key_up(shortcuts.space, {'func': spacebar_up});
 		shortcuts.add_key_up(shortcuts.esc, {'func': esc_up});
 
-		shortcuts.add_key_up('3'.charCodeAt(), {'shift': true, 'func': function() {	scramble_manager.set($('scramble_menu').selectedIndex=0);next_scramble();	}});
-		shortcuts.add_key_up('4'.charCodeAt(), {'shift': true, 'func': function() {	scramble_manager.set($('scramble_menu').selectedIndex=1);next_scramble();	}});
+		shortcuts.add_key_up('3'.charCodeAt(), {'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 0); next_scramble(); }});
+		shortcuts.add_key_up('4'.charCodeAt(), {'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 1); next_scramble(); }});
+		shortcuts.add_key_up('D'.charCodeAt(), {'shift': true, 'func': function(){ session.del(null); update_stats(); }});
 
 		if(localStorage)
 			config = JSON.parse(localStorage.getItem("ui.config"));
