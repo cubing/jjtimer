@@ -3,17 +3,18 @@ var shortcuts = (function() {
 	var shortcuts_up = {};
 
 	function add_key_down(key, shortcut) {
-		shortcut['direction'] = 0;
-		shortcut['shift'] = shortcut['shift'] ? true : false;
-		if(!shortcuts_down[key]) shortcuts_down[key] = [];
-		shortcuts_down[key][shortcuts_down[key].length] = shortcut;
+		add_key(key, shortcut, shortcuts_down);
 	}
 
 	function add_key_up(key, shortcut) {
-		shortcut['direction'] = 1;
+		add_key(key, shortcut, shortcuts_up);
+	}
+
+	function add_key(key, shortcut, direction) {
 		shortcut['shift'] = shortcut['shift'] ? true : false;
-		if(!shortcuts_up[key]) shortcuts_up[key] = [];
-		shortcuts_up[key][shortcuts_up[key].length] = shortcut;
+		key = typeof key === String ? key.charCodeAt() : key;
+		if(!direction[key]) direction[key] = [];
+		direction[key][direction[key].length] = shortcut;
 	}
 
 	function key_down(ev) {
