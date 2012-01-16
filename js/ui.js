@@ -183,11 +183,11 @@ var ui = (function() {
 	}
 
 	function spacebar_down(ev) {
-		timer.trigger_down();
+		timer.trigger_down(ev);
 	}
 
 	function spacebar_up(ev) {
-			timer.trigger_up(true);
+			timer.trigger_up(ev);
 	}
 
 	function esc_up(ev) {

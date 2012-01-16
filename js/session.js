@@ -92,7 +92,7 @@ var session = (function() {
 	},
 
 	session_mean: function() {
-		return mean(0, solves.length);
+		return mean();
 	},
 
 	best_average: function(length, find_best_singles) {
