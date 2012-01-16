@@ -65,6 +65,7 @@ var session = (function() {
 	},
 
 	del: function(index) {
+		if(index === null) index = solves.length - 1;
 		solves.splice(index, 1);
 	},
 
