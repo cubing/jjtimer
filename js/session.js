@@ -6,8 +6,8 @@ var session = (function() {
 	}
 
 	function solve_sort(a, b){
-		if(a['DNF']) return -1;
-		if(b['DNF']) return 1;
+		if(a['DNF']) return 1;
+		if(b['DNF']) return -1;
 
 		return a['time'] - b['time'];
 	}
@@ -41,7 +41,7 @@ var session = (function() {
 		copy.splice(0, trim);
 		copy.splice(copy.length - trim, trim);
 
-		if(copy[0]['DNF']) return -1;
+		if(copy[copy.length-1]['DNF']) return -1;
 
 		var sum = 0;
 		for(var i = 0; i < copy.length; ++i)
