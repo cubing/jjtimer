@@ -327,6 +327,8 @@ var ui = (function() {
 		options_label = $('options_label');
 		to_hide = document.getElementsByClassName("hide_running");
 
+		update_stats();
+
 		$('p2').onclick = function() {
 			if(timer.is_running()) return;
 			session.toggle_plus_two(null);
