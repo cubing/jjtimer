@@ -62,22 +62,26 @@ var session = (function() {
 
 	add: function(time, scramble) {
 		solves.push({'time': time, 'scramble': scramble});
+		ui.update_stats();
 	},
 
 	del: function(index) {
 		if(index === null) index = solves.length - 1;
 		solves.splice(index, 1);
+		ui.update_stats();
 	},
 
 	toggle_dnf: function(index) {
 		if(index === null) index = solves.length - 1;
 		solves[index]['DNF'] = !solves[index]['DNF'];
+		ui.update_stats();
 	},
 
 	toggle_plus_two: function(index) {
 		if(index === null) index = solves.length - 1;
 		solves[index]['plus_two'] = !solves[index]['plus_two'];
 		solves[index]['time'] += solves[index]['plus_two'] ? 2000 : -2000;
+		ui.update_stats();
 	},
 
 	mean: mean,
@@ -133,6 +137,7 @@ var session = (function() {
 			var localSolves = localStorage.getItem('session.solves');
 			if(localSolves != null)
 				solves = JSON.parse(localSolves);	
+			ui.update_stats();
 		}
 	},
 

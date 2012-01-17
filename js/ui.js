@@ -171,7 +171,6 @@ var ui = (function() {
 		if(is_visible($('options_popup'))) toggle($('options_popup'));
 		else if(is_visible($('solve_popup'))) {
 			toggle($('solve_popup'));
-			update_stats();
 		}
 		else if(is_visible($('avg_popup')))
 			toggle($('avg_popup'));
@@ -215,6 +214,8 @@ var ui = (function() {
 	}
 
 	return {
+	update_stats: update_stats,
+
 	on_inspection: on_inspection,
 
 	on_running: function() {
@@ -250,7 +251,6 @@ var ui = (function() {
 			to_hide[i].className = to_hide[i].className.substr(0, to_hide[i].className.length-2);
 		}
 		next_scramble();
-		update_stats();
 	},
 
 	toggle_solve_popup: toggle_solve_popup,
@@ -259,7 +259,6 @@ var ui = (function() {
 	reset: function() {
 		timer.reset();
 		next_scramble();
-		update_stats();
 		t(timer_label, "0.00");	
 		t(times_label, "&nbsp;");
 	},
@@ -279,7 +278,7 @@ var ui = (function() {
 	},
 
 	render_body: function() {
-		document.body.innerHTML = '<div id="left"><div id="info"></div>'+
+		document.body.innerHTML = '<div id="left"><div id="cube_drawing"></div>'+
               '<div id="timer_label">0.00</div>'+
               '<div class="hide_running" id="scramble_label"></div>'+
               '<div id="penalty" class="a hide_running">that time was: <span id="p2">+2</span> <span id="dnf">DNF</span></div>'+
@@ -294,8 +293,8 @@ var ui = (function() {
               '<div id="right"><div id="times_label" class="hide_running a"></div></div>'+
               '<div id="options_popup" style="display: none;" class="popup"><h2>options</h2>'+
               '<p><select id="scramble_menu"></select></p>'+
-              '<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/></p>'+
-              '<h3>timer</h3>'+
+              '<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/>'+
+              '<div id="info"></div></p><h3>timer</h3>'+
               '<p><input type="checkbox" id="use_inspection"><label for="use_inspection">use inspection</label>'+
               '<input type="checkbox" id="use_milli"><label for="use_milli">use milliseconds</label></p>'+
               '<h3>session</h3>'+
@@ -331,13 +330,11 @@ var ui = (function() {
 		$('p2').onclick = function() {
 			if(timer.is_running()) return;
 			session.toggle_plus_two(null);
-			update_stats();
 			t(timer_label, solve_time(session.last()));
 		};
 		$('dnf').onclick = function() {
 			if(timer.is_running()) return;
 			session.toggle_dnf(null);
-			update_stats();
 			t(timer_label, solve_time(session.last()));
 		};
 
@@ -394,7 +391,7 @@ var ui = (function() {
 			t(timer_label, human_time(timer.get_time()));
 		}
 		$('save_btn').onclick = session.save;
-		$('load_btn').onclick = function() { session.load(); update_stats(); };
+		$('load_btn').onclick = function() { session.load(); };
 		$('auto_save').onchange = function() { config['auto_save'] = $('auto_save').checked;  };
 
 		$('solve_popup_close').onclick = toggle_popup;
@@ -412,7 +409,7 @@ var ui = (function() {
 		shortcuts.add_key_up('3'.charCodeAt(), {'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 0); next_scramble(); }});
 		shortcuts.add_key_up('4'.charCodeAt(), {'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 1); next_scramble(); }});
 		shortcuts.add_key_up('5'.charCodeAt(), {'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 2); next_scramble(); }});
-		shortcuts.add_key_up('D'.charCodeAt(), {'shift': true, 'func': function(){ session.del(null); update_stats(); }});
+		shortcuts.add_key_up('D'.charCodeAt(), {'shift': true, 'func': function(){ session.del(null); }});
 
 		if(localStorage)
 			config = JSON.parse(localStorage.getItem("ui.config"));
@@ -422,7 +419,6 @@ var ui = (function() {
 		if(config['auto_save']) {
 			$('auto_save').checked = true;
 			session.load();
-			update_stats();
 		}
 		if(config['use_inspection']) {
 			$('use_inspection').checked = true;
