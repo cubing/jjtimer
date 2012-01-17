@@ -21,7 +21,7 @@ h2, h3 {
 	height: 100%;
 	text-align: center;
 	position: relative;
-	box-shadow: 2px 3px 1px #ccc;
+	box-shadow: 2px 0px 1px #ccc;
 }
 
 #timer_label {
@@ -63,22 +63,16 @@ h2, h3 {
 	display: none;
 }
 
-#options, #solve_popup, #avg_popup {
+.popup {
 	z-index: 6;
 	position: absolute;
 	background-color: #fff;
 	border: 1px solid #ddd;
-	padding: 5px;
-	top:40%;
-	left:50%;
-	margin-left:-12.5%;
-	margin-top:-12.5%;
+	top: 50%;
+	left: 50%;
 	padding: 1%;
 	display: none;
 	box-shadow: 1px 2px 1px #888;
-}
-
-#solve_popup {
 	line-height: 150%;
 	max-width: 40%;
 }
