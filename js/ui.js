@@ -115,10 +115,16 @@ var ui = (function() {
 		}
 	}
 
-	function toggle_options() {
+	function centre(el) {
+		el.style.marginLeft = (el.offsetWidth / -2) + "px";
+		el.style.marginTop = (el.offsetHeight / -2) + "px";
+	}
+
+	function toggle_options_popup() {
 		if(timer.is_running()) return;
-		toggle($('options'));
+		toggle($('options_popup'));
 		toggle($('gray_out')); 
+		centre($('options_popup'));
 	}
 
 	function toggle_solve_popup(index) {
@@ -142,6 +148,7 @@ var ui = (function() {
 		}
 		toggle($('solve_popup'));
 		toggle($('gray_out'));
+		centre($('solve_popup'));
 	}
 
 	function toggle_avg_popup(index, end) {
@@ -157,10 +164,11 @@ var ui = (function() {
 		}
 		toggle($('avg_popup'));
 		toggle($('gray_out'));
+		centre($('avg_popup'));
 	}
 
 	function toggle_popup() {
-		if(is_visible($('options'))) toggle($('options'));
+		if(is_visible($('options_popup'))) toggle($('options_popup'));
 		else if(is_visible($('solve_popup'))) {
 			toggle($('solve_popup'));
 			update_stats();
@@ -183,11 +191,11 @@ var ui = (function() {
 	}
 
 	function spacebar_down(ev) {
-		timer.trigger_down();
+		timer.trigger_down(ev);
 	}
 
 	function spacebar_up(ev) {
-			timer.trigger_up(true);
+		timer.trigger_up(ev);
 	}
 
 	function esc_up(ev) {
@@ -198,6 +206,12 @@ var ui = (function() {
 			if(timer.is_running()) timer.trigger_down();
 			ui.reset();
 		}
+	}
+
+	function on_close() {
+		if(config['auto_save'])
+			session.save();
+		localStorage.setItem("ui.config", JSON.stringify(config));
 	}
 
 	return {
@@ -264,12 +278,6 @@ var ui = (function() {
 		}, 1000);
 	},
 
-	on_close: function() {
-		if(config['auto_save'])
-			session.save();
-		localStorage.setItem("ui.config", JSON.stringify(config));
-	},
-
 	render_body: function() {
 		document.body.innerHTML = '<div id="left"><div id="info"></div>'+
               '<div id="timer_label">0.00</div>'+
@@ -284,7 +292,7 @@ var ui = (function() {
               '<span class="a"><span id="toggle_stats">hide stats</span> | <span id="options_label">options</span></span></div></div>'+
 
               '<div id="right"><div id="times_label" class="hide_running a"></div></div>'+
-              '<div id="options" style="display: none;"><h2>options</h2>'+
+              '<div id="options_popup" style="display: none;" class="popup"><h2>options</h2>'+
               '<p><select id="scramble_menu"></select></p>'+
               '<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/></p>'+
               '<h3>timer</h3>'+
@@ -295,19 +303,17 @@ var ui = (function() {
               '<p><input type="checkbox" id="auto_save"><label for="auto_save">automatically save/load</label></p>'+
               '<span class="a"><span id="close_options">close</span></span></div>'+
 
-              '<div id="solve_popup" style="display: none;">'+
+              '<div id="solve_popup" style="display: none;" class="popup">'+
               '<h3>solve <span id="solve_popup_index"></span></h3>'+
               '<span id="solve_popup_time"></span>'+
               '<br /><span id="solve_popup_scramble"></span>'+
               '<br /><span class="a">'+
               '<span id="solve_popup_p2">+2</span> <span id="solve_popup_dnf">DNF</span> <span id="solve_popup_del">delete</span>'+
-              '<span id="solve_popup_close">close</span>'+
-              '</span></div>'+
+              '<span id="solve_popup_close">close</span></span></div>'+
 
-              '<div id="avg_popup" style="display: none;">'+
+              '<div id="avg_popup" style="display: none;" class="popup">'+
               '<h3 id="avg_popup_header"></h3>'+
-              '<span id="avg_popup_list"></span>'+
-              '</div>'+
+              '<span id="avg_popup_list"></span></div>'+
 
               '<div id="gray_out" style="display: none;"></div>';
 	},
@@ -371,8 +377,8 @@ var ui = (function() {
 				$('toggle_stats').innerHTML = "show stats";
 		};
 
-		$('options_label').onclick = toggle_options;
-		$('close_options').onclick = toggle_options;
+		$('options_label').onclick = toggle_options_popup;
+		$('close_options').onclick = toggle_options_popup;
 		$('gray_out').onclick = toggle_popup;
 		$('scramble_menu').onchange = function(s) {
 			scramble_manager.set($('scramble_menu').selectedIndex);
@@ -399,9 +405,14 @@ var ui = (function() {
 		ui.reset();
 		
 		shortcuts.init();
-		shortcuts.add_key_down(32, {'func': spacebar_down});
-		shortcuts.add_key_up(32, {'func': spacebar_up});
-		shortcuts.add_key_up(27, {'func': esc_up});
+		shortcuts.add_key_down(shortcuts.space, {'func': spacebar_down});
+		shortcuts.add_key_up(shortcuts.space, {'func': spacebar_up});
+		shortcuts.add_key_up(shortcuts.esc, {'func': esc_up});
+
+		shortcuts.add_key_up('3'.charCodeAt(), {'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 0); next_scramble(); }});
+		shortcuts.add_key_up('4'.charCodeAt(), {'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 1); next_scramble(); }});
+		shortcuts.add_key_up('5'.charCodeAt(), {'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 2); next_scramble(); }});
+		shortcuts.add_key_up('D'.charCodeAt(), {'shift': true, 'func': function(){ session.del(null); update_stats(); }});
 
 		if(localStorage)
 			config = JSON.parse(localStorage.getItem("ui.config"));
@@ -419,9 +430,17 @@ var ui = (function() {
 		}
 
 		$('use_milli').checked = config['use_milli'];
+
+		window.onbeforeunload = on_close;
+		window.onblur = function() { timer_label.style.color="gray"; };
+		window.onfocus = function() { timer_label.style.color="black"; };
+		window.onresize= function() {
+			centre($('options_popup'));
+			centre($('solve_popup'));
+			centre($('avg_popup'));
+		}
 	}
 	};
 })();
 window['ui'] = ui;
 window.onload = ui.init;
-window.onbeforeunload = ui.on_close;

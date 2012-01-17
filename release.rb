@@ -1,4 +1,4 @@
-js_files = %w(session timer scrambler ui)
+js_files = %w(session timer scrambler shortcuts ui)
 merge = js_files.map {|f| File.read "js/" + f + ".js" }.join
 
 if ARGV[0] == "-o"
