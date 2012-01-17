@@ -115,10 +115,16 @@ var ui = (function() {
 		}
 	}
 
+	function centre(el) {
+		el.style.marginLeft = (el.offsetWidth / -2) + "px";
+		el.style.marginTop = (el.offsetHeight / -2) + "px";
+	}
+
 	function toggle_options_popup() {
 		if(timer.is_running()) return;
-		toggle($('options'));
+		toggle($('options_popup'));
 		toggle($('gray_out')); 
+		centre($('options_popup'));
 	}
 
 	function toggle_solve_popup(index) {
@@ -142,6 +148,7 @@ var ui = (function() {
 		}
 		toggle($('solve_popup'));
 		toggle($('gray_out'));
+		centre($('solve_popup'));
 	}
 
 	function toggle_avg_popup(index, end) {
@@ -157,10 +164,11 @@ var ui = (function() {
 		}
 		toggle($('avg_popup'));
 		toggle($('gray_out'));
+		centre($('avg_popup'));
 	}
 
 	function toggle_popup() {
-		if(is_visible($('options'))) toggle($('options'));
+		if(is_visible($('options_popup'))) toggle($('options_popup'));
 		else if(is_visible($('solve_popup'))) {
 			toggle($('solve_popup'));
 			update_stats();
@@ -284,7 +292,7 @@ var ui = (function() {
               '<span class="a"><span id="toggle_stats">hide stats</span> | <span id="options_label">options</span></span></div></div>'+
 
               '<div id="right"><div id="times_label" class="hide_running a"></div></div>'+
-              '<div id="options" style="display: none;"><h2>options</h2>'+
+              '<div id="options_popup" style="display: none;" class="popup"><h2>options</h2>'+
               '<p><select id="scramble_menu"></select></p>'+
               '<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/></p>'+
               '<h3>timer</h3>'+
@@ -295,7 +303,7 @@ var ui = (function() {
               '<p><input type="checkbox" id="auto_save"><label for="auto_save">automatically save/load</label></p>'+
               '<span class="a"><span id="close_options">close</span></span></div>'+
 
-              '<div id="solve_popup" style="display: none;">'+
+              '<div id="solve_popup" style="display: none;" class="popup">'+
               '<h3>solve <span id="solve_popup_index"></span></h3>'+
               '<span id="solve_popup_time"></span>'+
               '<br /><span id="solve_popup_scramble"></span>'+
@@ -303,7 +311,7 @@ var ui = (function() {
               '<span id="solve_popup_p2">+2</span> <span id="solve_popup_dnf">DNF</span> <span id="solve_popup_del">delete</span>'+
               '<span id="solve_popup_close">close</span></span></div>'+
 
-              '<div id="avg_popup" style="display: none;">'+
+              '<div id="avg_popup" style="display: none;" class="popup">'+
               '<h3 id="avg_popup_header"></h3>'+
               '<span id="avg_popup_list"></span></div>'+
 
@@ -424,8 +432,13 @@ var ui = (function() {
 		$('use_milli').checked = config['use_milli'];
 
 		window.onbeforeunload = on_close;
-		window.onblur = function() { timer_label.style.color="gray"; }
-		window.onfocus = function() { timer_label.style.color="black"; }
+		window.onblur = function() { timer_label.style.color="gray"; };
+		window.onfocus = function() { timer_label.style.color="black"; };
+		window.onresize= function() {
+			centre($('options_popup'));
+			centre($('solve_popup'));
+			centre($('avg_popup'));
+		}
 	}
 	};
 })();
