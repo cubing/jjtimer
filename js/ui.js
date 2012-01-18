@@ -261,6 +261,7 @@ var ui = (function() {
 		next_scramble();
 		t(timer_label, "0.00");	
 		t(times_label, "&nbsp;");
+		update_stats();
 	},
 
 	load_plugin: function() {
@@ -326,8 +327,6 @@ var ui = (function() {
 		times_label = $('times_label');
 		options_label = $('options_label');
 		to_hide = document.getElementsByClassName("hide_running");
-
-		update_stats();
 
 		$('p2').onclick = function() {
 			if(timer.is_running()) return;
