@@ -31,7 +31,7 @@ h2, h3 {
 
 #scramble_label {
 	font-weight: bold;
-	width: 80%;
+	max-width: 80%;
 	margin: auto;
 }
 
