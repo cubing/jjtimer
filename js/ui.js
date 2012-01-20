@@ -13,7 +13,6 @@ var ui = (function() {
 	function is_visible(e) { return e.style.display !== "none"; }
 
 	var timer_label, scramble_label, stats_label, options_label, to_hide;
-	var update_timer, inspection_timer, inspection_count = 15;
 	var config;
 
 	function human_time(time) {
@@ -49,19 +48,17 @@ var ui = (function() {
 		return out;
 	}
 
-	function on_inspection() {
+	function on_inspection(inspection_time) {
 		timer_label.style.color = "red";
-		if(inspection_count > 0) {
-			t(timer_label, inspection_count);
+		if(inspection_time > 0) {
+			t(timer_label, inspection_time);
 		}
-		else if(inspection_count > -2) {
+		else if(inspection_time > -2) {
 			t(timer_label, "+2");
 		}
 		else {
 			t(timer_label, "DNF");
 		}
-		inspection_count -= 1;
-		inspection_timer = setTimeout(on_inspection, 1000);
 	}
 
 	function next_scramble()
@@ -220,32 +217,18 @@ var ui = (function() {
 
 	on_running: function() {
 		timer_label.style.color = "black";
-		clearTimeout(inspection_timer);
-		update_timer = setInterval(ui.update_running, 10);
 		for(var i = 0; i < to_hide.length; i++)
 		{
 			to_hide[i].className = to_hide[i].className + " g";
 		}
 	},
 
-	update_running: function() {
-		t(timer_label, human_time(timer.get_time()));
+	update_running: function(time) {
+		t(timer_label, human_time(time));
 	},
 
 	on_stop: function() {
-		clearInterval(update_timer);
 		t(timer_label, human_time(timer.get_time()));
-		if(timer.use_inspection()) {
-			if(inspection_count < 0) {
-				if(inspection_count >= -2) {
-					session.toggle_plus_two(null);
-				}
-				else {
-					session.toggle_dnf(null);
-				}
-			}
-			inspection_count = 15;
-		}
 		for(var i = 0; i < to_hide.length; i++)
 		{
 			to_hide[i].className = to_hide[i].className.substr(0, to_hide[i].className.length-2);
