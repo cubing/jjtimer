@@ -261,49 +261,7 @@ var ui = (function() {
 		}, 1000);
 	},
 
-	render_body: function() {
-		document.body.innerHTML = '<div id="left"><div id="cube_drawing"></div>'+
-              '<div id="timer_label">0.00</div>'+
-              '<div class="hide_running" id="scramble_label"></div>'+
-              '<div id="penalty" class="a hide_running">that time was: <span id="p2">+2</span> <span id="dnf">DNF</span></div>'+
-              '<div id="bottom_bar" class="hide_running"><div id="stats_label">'+
-              'times: <span id="s_t">0</span><br />'+
-              '<span id="stats_link" class="a">'+
-              'current average: <span id="c_a_5"></span>, <span id="c_a_12"></span>, <span id="c_a_100"></span><br />'+
-              'best average: <span id="b_a_5"></span>, <span id="b_a_12"></span>, <span id="b_a_100"></span><br />'+
-              'session average: <span id="s_a"></span>, mean: <span id="s_m"></span></span></div>'+
-              '<span class="a"><span id="toggle_stats">hide stats</span> | <span id="options_label">options</span></span></div></div>'+
-
-              '<div id="right"><div id="times_label" class="hide_running a"></div></div>'+
-              '<div id="options_popup" style="display: none;" class="popup"><h2>options</h2>'+
-              '<p>puzzle: <select id="scramble_menu"></select></p>'+
-              '<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/>'+
-              '<div id="info"></div></p><h3>timer</h3>'+
-              '<p><input type="checkbox" id="use_inspection"><label for="use_inspection">use inspection</label>'+
-              '<input type="checkbox" id="use_milli"><label for="use_milli">use milliseconds</label></p>'+
-              '<h3>session</h3>'+
-              '<p><input type="submit" id="save_btn" value="save" /> <input type="submit" id="load_btn" value="load" /></p>'+
-              '<p><input type="checkbox" id="auto_save"><label for="auto_save">automatically save/load</label></p>'+
-              '<span class="a"><span id="close_options">close</span></span></div>'+
-
-              '<div id="solve_popup" style="display: none;" class="popup">'+
-              '<h3>solve <span id="solve_popup_index"></span></h3>'+
-              '<span id="solve_popup_time"></span>'+
-              '<br /><span id="solve_popup_scramble"></span>'+
-              '<br /><span class="a">'+
-              '<span id="solve_popup_p2">+2</span> <span id="solve_popup_dnf">DNF</span> <span id="solve_popup_del">delete</span>'+
-              '<span id="solve_popup_close">close</span></span></div>'+
-
-              '<div id="avg_popup" style="display: none;" class="popup">'+
-              '<h3 id="avg_popup_header"></h3>'+
-              '<span id="avg_popup_list"></span></div>'+
-
-              '<div id="gray_out" style="display: none;"></div>';
-	},
-
 	init: function() {
-		ui.render_body();
-
 		timer_label = $('timer_label');
 		scramble_label = $('scramble_label');
 		stats_label = $('stats_label');
