@@ -89,17 +89,22 @@ var ui = (function() {
 		for(var i = 0; i < session.length(); ++i)
 		{
 			if(i != 0) out += ", ";
-			if(i === hilight_index) out += "<span class='h' onclick='ui.toggle_avg_popup("+hilight_index+", "+(hilight_index + length)+")'>";
+			if(i === hilight_index) out += "<a class='h' onclick='ui.toggle_avg_popup("+hilight_index+", "+(hilight_index + length)+")'>";
 			if(i === paren_i || i === paren_j) out += "(";
 
-			if(hilight_index !== -1 && i >= hilight_index)
-				out += "<span>";
-			else out += "<span onclick='ui.toggle_solve_popup("+i+")'>";
-			out += solve_time(session.solves()[i]);
-			out += "</span>";
+			var time_str = solve_time(session.solves()[i]);
+			if(hilight_index === -1 || (i < hilight_index || i > hilight_index+length)) {
+				out += "<a href='javascript:0;' onclick='ui.toggle_solve_popup("+i+");'>";
+				out += time_str;
+				out += "</a>";
+			}
+			else {
+				out += time_str;
+			}
+
 
 			if(i === paren_i || i === paren_j) out += ")";
-			if(i === hilight_index + length) out += "</span>";
+			if(i === hilight_index + length) out += "</a>";
 		}
 		return out;
 	}
@@ -219,7 +224,7 @@ var ui = (function() {
 		timer_label.style.color = "black";
 		for(var i = 0; i < to_hide.length; i++)
 		{
-			to_hide[i].className = to_hide[i].className + " g";
+			to_hide[i].className = to_hide[i].className + " disabled";
 		}
 	},
 
@@ -231,7 +236,7 @@ var ui = (function() {
 		t(timer_label, human_time(timer.get_time()));
 		for(var i = 0; i < to_hide.length; i++)
 		{
-			to_hide[i].className = to_hide[i].className.substr(0, to_hide[i].className.length-2);
+			to_hide[i].className = to_hide[i].className.replace("disabled", "");
 		}
 		next_scramble();
 	},
