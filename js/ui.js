@@ -210,6 +210,18 @@ var ui = (function() {
 		localStorage.setItem("ui.config", JSON.stringify(config));
 	}
 
+	function load_colours() {
+		var styles = "";
+		if(config['link_colour']) {
+			styles += ".a span { color: "+ config['link_colour'] +";}";
+		}
+		if(styles != "") {
+			var user_styles = document.createElement('style');
+			user_styles.innerHTML = styles;
+			document.body.appendChild(user_styles);
+		}
+	}
+
 	return {
 	update_stats: update_stats,
 
@@ -368,6 +380,9 @@ var ui = (function() {
 		}
 
 		$('use_milli').checked = config['use_milli'];
+
+		config['link_colour'] = "red";
+		load_colours();
 
 		window.onbeforeunload = on_close;
 		window.onblur = function() { timer_label.style.color="gray"; };
