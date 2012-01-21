@@ -31,7 +31,7 @@ h2, h3 {
 
 #scramble_label {
 	font-weight: bold;
-	width: 80%;
+	max-width: 80%;
 	margin: auto;
 }
 
@@ -81,16 +81,17 @@ h2, h3 {
 	float: right;
 }
 
-.a span {
+a {
 	color: #36c;
 	cursor: pointer;
+	text-decoration: none;
 }
 
-.a span:hover {
+a:hover {
 	text-decoration: underline;
 }
 
-.g, .g span {
+.disabled, .disabled a {
 	color: gray;
 }
 

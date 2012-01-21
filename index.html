@@ -10,5 +10,61 @@
 <script type="text/javascript" src="js/ui.js"></script>
 </head>
 <body>
+<div id="left">
+	<div id="cube_drawing"></div>
+	<div id="timer_label">0.00</div>
+	<div class="hide_running" id="scramble_label"></div>
+	<div id="penalty" class="hide_running">that time was: <a href="javascript:0;" id="p2">+2</a> <a href="javascript:0;" id="dnf">DNF</a></div>
+
+	<div id="bottom_bar" class="hide_running">
+		<div id="stats_label">
+			times: <span id="s_t">0</span><br />
+			<span id="stats_link">
+				current average: <a href="javascript:0;" id="c_a_5"></a>, <a href="javascript:0;" id="c_a_12"></a>, <a href="javascript:0;" id="c_a_100"></a><br />
+				best average: <a href="javascript:0;" id="b_a_5"></a>, <a href="javascript:0;" id="b_a_12"></a>, <a href="javascript:0;" id="b_a_100"></a><br />
+				session average: <a href="javascript:0;" id="s_a"></a>, mean: <a href="javascript:0;" id="s_m"></a>
+			</span>
+		</div>
+			<a href="javascript:0;" id="toggle_stats">hide stats</a> | <a href="javascript:0;" id="options_label">options</a>
+	</div>
+</div>
+
+<div id="right">
+	<div id="times_label" class="hide_running"></div>
+</div>
+
+<div id="options_popup" style="display: none;" class="popup">
+	<h2>options</h2>
+	<p>puzzle: <select id="scramble_menu"></select></p>
+	<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/>
+	<div id="info"></div></p>
+
+	<h3>timer</h3>
+	<p><input type="checkbox" id="use_inspection"><label for="use_inspection">use inspection</label>
+	<input type="checkbox" id="use_milli"><label for="use_milli">use milliseconds</label></p>
+
+	<h3>session</h3>
+	<p><input type="submit" id="save_btn" value="save" /> <input type="submit" id="load_btn" value="load" /></p>
+	<p><input type="checkbox" id="auto_save"><label for="auto_save">automatically save/load</label></p>
+	<a href="javascript:0;" id="close_options">close</a>
+</div>
+
+<div id="solve_popup" style="display: none;" class="popup">
+	<h3>solve <span id="solve_popup_index"></span></h3>
+	<span id="solve_popup_time"></span>
+	<br /><span id="solve_popup_scramble"></span>
+	<br />
+	<a href="javascript:0;" id="solve_popup_p2">+2</a>
+	<a href="javascript:0;" id="solve_popup_dnf">DNF</a>
+	<a href="javascript:0;" id="solve_popup_del">delete</a>
+	<a href="javascript:0;" id="solve_popup_close">close</a>
+</div>
+
+<div id="avg_popup" style="display: none;" class="popup">
+	<h3 id="avg_popup_header"></h3>
+	<span id="avg_popup_list"></span>
+</div>
+
+<div id="gray_out" style="display: none;"></div>
 </body>
 </html>

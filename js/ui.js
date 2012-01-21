@@ -13,7 +13,6 @@ var ui = (function() {
 	function is_visible(e) { return e.style.display !== "none"; }
 
 	var timer_label, scramble_label, stats_label, options_label, to_hide;
-	var update_timer, inspection_timer, inspection_count = 15;
 	var config;
 
 	function human_time(time) {
@@ -49,19 +48,17 @@ var ui = (function() {
 		return out;
 	}
 
-	function on_inspection() {
+	function on_inspection(inspection_time) {
 		timer_label.style.color = "red";
-		if(inspection_count > 0) {
-			t(timer_label, inspection_count);
+		if(inspection_time > 0) {
+			t(timer_label, inspection_time);
 		}
-		else if(inspection_count > -2) {
+		else if(inspection_time > -2) {
 			t(timer_label, "+2");
 		}
 		else {
 			t(timer_label, "DNF");
 		}
-		inspection_count -= 1;
-		inspection_timer = setTimeout(on_inspection, 1000);
 	}
 
 	function next_scramble()
@@ -92,17 +89,22 @@ var ui = (function() {
 		for(var i = 0; i < session.length(); ++i)
 		{
 			if(i != 0) out += ", ";
-			if(i === hilight_index) out += "<span class='h' onclick='ui.toggle_avg_popup("+hilight_index+", "+(hilight_index + length)+")'>";
+			if(i === hilight_index) out += "<a class='h' onclick='ui.toggle_avg_popup("+hilight_index+", "+(hilight_index + length)+")'>";
 			if(i === paren_i || i === paren_j) out += "(";
 
-			if(hilight_index !== -1 && i >= hilight_index)
-				out += "<span>";
-			else out += "<span onclick='ui.toggle_solve_popup("+i+")'>";
-			out += solve_time(session.solves()[i]);
-			out += "</span>";
+			var time_str = solve_time(session.solves()[i]);
+			if(hilight_index === -1 || (i < hilight_index || i > hilight_index+length)) {
+				out += "<a href='javascript:0;' onclick='ui.toggle_solve_popup("+i+");'>";
+				out += time_str;
+				out += "</a>";
+			}
+			else {
+				out += time_str;
+			}
+
 
 			if(i === paren_i || i === paren_j) out += ")";
-			if(i === hilight_index + length) out += "</span>";
+			if(i === hilight_index + length) out += "</a>";
 		}
 		return out;
 	}
@@ -171,7 +173,6 @@ var ui = (function() {
 		if(is_visible($('options_popup'))) toggle($('options_popup'));
 		else if(is_visible($('solve_popup'))) {
 			toggle($('solve_popup'));
-			update_stats();
 		}
 		else if(is_visible($('avg_popup')))
 			toggle($('avg_popup'));
@@ -215,42 +216,29 @@ var ui = (function() {
 	}
 
 	return {
+	update_stats: update_stats,
+
 	on_inspection: on_inspection,
 
 	on_running: function() {
 		timer_label.style.color = "black";
-		clearTimeout(inspection_timer);
-		update_timer = setInterval(ui.update_running, 10);
 		for(var i = 0; i < to_hide.length; i++)
 		{
-			to_hide[i].className = to_hide[i].className + " g";
+			to_hide[i].className = to_hide[i].className + " disabled";
 		}
 	},
 
-	update_running: function() {
-		t(timer_label, human_time(timer.get_time()));
+	update_running: function(time) {
+		t(timer_label, human_time(time));
 	},
 
 	on_stop: function() {
-		clearInterval(update_timer);
 		t(timer_label, human_time(timer.get_time()));
-		if(timer.use_inspection()) {
-			if(inspection_count < 0) {
-				if(inspection_count >= -2) {
-					session.toggle_plus_two(null);
-				}
-				else {
-					session.toggle_dnf(null);
-				}
-			}
-			inspection_count = 15;
-		}
 		for(var i = 0; i < to_hide.length; i++)
 		{
-			to_hide[i].className = to_hide[i].className.substr(0, to_hide[i].className.length-2);
+			to_hide[i].className = to_hide[i].className.replace("disabled", "");
 		}
 		next_scramble();
-		update_stats();
 	},
 
 	toggle_solve_popup: toggle_solve_popup,
@@ -259,9 +247,9 @@ var ui = (function() {
 	reset: function() {
 		timer.reset();
 		next_scramble();
-		update_stats();
 		t(timer_label, "0.00");	
 		t(times_label, "&nbsp;");
+		update_stats();
 	},
 
 	load_plugin: function() {
@@ -278,49 +266,7 @@ var ui = (function() {
 		}, 1000);
 	},
 
-	render_body: function() {
-		document.body.innerHTML = '<div id="left"><div id="info"></div>'+
-              '<div id="timer_label">0.00</div>'+
-              '<div class="hide_running" id="scramble_label"></div>'+
-              '<div id="penalty" class="a hide_running">that time was: <span id="p2">+2</span> <span id="dnf">DNF</span></div>'+
-              '<div id="bottom_bar" class="hide_running"><div id="stats_label">'+
-              'times: <span id="s_t">0</span><br />'+
-              '<span id="stats_link" class="a">'+
-              'current average: <span id="c_a_5"></span>, <span id="c_a_12"></span>, <span id="c_a_100"></span><br />'+
-              'best average: <span id="b_a_5"></span>, <span id="b_a_12"></span>, <span id="b_a_100"></span><br />'+
-              'session average: <span id="s_a"></span>, mean: <span id="s_m"></span></span></div>'+
-              '<span class="a"><span id="toggle_stats">hide stats</span> | <span id="options_label">options</span></span></div></div>'+
-
-              '<div id="right"><div id="times_label" class="hide_running a"></div></div>'+
-              '<div id="options_popup" style="display: none;" class="popup"><h2>options</h2>'+
-              '<p><select id="scramble_menu"></select></p>'+
-              '<p><input type="input" id="plugin_url" /><input type="submit" onclick="ui.load_plugin()" value="load"/></p>'+
-              '<h3>timer</h3>'+
-              '<p><input type="checkbox" id="use_inspection"><label for="use_inspection">use inspection</label>'+
-              '<input type="checkbox" id="use_milli"><label for="use_milli">use milliseconds</label></p>'+
-              '<h3>session</h3>'+
-              '<p><input type="submit" id="save_btn" value="save" /> <input type="submit" id="load_btn" value="load" /></p>'+
-              '<p><input type="checkbox" id="auto_save"><label for="auto_save">automatically save/load</label></p>'+
-              '<span class="a"><span id="close_options">close</span></span></div>'+
-
-              '<div id="solve_popup" style="display: none;" class="popup">'+
-              '<h3>solve <span id="solve_popup_index"></span></h3>'+
-              '<span id="solve_popup_time"></span>'+
-              '<br /><span id="solve_popup_scramble"></span>'+
-              '<br /><span class="a">'+
-              '<span id="solve_popup_p2">+2</span> <span id="solve_popup_dnf">DNF</span> <span id="solve_popup_del">delete</span>'+
-              '<span id="solve_popup_close">close</span></span></div>'+
-
-              '<div id="avg_popup" style="display: none;" class="popup">'+
-              '<h3 id="avg_popup_header"></h3>'+
-              '<span id="avg_popup_list"></span></div>'+
-
-              '<div id="gray_out" style="display: none;"></div>';
-	},
-
 	init: function() {
-		ui.render_body();
-
 		timer_label = $('timer_label');
 		scramble_label = $('scramble_label');
 		stats_label = $('stats_label');
@@ -331,13 +277,11 @@ var ui = (function() {
 		$('p2').onclick = function() {
 			if(timer.is_running()) return;
 			session.toggle_plus_two(null);
-			update_stats();
 			t(timer_label, solve_time(session.last()));
 		};
 		$('dnf').onclick = function() {
 			if(timer.is_running()) return;
 			session.toggle_dnf(null);
-			update_stats();
 			t(timer_label, solve_time(session.last()));
 		};
 
@@ -394,7 +338,7 @@ var ui = (function() {
 			t(timer_label, human_time(timer.get_time()));
 		}
 		$('save_btn').onclick = session.save;
-		$('load_btn').onclick = function() { session.load(); update_stats(); };
+		$('load_btn').onclick = function() { session.load(); };
 		$('auto_save').onchange = function() { config['auto_save'] = $('auto_save').checked;  };
 
 		$('solve_popup_close').onclick = toggle_popup;
@@ -412,7 +356,7 @@ var ui = (function() {
 		shortcuts.add_key_up('3'.charCodeAt(), {'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 0); next_scramble(); }});
 		shortcuts.add_key_up('4'.charCodeAt(), {'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 1); next_scramble(); }});
 		shortcuts.add_key_up('5'.charCodeAt(), {'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 2); next_scramble(); }});
-		shortcuts.add_key_up('D'.charCodeAt(), {'shift': true, 'func': function(){ session.del(null); update_stats(); }});
+		shortcuts.add_key_up('D'.charCodeAt(), {'shift': true, 'func': function(){ session.del(null); }});
 
 		if(localStorage)
 			config = JSON.parse(localStorage.getItem("ui.config"));
@@ -422,7 +366,6 @@ var ui = (function() {
 		if(config['auto_save']) {
 			$('auto_save').checked = true;
 			session.load();
-			update_stats();
 		}
 		if(config['use_inspection']) {
 			$('use_inspection').checked = true;
