@@ -6,8 +6,8 @@ var session = (function() {
 	}
 
 	function solve_sort(a, b){
-		if(a['DNF']) return -1;
-		if(b['DNF']) return 1;
+		if(a['DNF']) return 1;
+		if(b['DNF']) return -1;
 
 		return a['time'] - b['time'];
 	}
@@ -41,7 +41,7 @@ var session = (function() {
 		copy.splice(0, trim);
 		copy.splice(copy.length - trim, trim);
 
-		if(copy[0]['DNF']) return -1;
+		if(copy[copy.length-1]['DNF']) return -1;
 
 		var sum = 0;
 		for(var i = 0; i < copy.length; ++i)
@@ -62,22 +62,26 @@ var session = (function() {
 
 	add: function(time, scramble) {
 		solves.push({'time': time, 'scramble': scramble});
+		ui.update_stats();
 	},
 
 	del: function(index) {
 		if(index === null) index = solves.length - 1;
 		solves.splice(index, 1);
+		ui.update_stats();
 	},
 
 	toggle_dnf: function(index) {
 		if(index === null) index = solves.length - 1;
 		solves[index]['DNF'] = !solves[index]['DNF'];
+		ui.update_stats();
 	},
 
 	toggle_plus_two: function(index) {
 		if(index === null) index = solves.length - 1;
 		solves[index]['plus_two'] = !solves[index]['plus_two'];
 		solves[index]['time'] += solves[index]['plus_two'] ? 2000 : -2000;
+		ui.update_stats();
 	},
 
 	mean: mean,
@@ -133,6 +137,7 @@ var session = (function() {
 			var localSolves = localStorage.getItem('session.solves');
 			if(localSolves != null)
 				solves = JSON.parse(localSolves);	
+			ui.update_stats();
 		}
 	},
 
