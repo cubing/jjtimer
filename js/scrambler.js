@@ -1,3 +1,4 @@
+"use strict";
 var scramble_manager = (function() {
 	var scramblers = [];
 	var last_scramble;

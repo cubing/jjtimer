@@ -1,3 +1,4 @@
+"use strict";
 function load_external(url) {
 	var file = document.createElement('script');
 	file.type = "text/javascript";
@@ -12,7 +13,7 @@ var ui = (function() {
 	function toggle(e) { e.style.display = (e.style.display === "none") ? "inline" : "none"; }
 	function is_visible(e) { return e.style.display !== "none"; }
 
-	var timer_label, scramble_label, stats_label, options_label, to_hide;
+	var timer_label, times_label, scramble_label, stats_label, options_label, to_hide;
 	var config;
 
 	function human_time(time) {
