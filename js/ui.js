@@ -214,6 +214,10 @@ var ui = (function() {
 
 	function load_colours() {
 		var styles = "";
+		if(config['ui_bg_colour']) {
+			styles += "#left, #right, .popup { background-color: " + config['ui_bg_colour'] + ";}";
+			$('ui_bg_colour').value = config['ui_bg_colour'];
+		}
 		if(config['ui_text_colour']) {
 			styles += "body { color: " + config['ui_text_colour'] + ";}";
 			$('ui_text_colour').value = config['ui_text_colour'];
@@ -357,6 +361,10 @@ var ui = (function() {
 			$('load_btn').onclick = function() { session.load(); };
 			$('auto_save').onchange = function() { config['auto_save'] = $('auto_save').checked; };
 
+			$('ui_bg_colour').onchange = function() {
+				config['ui_bg_colour'] = $('ui_bg_colour').value;
+				load_colours();
+			};
 			$('ui_text_colour').onchange = function() {
 				config['ui_text_colour'] = $('ui_text_colour').value;
 				load_colours();
