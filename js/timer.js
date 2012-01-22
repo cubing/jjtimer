@@ -1,3 +1,4 @@
+"use strict";
 var timer = function() {
 	var state, Waiting = 0, Inspecting = 1, Ready = 2, Running = 3, Delay = 4;
 	var start_time, end_time, solve_time;
