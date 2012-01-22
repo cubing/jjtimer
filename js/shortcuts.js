@@ -1,3 +1,4 @@
+"use strict";
 var shortcuts = (function() {
 	var shortcuts_down = {};
 	var shortcuts_up = {};
