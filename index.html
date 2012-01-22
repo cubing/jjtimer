@@ -14,25 +14,23 @@
 	<div id="cube_drawing"></div>
 	<div id="timer_label">0.00</div>
 	<div class="hide_running" id="scramble_label"></div>
-	<div id="penalty" class="a hide_running">that time was: <span id="p2">+2</span> <span id="dnf">DNF</span></div>
+	<div id="penalty" class="hide_running">that time was: <a href="javascript:;" id="p2">+2</a> <a href="javascript:;" id="dnf">DNF</a></div>
 
 	<div id="bottom_bar" class="hide_running">
 		<div id="stats_label">
 			times: <span id="s_t">0</span><br />
-			<span id="stats_link" class="a">
-				current average: <span id="c_a_5"></span>, <span id="c_a_12"></span>, <span id="c_a_100"></span><br />
-				best average: <span id="b_a_5"></span>, <span id="b_a_12"></span>, <span id="b_a_100"></span><br />
-				session average: <span id="s_a"></span>, mean: <span id="s_m"></span>
+			<span id="stats_link">
+				current average: <a href="javascript:;" id="c_a_5"></a>, <a href="javascript:;" id="c_a_12"></a>, <a href="javascript:;" id="c_a_100"></a><br />
+				best average: <a href="javascript:;" id="b_a_5"></a>, <a href="javascript:;" id="b_a_12"></a>, <a href="javascript:;" id="b_a_100"></a><br />
+				session average: <a href="javascript:;" id="s_a"></a>, mean: <a href="javascript:;" id="s_m"></a>
 			</span>
 		</div>
-		<span class="a">
-			<span id="toggle_stats">hide stats</span> | <span id="options_label">options</span>
-		</span>
+			<a href="javascript:;" id="toggle_stats">hide stats</a> | <a href="javascript:;" id="options_label">options</a>
 	</div>
 </div>
 
 <div id="right">
-	<div id="times_label" class="hide_running a"></div>
+	<div id="times_label" class="hide_running"></div>
 </div>
 
 <div id="options_popup" style="display: none;" class="popup">
@@ -48,16 +46,18 @@
 	<h3>session</h3>
 	<p><input type="submit" id="save_btn" value="save" /> <input type="submit" id="load_btn" value="load" /></p>
 	<p><input type="checkbox" id="auto_save"><label for="auto_save">automatically save/load</label></p>
-	<span class="a"><span id="close_options">close</span></span>
+	<a href="javascript:;" id="close_options">close</a>
 </div>
 
 <div id="solve_popup" style="display: none;" class="popup">
 	<h3>solve <span id="solve_popup_index"></span></h3>
 	<span id="solve_popup_time"></span>
 	<br /><span id="solve_popup_scramble"></span>
-	<br /><span class="a">
-	<span id="solve_popup_p2">+2</span> <span id="solve_popup_dnf">DNF</span> <span id="solve_popup_del">delete</span>
-	<span id="solve_popup_close">close</span></span>
+	<br />
+	<a href="javascript:;" id="solve_popup_p2">+2</a>
+	<a href="javascript:;" id="solve_popup_dnf">DNF</a>
+	<a href="javascript:;" id="solve_popup_del">delete</a>
+	<a href="javascript:;" id="solve_popup_close">close</a>
 </div>
 
 <div id="avg_popup" style="display: none;" class="popup">

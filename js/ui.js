@@ -1,3 +1,4 @@
+"use strict";
 function load_external(url) {
 	var file = document.createElement('script');
 	file.type = "text/javascript";
@@ -12,7 +13,7 @@ var ui = (function() {
 	function toggle(e) { e.style.display = (e.style.display === "none") ? "inline" : "none"; }
 	function is_visible(e) { return e.style.display !== "none"; }
 
-	var timer_label, scramble_label, stats_label, options_label, to_hide;
+	var timer_label, times_label, scramble_label, stats_label, options_label, to_hide;
 	var config;
 
 	function human_time(time) {
@@ -89,17 +90,22 @@ var ui = (function() {
 		for(var i = 0; i < session.length(); ++i)
 		{
 			if(i != 0) out += ", ";
-			if(i === hilight_index) out += "<span class='h' onclick='ui.toggle_avg_popup("+hilight_index+", "+(hilight_index + length)+")'>";
+			if(i === hilight_index) out += "<a href='javascript:;' class='h' onclick='ui.toggle_avg_popup("+hilight_index+", "+(hilight_index + length)+")'>";
 			if(i === paren_i || i === paren_j) out += "(";
 
-			if(hilight_index !== -1 && i >= hilight_index)
-				out += "<span>";
-			else out += "<span onclick='ui.toggle_solve_popup("+i+")'>";
-			out += solve_time(session.solves()[i]);
-			out += "</span>";
+			var time_str = solve_time(session.solves()[i]);
+			if(hilight_index === -1 || (i < hilight_index || i > hilight_index+length)) {
+				out += "<a href='javascript:;' onclick='ui.toggle_solve_popup("+i+");'>";
+				out += time_str;
+				out += "</a>";
+			}
+			else {
+				out += time_str;
+			}
+
 
 			if(i === paren_i || i === paren_j) out += ")";
-			if(i === hilight_index + length) out += "</span>";
+			if(i === hilight_index + length) out += "</a>";
 		}
 		return out;
 	}
@@ -231,7 +237,7 @@ var ui = (function() {
 		timer_label.style.color = "black";
 		for(var i = 0; i < to_hide.length; i++)
 		{
-			to_hide[i].className = to_hide[i].className + " g";
+			to_hide[i].className = to_hide[i].className + " disabled";
 		}
 	},
 
@@ -243,7 +249,7 @@ var ui = (function() {
 		t(timer_label, human_time(timer.get_time()));
 		for(var i = 0; i < to_hide.length; i++)
 		{
-			to_hide[i].className = to_hide[i].className.substr(0, to_hide[i].className.length-2);
+			to_hide[i].className = to_hide[i].className.replace("disabled", "");
 		}
 		next_scramble();
 	},
