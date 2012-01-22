@@ -218,8 +218,8 @@ var ui = (function() {
 
 	function load_colours() {
 		var styles = "";
-		if(config['link_colour']) {
-			styles += ".a span { color: "+ config['link_colour'] +";}";
+		if(config['ui_link_colour']) {
+			styles += "a { color: "+ config['ui_link_colour'] +";}";
 		}
 		if(styles != "") {
 			var user_styles = document.createElement('style');
@@ -387,7 +387,7 @@ var ui = (function() {
 
 		$('use_milli').checked = config['use_milli'];
 
-		config['link_colour'] = "red";
+		config['ui_link_colour'] = "red";
 		load_colours();
 
 		window.onbeforeunload = on_close;
