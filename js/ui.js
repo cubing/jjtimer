@@ -90,7 +90,7 @@ var ui = (function() {
 		for(var i = 0; i < session.length(); ++i)
 		{
 			if(i != 0) out += ", ";
-			if(i === highlight_index) out += "<a href='javascript:;' class='h' onclick='ui.toggle_avg_popup("+highlight_index+", "+(highlight_index + length)+")'>";
+			if (i === highlight_index) out += "<a href='javascript:;' class='highlighted' onclick='ui.toggle_avg_popup(" + highlight_index + ", " + (highlight_index + length) + ")'>";
 			if(i === paren_i || i === paren_j) out += "(";
 
 			var time_str = solve_time(session.solves()[i]);
@@ -220,6 +220,9 @@ var ui = (function() {
 		var styles = "";
 		if(config['ui_link_colour']) {
 			styles += "a { color: "+ config['ui_link_colour'] +";}";
+		}
+		if(config['ui_highlight_colour']) {
+			styles += ".highlighted { background-color: " + config['ui_highlight_colour'] + ";}";
 		}
 		if(styles != "") {
 			var user_styles = document.createElement('style');
@@ -388,6 +391,7 @@ var ui = (function() {
 		$('use_milli').checked = config['use_milli'];
 
 		config['ui_link_colour'] = "red";
+		config['ui_highlight_colour'] = "green";
 		load_colours();
 
 		window.onbeforeunload = on_close;
