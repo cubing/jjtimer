@@ -81,20 +81,20 @@ var ui = (function() {
 		times_label.scrollTop = times_label.scrollHeight;
 	}
 
-	function to_times_list(hilight_index, length, paren_i, paren_j) {
+	function to_times_list(highlight_index, length, paren_i, paren_j) {
 		if(session.length() < 1) return "&nbsp;"
-		if(hilight_index === null)
-			hilight_index = length = paren_i = paren_j = -1;
+		if(highlight_index === null)
+			highlight_index = length = paren_i = paren_j = -1;
 
 		var out = "";
 		for(var i = 0; i < session.length(); ++i)
 		{
 			if(i != 0) out += ", ";
-			if(i === hilight_index) out += "<a href='javascript:;' class='h' onclick='ui.toggle_avg_popup("+hilight_index+", "+(hilight_index + length)+")'>";
+			if(i === highlight_index) out += "<a href='javascript:;' class='h' onclick='ui.toggle_avg_popup("+highlight_index+", "+(highlight_index + length)+")'>";
 			if(i === paren_i || i === paren_j) out += "(";
 
 			var time_str = solve_time(session.solves()[i]);
-			if(hilight_index === -1 || (i < hilight_index || i > hilight_index+length)) {
+			if(highlight_index === -1 || (i < highlight_index || i > highlight_index+length)) {
 				out += "<a href='javascript:;' onclick='ui.toggle_solve_popup("+i+");'>";
 				out += time_str;
 				out += "</a>";
@@ -105,7 +105,7 @@ var ui = (function() {
 
 
 			if(i === paren_i || i === paren_j) out += ")";
-			if(i === hilight_index + length) out += "</a>";
+			if(i === highlight_index + length) out += "</a>";
 		}
 		return out;
 	}
@@ -186,7 +186,7 @@ var ui = (function() {
 		t(times_label, to_times_list(start, length - 1, paren_i, paren_j));
 	}
 
-	function hilight_current(length, paren_i, paren_j) {
+	function highlight_current(length, paren_i, paren_j) {
 		if(timer.is_running()) return;
 		if(paren_i === null || paren_j === null) paren_i = paren_j = -1;
 		highlight(session.length() - length, length, paren_i, paren_j);
@@ -300,7 +300,7 @@ var ui = (function() {
 
 		$('c_a_5').onclick = function() {
 			if(timer.is_running()) return;
-			hilight_current(5, null, null);
+			highlight_current(5, null, null);
 		};
 		$('b_a_5').onclick = function() {
 			if(timer.is_running()) return;
@@ -309,7 +309,7 @@ var ui = (function() {
 		};
 		$('c_a_12').onclick = function() {
 			if(timer.is_running()) return;
-			hilight_current(12, null, null);
+			highlight_current(12, null, null);
 		};
 		$('b_a_12').onclick = function() {
 			if(timer.is_running()) return;
@@ -318,11 +318,11 @@ var ui = (function() {
 		};
 		$('s_a').onclick = function() {
 			if(timer.is_running()) return;
-			hilight_current(session.length(), null, null);
+			highlight_current(session.length(), null, null);
 		};
 		$('s_m').onclick = function() {
 			if(timer.is_running()) return;
-			hilight_current(session.length(), null, null);
+			highlight_current(session.length(), null, null);
 		};
 
 		$('toggle_stats').onclick = function() {
