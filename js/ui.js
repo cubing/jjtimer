@@ -230,11 +230,7 @@ var ui = (function() {
 			styles += ".highlighted { background-color: " + config['ui_highlight_colour'] + ";}";
 			$('ui_highlight_colour').value = config['ui_highlight_colour'];
 		}
-		if(styles != "") {
-			var user_styles = document.createElement('style');
-			user_styles.innerHTML = styles;
-			document.body.appendChild(user_styles);
-		}
+		t($('user_styles'), styles);
 	}
 
 	function change_font_size(el, delta) {
