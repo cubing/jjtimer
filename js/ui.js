@@ -237,6 +237,11 @@ var ui = (function() {
 		}
 	}
 
+	function change_font_size(el, delta) {
+		var size = parseFloat(el.style.fontSize);
+		return el.style.fontSize = (size + delta) + "em";
+	}
+
 	return {
 		update_stats: update_stats,
 
@@ -412,6 +417,25 @@ var ui = (function() {
 			$('use_milli').checked = config['use_milli'];
 
 			load_colours();
+
+			$('ui_timer_size_inc').onclick = function() {
+				config['timer_label_size'] = change_font_size(timer_label, 1);
+			};
+
+			$('ui_timer_size_dec').onclick = function() {
+				config['timer_label_size'] = change_font_size(timer_label, -1);
+			};
+
+			$('ui_scramble_size_inc').onclick = function() {
+				config['scramble_label_size'] = change_font_size(scramble_label, 0.1);
+			};
+
+			$('ui_scramble_size_dec').onclick = function() {
+				config['scramble_label_size'] = change_font_size(scramble_label, -0.1);
+			};
+
+			timer_label.style.fontSize = config['timer_label_size'] || "10em";
+			scramble_label.style.fontSize = config['scramble_label_size'] || "1em";
 
 			window.onbeforeunload = on_close;
 			window.onblur = function() { timer_label.style.color = "gray"; };
