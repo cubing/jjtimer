@@ -22,6 +22,7 @@ var scramble_manager = (function() {
 		if(current_scrambler && current_scrambler.unselected)
 			current_scrambler.unselected();
 		
+		current_index = index;
 		current_scrambler = scramblers[index];
 		
 		if(current_scrambler.selected)
@@ -42,6 +43,8 @@ var scramble_manager = (function() {
 		add: add,
 		add_default: add_default,
 		set: set,
+
+		current_index: function() { return current_index; },
 
 		next: next,
 		last_scramble: function() { return last_scramble; },

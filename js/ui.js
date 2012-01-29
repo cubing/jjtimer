@@ -87,8 +87,7 @@ var ui = (function() {
 			highlight_index = length = paren_i = paren_j = -1;
 
 		var out = "";
-		for(var i = 0; i < session.length(); ++i)
-		{
+		for(var i = 0; i < session.length(); ++i) {
 			if(i != 0) out += ", ";
 			if(i === highlight_index) out += "<a href='javascript:;' class='h' onclick='ui.toggle_avg_popup("+highlight_index+", "+(highlight_index + length)+")'>";
 			if(i === paren_i || i === paren_j) out += "(";
@@ -103,7 +102,6 @@ var ui = (function() {
 				out += time_str;
 			}
 
-
 			if(i === paren_i || i === paren_j) out += ")";
 			if(i === highlight_index + length) out += "</a>";
 		}
@@ -112,10 +110,10 @@ var ui = (function() {
 	
 	function populate_scramblers_menu() {
 		var menu = $('scramble_menu');
-		for(var i = 0; i < scramble_manager.scramblers.length; i++)
-		{
+		for(var i = 0; i < scramble_manager.scramblers.length; i++) {
 			menu.options[i] = new Option(scramble_manager.get_name(i));
 		}
+		menu.options[scramble_manager.current_index()].selected = true;
 	}
 
 	function centre(el) {
