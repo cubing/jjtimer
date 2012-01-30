@@ -391,9 +391,12 @@ var ui = (function() {
 			shortcuts.add_key_up(shortcuts.space, { 'func': spacebar_up });
 			shortcuts.add_key_up(shortcuts.esc, { 'func': esc_up });
 
-			shortcuts.add_key_up('3'.charCodeAt(), { 'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 0); next_scramble(); } });
-			shortcuts.add_key_up('4'.charCodeAt(), { 'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 1); next_scramble(); } });
-			shortcuts.add_key_up('5'.charCodeAt(), { 'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 2); next_scramble(); } });
+			shortcuts.add_key_up('2'.charCodeAt(), { 'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 0); next_scramble(); } });
+			shortcuts.add_key_up('3'.charCodeAt(), { 'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 1); next_scramble(); } });
+			shortcuts.add_key_up('4'.charCodeAt(), { 'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 2); next_scramble(); } });
+			shortcuts.add_key_up('5'.charCodeAt(), { 'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 3); next_scramble(); } });
+			shortcuts.add_key_up('6'.charCodeAt(), { 'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 4); next_scramble(); } });
+			shortcuts.add_key_up('7'.charCodeAt(), { 'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 5); next_scramble(); } });
 			shortcuts.add_key_up('D'.charCodeAt(), { 'shift': true, 'func': function() { session.del(null); } });
 
 			if(localStorage)
