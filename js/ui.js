@@ -212,7 +212,7 @@ var ui = (function() {
 		localStorage.setItem("ui.config", JSON.stringify(config));
 	}
 
-	function load_colours() {
+	function load_user_styles() {
 		var styles = "";
 		if(config['ui_bg_colour']) {
 			styles += "#left, #right, .popup { background-color: " + config['ui_bg_colour'] + ";}";
@@ -380,23 +380,26 @@ var ui = (function() {
 
 			$('ui_bg_colour').onchange = function() {
 				config['ui_bg_colour'] = $('ui_bg_colour').value;
-				load_colours();
+				load_user_styles();
 			};
 			$('ui_text_colour').onchange = function() {
 				config['ui']['text_color'] = $('ui_text_colour').value;
-				load_colours();
+				load_user_styles();
 			};
 			$('ui_link_colour').onchange = function() {
 				config['ui_link_colour'] = $('ui_link_colour').value;
-				load_colours();
+				load_user_styles();
 			};
 			$('ui_highlight_colour').onchange = function() {
 				config['ui_highlight_colour'] = $('ui_highlight_colour').value;
-				load_colours();
+				load_user_styles();
 			};
 
 			$('options-ui-reset').onclick = function() {
-				delete config['ui'];
+				config['ui'] = {};
+				timer_label.style.fontSize = "10em";
+				scramble_label.style.fontSize = "1em";
+				load_user_styles();
 			};
 
 			$('solve_popup_close').onclick = toggle_popup;
@@ -437,8 +440,7 @@ var ui = (function() {
 
 			$('use_milli').checked = config['use_milli'];
 
-			load_colours();
-
+			load_user_styles();
 
 			timer_label.style.fontSize = config['ui']['timer_label_size'] || "10em";
 			scramble_label.style.fontSize = config['ui']['scramble_label_size'] || "1em";
