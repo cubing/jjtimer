@@ -8,18 +8,21 @@ var scramble_manager = (function() {
 	function add(s) {
 		scramblers.push(s);
 	}
-	
+
 	function add_default() {
-		add({ name: '3x3', scramble_func: scramble_manager.generic([["U","D"],["R","L"],["F","B"]],["","2","'"], 25), selected: function(){}, unselected: function(){}});
-		add({ name: '4x4', scramble_func: scramble_manager.generic([["U","D","u"],["R","L","r"],["F","B","f"]],["","2","'"], 40), selected: function(){}, unselected: function(){}});
-		add({ name: '5x5', scramble_func: scramble_manager.generic([["U","D","u'",'d'],["R","L",'r','l'],["F","B",'f','b']],["","2","'"], 60), selected: function(){}, unselected: function(){}});
-		set(0);
+		add({ name: '2x2x2', scramble_func: scramble_manager.generic([["U"],["R"],["F"]],["","2","'"], 25), selected: function(){}, unselected: function(){}});
+		add({ name: '3x3x3', scramble_func: scramble_manager.generic([["U","D"],["R","L"],["F","B"]],["","2","'"], 25), selected: function(){}, unselected: function(){}});
+		add({ name: '4x4x4', scramble_func: scramble_manager.generic([["U","D","u"],["R","L","r"],["F","B","f"]],["","2","'"], 40), selected: function(){}, unselected: function(){}});
+		add({ name: '5x5x5', scramble_func: scramble_manager.generic([["U","D","u'",'d'],["R","L",'r','l'],["F","B",'f','b']],["","2","'"], 60), selected: function(){}, unselected: function(){}});
+		add({ name: 'square-1', scramble_func:sq1_scrambler.scramble, selected: function(){},unselected:function(){}});
+		set(1);
 	}
 	
 	function set(index) {
 		if(current_scrambler && current_scrambler.unselected)
 			current_scrambler.unselected();
 		
+		current_index = index;
 		current_scrambler = scramblers[index];
 		
 		if(current_scrambler.selected)
@@ -40,6 +43,8 @@ var scramble_manager = (function() {
 		add: add,
 		add_default: add_default,
 		set: set,
+
+		current_index: function() { return current_index; },
 
 		next: next,
 		last_scramble: function() { return last_scramble; },

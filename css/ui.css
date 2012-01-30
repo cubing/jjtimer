@@ -102,6 +102,11 @@ a:hover {
 	color: gray;
 }
 
+.disabled a:hover {
+	cursor: default;
+	text-decoration: none;
+}
+
 .highlighted {
 	background-color: yellow;
 }

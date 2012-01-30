@@ -101,7 +101,6 @@ var ui = (function() {
 				out += time_str;
 			}
 
-
 			if(i === paren_i || i === paren_j) out += ")";
 			if(i === highlight_index + length) out += "</a>";
 		}
@@ -113,6 +112,7 @@ var ui = (function() {
 		for(var i = 0; i < scramble_manager.scramblers.length; i++) {
 			menu.options[i] = new Option(scramble_manager.get_name(i));
 		}
+		menu.options[scramble_manager.current_index()].selected = true;
 	}
 
 	function centre(el) {
