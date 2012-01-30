@@ -214,21 +214,22 @@ var ui = (function() {
 
 	function load_user_styles() {
 		var styles = "";
-		if(config['ui_bg_colour']) {
-			styles += "#left, #right, .popup { background-color: " + config['ui_bg_colour'] + ";}";
-			$('ui_bg_colour').value = config['ui_bg_colour'];
+		var ui_styles = config['ui'];
+		if(ui_styles['bg_colour']) {
+			styles += "#left, #right, .popup { background-color: " + ui_styles['bg_colour'] + ";}";
+			$('ui_bg_colour').value = ui_styles['bg_colour'];
 		}
-		if(config['ui']['text_color']) {
-			styles += "body { color: " + config['ui']['text_color'] + ";}";
-			$('ui_text_colour').value = config['ui']['text_color'];
+		if(ui_styles['text_color']) {
+			styles += "body { color: " + ui_styles['text_color'] + ";}";
+			$('ui_text_colour').value = ui_styles['text_color'];
 		}
-		if(config['ui_link_colour']) {
-			styles += "a { color: " + config['ui_link_colour'] + ";}";
-			$('ui_link_colour').value = config['ui_link_colour'];
+		if(ui_styles['link_colour']) {
+			styles += "a { color: " + ui_styles['link_colour'] + ";}";
+			$('ui_link_colour').value = ui_styles['link_colour'];
 		}
-		if(config['ui_highlight_colour']) {
-			styles += ".highlighted { background-color: " + config['ui_highlight_colour'] + ";}";
-			$('ui_highlight_colour').value = config['ui_highlight_colour'];
+		if(ui_styles['highlight_colour']) {
+			styles += ".highlighted { background-color: " + ui_styles['highlight_colour'] + ";}";
+			$('ui_highlight_colour').value = ui_styles['highlight_colour'];
 		}
 		t($('user_styles'), styles);
 	}
@@ -379,7 +380,7 @@ var ui = (function() {
 			};
 
 			$('ui_bg_colour').onchange = function() {
-				config['ui_bg_colour'] = $('ui_bg_colour').value;
+				config['ui']['bg_colour'] = $('ui_bg_colour').value;
 				load_user_styles();
 			};
 			$('ui_text_colour').onchange = function() {
@@ -387,11 +388,11 @@ var ui = (function() {
 				load_user_styles();
 			};
 			$('ui_link_colour').onchange = function() {
-				config['ui_link_colour'] = $('ui_link_colour').value;
+				config['ui']['link_colour'] = $('ui_link_colour').value;
 				load_user_styles();
 			};
 			$('ui_highlight_colour').onchange = function() {
-				config['ui_highlight_colour'] = $('ui_highlight_colour').value;
+				config['ui']['highlight_colour'] = $('ui_highlight_colour').value;
 				load_user_styles();
 			};
 
