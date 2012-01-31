@@ -36,7 +36,8 @@ var shortcuts = (function() {
 				s[i]['func'](ev);
 			}
 		} 
-}
+	}
+
 	function init() {
 		document.onkeydown = key_down;
 		document.onkeyup = key_up;

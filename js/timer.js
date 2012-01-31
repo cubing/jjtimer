@@ -13,7 +13,7 @@ var timer = function() {
 
 	function set_running() {
 		solve_time = undefined;
-		start_time = new Date();
+		start_time = new Date().getTime();
 		state = Running;
 		clearTimeout(inspection_timer);
 		ui.on_running();
@@ -25,10 +25,10 @@ var timer = function() {
 	}
 
 	function set_stopped() {
-		end_time = new Date();
+		end_time = new Date().getTime();
 		clearInterval(running_timer);
 		state = Delay;
-		solve_time = end_time.getTime() - start_time.getTime();
+		solve_time = end_time - start_time;
 		ui.on_stop();
 		session.add(solve_time, scramble_manager.last_scramble());
 		if(use_inspection && inspection_count < 0) {
@@ -83,7 +83,7 @@ var timer = function() {
 		},
 		
 		get_time: function() {
-			return solve_time || new Date().getTime() - start_time.getTime();
+			return solve_time || new Date().getTime() - start_time;
 		}
 	};
 }();
