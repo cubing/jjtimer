@@ -13,16 +13,16 @@ var scramble_manager = (function() {
 			var donemoves = [];
 			var lastaxis = -1;
 			var s = "";
-					for(var j = 0; j < length; j++){
+			for(var j = 0; j < length; j++){
 				var done = 0;
 				while(done === 0) {
 					var first = randn(turns.length);
 					var second = randn(turns[first].length);
-							if(first != lastaxis) {
+					if(first != lastaxis) {
 						for(var k=0; k < turns[first].length; k++) donemoves[k] = 0;
 						lastaxis = first;
 					}
-						if(donemoves[second] === 0) {
+					if(donemoves[second] === 0) {
 						donemoves[second] = 1;
 						s += (turns[first][second]) instanceof Array ?
 							rand_el(turns[first][second]) : turns[first][second];
