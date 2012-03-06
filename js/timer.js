@@ -29,8 +29,8 @@ var timer = function() {
 		clearInterval(running_timer);
 		state = Delay;
 		solve_time = end_time - start_time;
-		ui.on_stop();
 		session.add(solve_time, scramble_manager.last_scramble());
+		ui.on_stop();
 		if(use_inspection && inspection_count < 0) {
 			if(inspection_count >= -2) {
 				session.toggle_plus_two(null);
