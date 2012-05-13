@@ -35,6 +35,21 @@ var ui = (function() {
 		if (hours > 0) {s = hours + ":" + s;}
 		return s;
 	}
+		function seconds_time(time) {
+		if(time < 0) return "DNF";
+
+		time = Math.round(time / (1000));
+		var s="";
+		var secs = time % 60;
+		var mins = ((time - secs) / 60) % 60;
+		var hours = (time - secs - 60 * mins) / 3600;
+		s = secs
+		if (secs < 10 && (mins > 0 || hours > 0)) {s = "0" + s;}
+		if (mins > 0 || hours > 0) {s = mins + ":" + s;}
+		if (mins < 20 && hours > 0) {s = "0" + s;}
+		if (hours > 0) {s = hours + ":" + s;}
+		return s;
+	}
 
 	function solve_time(solve) {
 		var out = "";
@@ -228,7 +243,12 @@ var ui = (function() {
 	},
 
 	update_running: function(time) {
+		if(config['hide_milli'])
+			{t(timer_label, seconds_time(time));}
+			else
+			{
 		t(timer_label, human_time(time));
+		}
 	},
 
 	on_stop: function() {
@@ -336,6 +356,11 @@ var ui = (function() {
 			update_stats();
 			t(timer_label, human_time(timer.get_time()));
 		}
+		$('hide_milli').onchange = function() {
+			config['hide_milli'] = $('hide_milli').checked;
+			update_stats();
+			t(timer_label, human_time(timer.get_time()));
+		}
 		$('save_btn').onclick = session.save;
 		$('load_btn').onclick = function() { session.load(); };
 		$('auto_save').onchange = function() { config['auto_save'] = $('auto_save').checked;  };
@@ -372,6 +397,7 @@ var ui = (function() {
 		}
 
 		$('use_milli').checked = config['use_milli'];
+		$('hide_milli').checked = config['hide_milli'];
 
 		window.onbeforeunload = on_close;
 		window.onblur = function() { timer_label.style.color="gray"; };
