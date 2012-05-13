@@ -16,19 +16,26 @@ var ui = (function() {
 	var timer_label, times_label, scramble_label, stats_label, options_label, to_hide;
 	var config;
 
-	function human_time(time) {
+	function human_time(time,running) {
 		if(time < 0) return "DNF";
-
+		if(config['hide_milli']&&running)
+		{
+		time = Math.floor(time/ 1000);
+		var bits = 0;
+		}
+		else
+		{
 		time = Math.round(time / (config['use_milli'] ? 1 : 10));
 		var bits = time % (config['use_milli'] ? 1000 : 100);
 		time = (time - bits) / (config['use_milli'] ? 1000 : 100);
+		}
 		var secs = time % 60;
 		var mins = ((time - secs) / 60) % 60;
 		var hours = (time - secs - 60 * mins) / 3600;
 		var s = "" + bits;
 		if(bits < 10) { s = "0" + s; }
 		if(bits < 100 && config['use_milli']) { s = "0" + s; }
-		s = secs + "." + s;
+		if(config['hide_milli']&&running){s = secs;}else{s = secs + "." + s;}
 		if(secs < 10 && (mins > 0 || hours > 0)) { s = "0" + s; }
 		if(mins > 0 || hours > 0) { s = mins + ":" + s; }
 		if(mins < 20 && hours > 0) { s = "0" + s; }
@@ -252,7 +259,7 @@ var ui = (function() {
 		},
 
 		update_running: function(time) {
-			t(timer_label, human_time(time));
+			t(timer_label, human_time(time,true));
 		},
 
 		on_stop: function() {
@@ -357,7 +364,11 @@ var ui = (function() {
 			$('use_milli').onchange = function() {
 				config['use_milli'] = $('use_milli').checked;
 				update_stats();
-				t(timer_label, human_time(timer.get_time()));
+				t(timer_label, human_time(timer.get_time(),false));
+			}
+			$('hide_milli').onchange = function() {
+				config['hide_milli'] = $('hide_milli').checked;
+				t(timer_label, human_time(timer.get_time(),false));
 			}
 			$('save_btn').onclick = session.save;
 			$('load_btn').onclick = function() { session.load(); };
@@ -440,6 +451,7 @@ var ui = (function() {
 			}
 
 			$('use_milli').checked = config['use_milli'];
+			$('hide_milli').checked = config['hide_milli'];
 
 			load_user_styles();
 
