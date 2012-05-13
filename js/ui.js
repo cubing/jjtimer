@@ -4,7 +4,7 @@ function load_external(url) {
 	file.type = "text/javascript";
 	file.src = url;
 	document.getElementsByTagName("head")[0].appendChild(file);
-} 
+}
 
 function $(id) { return document.getElementById(id); }
 function t(e, t) { e.innerHTML = t; }
@@ -26,13 +26,13 @@ var ui = (function() {
 		var mins = ((time - secs) / 60) % 60;
 		var hours = (time - secs - 60 * mins) / 3600;
 		var s = "" + bits;
-		if (bits < 10) {s = "0" + s;}
-		if (bits < 100 && config['use_milli']) {s = "0" + s;}
+		if(bits < 10) { s = "0" + s; }
+		if(bits < 100 && config['use_milli']) { s = "0" + s; }
 		s = secs + "." + s;
-		if (secs < 10 && (mins > 0 || hours > 0)) {s = "0" + s;}
-		if (mins > 0 || hours > 0) {s = mins + ":" + s;}
-		if (mins < 20 && hours > 0) {s = "0" + s;}
-		if (hours > 0) {s = hours + ":" + s;}
+		if(secs < 10 && (mins > 0 || hours > 0)) { s = "0" + s; }
+		if(mins > 0 || hours > 0) { s = mins + ":" + s; }
+		if(mins < 20 && hours > 0) { s = "0" + s; }
+		if(hours > 0) { s = hours + ":" + s; }
 		return s;
 	}
 
@@ -62,8 +62,7 @@ var ui = (function() {
 		}
 	}
 
-	function next_scramble()
-	{
+	function next_scramble() {
 		t(scramble_label, scramble_manager.next());
 	}
 
@@ -89,12 +88,12 @@ var ui = (function() {
 		var out = "";
 		for(var i = 0; i < session.length(); ++i) {
 			if(i != 0) out += ", ";
-			if(i === highlight_index) out += "<a href='javascript:;' class='h' onclick='ui.toggle_avg_popup("+highlight_index+", "+(highlight_index + length)+")'>";
+			if(i === highlight_index) out += "<a href='javascript:;' class='highlighted' onclick='ui.toggle_avg_popup(" + highlight_index + ", " + (highlight_index + length) + ")'>";
 			if(i === paren_i || i === paren_j) out += "(";
 
 			var time_str = solve_time(session.solves()[i]);
-			if(highlight_index === -1 || (i < highlight_index || i > highlight_index+length)) {
-				out += "<a href='javascript:;' onclick='ui.toggle_solve_popup("+i+");'>";
+			if(highlight_index === -1 || (i < highlight_index || i > highlight_index + length)) {
+				out += "<a href='javascript:;' onclick='ui.toggle_solve_popup(" + i + ");'>";
 				out += time_str;
 				out += "</a>";
 			}
@@ -107,7 +106,7 @@ var ui = (function() {
 		}
 		return out;
 	}
-	
+
 	function populate_scramblers_menu() {
 		var menu = $('scramble_menu');
 		for(var i = 0; i < scramble_manager.scramblers.length; i++) {
@@ -124,7 +123,7 @@ var ui = (function() {
 	function toggle_options_popup() {
 		if(timer.is_running()) return;
 		toggle($('options_popup'));
-		toggle($('gray_out')); 
+		toggle($('gray_out'));
 		centre($('options_popup'));
 	}
 
@@ -155,13 +154,12 @@ var ui = (function() {
 	function toggle_avg_popup(index, end) {
 		if(index !== null) {
 			var out = "";
-			for(var i = index; i < end+1; i++)
-			{
+			for(var i = index; i < end + 1; i++) {
 				out += solve_time(session.solves()[i]) + " ";
 				out += session.solves()[i]['scramble'] + "<br />";
 			}
 			$('avg_popup_list').innerHTML = out;
-			$('avg_popup_header').innerHTML = "solves " + (index+1) + " - " + (end+1);
+			$('avg_popup_header').innerHTML = "solves " + (index + 1) + " - " + (end + 1);
 		}
 		toggle($('avg_popup'));
 		toggle($('gray_out'));
@@ -177,7 +175,7 @@ var ui = (function() {
 			toggle($('avg_popup'));
 		toggle($('gray_out'));
 	}
-	
+
 	function highlight(start, length, paren_i, paren_j) {
 		if(timer.is_running()) return;
 		if(paren_i === null || paren_j === null) paren_i = paren_j = -1;
@@ -214,174 +212,249 @@ var ui = (function() {
 		localStorage.setItem("ui.config", JSON.stringify(config));
 	}
 
-	return {
-	update_stats: update_stats,
-
-	on_inspection: on_inspection,
-
-	on_running: function() {
-		timer_label.style.color = "black";
-		for(var i = 0; i < to_hide.length; i++)
-		{
-			to_hide[i].className = to_hide[i].className + " disabled";
+	function load_user_styles() {
+		var styles = "";
+		var ui_styles = config['ui'];
+		if(ui_styles['bg_colour']) {
+			styles += "#left, #right, .popup { background-color: " + ui_styles['bg_colour'] + ";}";
+			$('ui_bg_colour').value = ui_styles['bg_colour'];
 		}
-	},
-
-	update_running: function(time) {
-		t(timer_label, human_time(time));
-	},
-
-	on_stop: function() {
-		t(timer_label, human_time(timer.get_time()));
-		for(var i = 0; i < to_hide.length; i++)
-		{
-			to_hide[i].className = to_hide[i].className.replace("disabled", "");
+		if(ui_styles['text_color']) {
+			styles += "body { color: " + ui_styles['text_color'] + ";}";
+			$('ui_text_colour').value = ui_styles['text_color'];
 		}
-		next_scramble();
-	},
-
-	toggle_solve_popup: toggle_solve_popup,
-	toggle_avg_popup: toggle_avg_popup,
-	
-	reset: function() {
-		timer.reset();
-		next_scramble();
-		t(timer_label, "0.00");	
-		t(times_label, "&nbsp;");
-		update_stats();
-	},
-
-	load_plugin: function() {
-		var url = $('plugin_url').value;
-		load_external(url);
-		$('plugin_url').value = "";
-	},
-
-	plugin_loaded: function(name) {
-		t($('info'), "loaded " + name);
-		populate_scramblers_menu();
-		setTimeout(function() {
-			t($('info'), "");
-		}, 1000);
-	},
-
-	init: function() {
-		timer_label = $('timer_label');
-		scramble_label = $('scramble_label');
-		stats_label = $('stats_label');
-		times_label = $('times_label');
-		options_label = $('options_label');
-		to_hide = document.getElementsByClassName("hide_running");
-
-		$('p2').onclick = function() {
-			if(timer.is_running()) return;
-			session.toggle_plus_two(null);
-			t(timer_label, solve_time(session.last()));
-		};
-		$('dnf').onclick = function() {
-			if(timer.is_running()) return;
-			session.toggle_dnf(null);
-			t(timer_label, solve_time(session.last()));
-		};
-
-		$('c_a_5').onclick = function() {
-			if(timer.is_running()) return;
-			highlight_current(5, null, null);
-		};
-		$('b_a_5').onclick = function() {
-			if(timer.is_running()) return;
-			var a = session.best_average(5, true);
-			highlight(a['index'], 5, a['best_single_index'], a['worst_single_index']);
-		};
-		$('c_a_12').onclick = function() {
-			if(timer.is_running()) return;
-			highlight_current(12, null, null);
-		};
-		$('b_a_12').onclick = function() {
-			if(timer.is_running()) return;
-			var a = session.best_average(12, true);
-			highlight(a['index'], 12, a['best_single_index'], a['worst_single_index']);
-		};
-		$('s_a').onclick = function() {
-			if(timer.is_running()) return;
-			highlight_current(session.length(), null, null);
-		};
-		$('s_m').onclick = function() {
-			if(timer.is_running()) return;
-			highlight_current(session.length(), null, null);
-		};
-
-		$('toggle_stats').onclick = function() {
-			if(timer.is_running()) return;
-			toggle($('stats_link'));
-			if(is_visible($('stats_link')))
-				$('toggle_stats').innerHTML = "hide stats";
-			else
-				$('toggle_stats').innerHTML = "show stats";
-		};
-
-		$('options_label').onclick = toggle_options_popup;
-		$('close_options').onclick = toggle_options_popup;
-		$('gray_out').onclick = toggle_popup;
-		$('scramble_menu').onchange = function(s) {
-			scramble_manager.set($('scramble_menu').selectedIndex);
-			next_scramble();
-		};
-		$('use_inspection').onchange = function() {
-			timer.toggle_inspection();
-			config['use_inspection'] = $('use_inspection').checked;
+		if(ui_styles['link_colour']) {
+			styles += "a { color: " + ui_styles['link_colour'] + ";}";
+			$('ui_link_colour').value = ui_styles['link_colour'];
 		}
-		$('use_milli').onchange = function() {
-			config['use_milli'] = $('use_milli').checked;
-			update_stats();
-			t(timer_label, human_time(timer.get_time()));
+		if(ui_styles['highlight_colour']) {
+			styles += ".highlighted { background-color: " + ui_styles['highlight_colour'] + ";}";
+			$('ui_highlight_colour').value = ui_styles['highlight_colour'];
 		}
-		$('save_btn').onclick = session.save;
-		$('load_btn').onclick = function() { session.load(); };
-		$('auto_save').onchange = function() { config['auto_save'] = $('auto_save').checked;  };
-
-		$('solve_popup_close').onclick = toggle_popup;
-
-		scramble_manager.add_default();
-		populate_scramblers_menu();
-
-		ui.reset();
-		
-		shortcuts.init();
-		shortcuts.add_key_down(shortcuts.space, {'func': spacebar_down});
-		shortcuts.add_key_up(shortcuts.space, {'func': spacebar_up});
-		shortcuts.add_key_up(shortcuts.esc, {'func': esc_up});
-
-		shortcuts.add_key_up('3'.charCodeAt(), {'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 0); next_scramble(); }});
-		shortcuts.add_key_up('4'.charCodeAt(), {'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 1); next_scramble(); }});
-		shortcuts.add_key_up('5'.charCodeAt(), {'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 2); next_scramble(); }});
-		shortcuts.add_key_up('D'.charCodeAt(), {'shift': true, 'func': function(){ session.del(null); }});
-
-		if(localStorage)
-			config = JSON.parse(localStorage.getItem("ui.config"));
-		if(config == null)
-			config = {};
-
-		if(config['auto_save']) {
-			$('auto_save').checked = true;
-			session.load();
-		}
-		if(config['use_inspection']) {
-			$('use_inspection').checked = true;
-			timer.toggle_inspection();
-		}
-
-		$('use_milli').checked = config['use_milli'];
-
-		window.onbeforeunload = on_close;
-		window.onblur = function() { timer_label.style.color="gray"; };
-		window.onfocus = function() { timer_label.style.color="black"; };
-		window.onresize= function() {
-			centre($('options_popup'));
-			centre($('solve_popup'));
-			centre($('avg_popup'));
-		}
+		t($('user_styles'), styles);
 	}
+
+	function change_font_size(el, delta) {
+		var size = parseFloat(el.style.fontSize);
+		return el.style.fontSize = (size + delta) + "em";
+	}
+
+	return {
+		update_stats: update_stats,
+
+		on_inspection: on_inspection,
+
+		on_running: function() {
+			timer_label.style.color = "";
+			for(var i = 0; i < to_hide.length; i++) {
+				to_hide[i].className = to_hide[i].className + " disabled";
+			}
+		},
+
+		update_running: function(time) {
+			t(timer_label, human_time(time));
+		},
+
+		on_stop: function() {
+			t(timer_label, human_time(timer.get_time()));
+			for(var i = 0; i < to_hide.length; i++) {
+				to_hide[i].className = to_hide[i].className.replace("disabled", "");
+			}
+			next_scramble();
+		},
+
+		toggle_solve_popup: toggle_solve_popup,
+		toggle_avg_popup: toggle_avg_popup,
+
+		reset: function() {
+			timer.reset();
+			next_scramble();
+			t(timer_label, "0.00");
+			t(times_label, "&nbsp;");
+			update_stats();
+		},
+
+		load_plugin: function() {
+			var url = $('plugin_url').value;
+			load_external(url);
+			$('plugin_url').value = "";
+		},
+
+		plugin_loaded: function(name) {
+			t($('info'), "loaded " + name);
+			populate_scramblers_menu();
+			setTimeout(function() {
+				t($('info'), "");
+			}, 1000);
+		},
+
+		init: function() {
+			timer_label = $('timer_label');
+			scramble_label = $('scramble_label');
+			stats_label = $('stats_label');
+			times_label = $('times_label');
+			options_label = $('options_label');
+			to_hide = document.getElementsByClassName("hide_running");
+
+			$('p2').onclick = function() {
+				if(timer.is_running()) return;
+				session.toggle_plus_two(null);
+				t(timer_label, solve_time(session.last()));
+			};
+			$('dnf').onclick = function() {
+				if(timer.is_running()) return;
+				session.toggle_dnf(null);
+				t(timer_label, solve_time(session.last()));
+			};
+
+			$('c_a_5').onclick = function() {
+				if(timer.is_running()) return;
+				highlight_current(5, null, null);
+			};
+			$('b_a_5').onclick = function() {
+				if(timer.is_running()) return;
+				var a = session.best_average(5, true);
+				highlight(a['index'], 5, a['best_single_index'], a['worst_single_index']);
+			};
+			$('c_a_12').onclick = function() {
+				if(timer.is_running()) return;
+				highlight_current(12, null, null);
+			};
+			$('b_a_12').onclick = function() {
+				if(timer.is_running()) return;
+				var a = session.best_average(12, true);
+				highlight(a['index'], 12, a['best_single_index'], a['worst_single_index']);
+			};
+			$('s_a').onclick = function() {
+				if(timer.is_running()) return;
+				highlight_current(session.length(), null, null);
+			};
+			$('s_m').onclick = function() {
+				if(timer.is_running()) return;
+				highlight_current(session.length(), null, null);
+			};
+
+			$('toggle_stats').onclick = function() {
+				if(timer.is_running()) return;
+				toggle($('stats_link'));
+				if(is_visible($('stats_link')))
+					$('toggle_stats').innerHTML = "hide stats";
+				else
+					$('toggle_stats').innerHTML = "show stats";
+			};
+
+			$('options_label').onclick = toggle_options_popup;
+			$('close_options').onclick = toggle_options_popup;
+			$('gray_out').onclick = toggle_popup;
+			$('scramble_menu').onchange = function() {
+				scramble_manager.set($('scramble_menu').selectedIndex);
+				next_scramble();
+			};
+			$('use_inspection').onchange = function() {
+				timer.toggle_inspection();
+				config['use_inspection'] = $('use_inspection').checked;
+			}
+			$('use_milli').onchange = function() {
+				config['use_milli'] = $('use_milli').checked;
+				update_stats();
+				t(timer_label, human_time(timer.get_time()));
+			}
+			$('save_btn').onclick = session.save;
+			$('load_btn').onclick = function() { session.load(); };
+			$('auto_save').onchange = function() { config['auto_save'] = $('auto_save').checked; };
+
+			$('ui_timer_size_inc').onclick = function() {
+				config['ui']['timer_label_size'] = change_font_size(timer_label, 1);
+			};
+
+			$('ui_timer_size_dec').onclick = function() {
+				config['ui']['timer_label_size'] = change_font_size(timer_label, -1);
+			};
+
+			$('ui_scramble_size_inc').onclick = function() {
+				config['ui']['scramble_label_size'] = change_font_size(scramble_label, 0.1);
+			};
+
+			$('ui_scramble_size_dec').onclick = function() {
+				config['ui']['scramble_label_size'] = change_font_size(scramble_label, -0.1);
+			};
+
+			$('ui_bg_colour').onchange = function() {
+				config['ui']['bg_colour'] = $('ui_bg_colour').value;
+				load_user_styles();
+			};
+			$('ui_text_colour').onchange = function() {
+				config['ui']['text_color'] = $('ui_text_colour').value;
+				load_user_styles();
+			};
+			$('ui_link_colour').onchange = function() {
+				config['ui']['link_colour'] = $('ui_link_colour').value;
+				load_user_styles();
+			};
+			$('ui_highlight_colour').onchange = function() {
+				config['ui']['highlight_colour'] = $('ui_highlight_colour').value;
+				load_user_styles();
+			};
+
+			$('options-ui-reset').onclick = function() {
+				config['ui'] = {};
+				timer_label.style.fontSize = "10em";
+				scramble_label.style.fontSize = "1em";
+				load_user_styles();
+			};
+
+			$('solve_popup_close').onclick = toggle_popup;
+
+			scramble_manager.add_default();
+			populate_scramblers_menu();
+
+			ui.reset();
+
+			shortcuts.init();
+			shortcuts.add_key_down(shortcuts.space, { 'func': spacebar_down });
+			shortcuts.add_key_up(shortcuts.space, { 'func': spacebar_up });
+			shortcuts.add_key_up(shortcuts.esc, { 'func': esc_up });
+
+			shortcuts.add_key_up('2'.charCodeAt(), { 'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 0); next_scramble(); } });
+			shortcuts.add_key_up('3'.charCodeAt(), { 'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 1); next_scramble(); } });
+			shortcuts.add_key_up('4'.charCodeAt(), { 'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 2); next_scramble(); } });
+			shortcuts.add_key_up('5'.charCodeAt(), { 'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 3); next_scramble(); } });
+			shortcuts.add_key_up('6'.charCodeAt(), { 'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 4); next_scramble(); } });
+			shortcuts.add_key_up('7'.charCodeAt(), { 'shift': true, 'func': function() { scramble_manager.set($('scramble_menu').selectedIndex = 5); next_scramble(); } });
+			shortcuts.add_key_up('D'.charCodeAt(), { 'shift': true, 'func': function() { session.del(null); } });
+
+			if(localStorage)
+				config = JSON.parse(localStorage.getItem("ui.config"));
+			if(config == null)
+				config = {};
+			if(config['ui'] == null)
+				config['ui'] = {};
+
+			if(config['auto_save']) {
+				$('auto_save').checked = true;
+				session.load();
+			}
+			if(config['use_inspection']) {
+				$('use_inspection').checked = true;
+				timer.toggle_inspection();
+			}
+
+			$('use_milli').checked = config['use_milli'];
+
+			load_user_styles();
+
+			timer_label.style.fontSize = config['ui']['timer_label_size'] || "10em";
+			scramble_label.style.fontSize = config['ui']['scramble_label_size'] || "1em";
+
+			window.onbeforeunload = on_close;
+			window.onblur = function() { timer_label.style.color = "gray"; };
+			window.onfocus = function() { timer_label.style.color = ""; };
+			window.onresize = function() {
+				centre($('options_popup'));
+				centre($('solve_popup'));
+				centre($('avg_popup'));
+			}
+		}
 	};
 })();
 window['ui'] = ui;

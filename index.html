@@ -3,6 +3,7 @@
 <head>
 <title>funktio</title>
 <link rel="stylesheet" href="css/ui.css" />
+<style type="text/css" id="user_styles"></style>
 <script type="text/javascript" src="js/session.js"></script>
 <script type="text/javascript" src="js/timer.js"></script>
 <script type="text/javascript" src="js/scrambler.js"></script>
@@ -47,7 +48,18 @@
 	<h3>session</h3>
 	<p><input type="submit" id="save_btn" value="save" /> <input type="submit" id="load_btn" value="load" /></p>
 	<p><input type="checkbox" id="auto_save"><label for="auto_save">automatically save/load</label></p>
-	<a href="javascript:;" id="close_options">close</a>
+
+			<h3>UI</h3>
+			<p>timer size: <a href="javascript:;" id="ui_timer_size_inc">+</a>/<a href="javascript:;" id="ui_timer_size_dec">-</a></p>
+			<p>scramble size: <a href="javascript:;" id="ui_scramble_size_inc">+</a>/<a href="javascript:;" id="ui_scramble_size_dec">-</a></p>
+			<h4>colours</h4>
+			<p><label for="ui_bg_colour">background</label> <input type="text" id="ui_bg_colour" /></p>
+			<p><label for="ui_text_colour">text</label> <input type="text" id="ui_text_colour" /></p>
+			<p><label for="ui_link_colour">link</label> <input type="text" id="ui_link_colour" /></p>
+			<p><label for="ui_highlight_colour">highlight</label> <input type="text" id="ui_highlight_colour" /></p>
+			<p><a href="javascript:;" id="options-ui-reset">reset UI</a></p>
+		<a href="javascript:;" id="close_options">close</a>
+	</div>
 </div>
 
 <div id="solve_popup" style="display: none;" class="popup">
